@@ -100,15 +100,16 @@
               </a>
               <ul class="menu-sub">
                 <li class="menu-item">
+                  <a href="/admin/view-products" class="menu-link">
+                    <div data-i18n="Basic Inputs">All Products</div>
+                  </a>
+                </li>
+                <li class="menu-item">
                   <a href="/admin/add-products" class="menu-link">
                     <div data-i18n="Basic Inputs">Add Products</div>
                   </a>
                 </li>
-                <li class="menu-item">
-                  <a href="/admin/edit-products" class="menu-link">
-                    <div data-i18n="Input groups">Edit Products</div>
-                  </a>
-                </li>
+                
               </ul>
             </li>
 
@@ -522,7 +523,7 @@
                       <div class="dropdown-divider"></div>
                     </li>
                     <li>
-                        {{#if admin}}
+                      {{#if admin}}
                       <a class="dropdown-item" href="/admin/admin-logout">
                         <i class="bx bx-power-off me-2"></i>
                         <span class="align-middle">Log Out</span>

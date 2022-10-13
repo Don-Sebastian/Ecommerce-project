@@ -1,7 +1,15 @@
 var express = require('express');
 var router = express.Router();
+// const path = require('path')
+
+const controller = require('../server/controller/product-controller');
+const multer = require('../server/middleware/multer')
+
+// var productHelper = require("../helpers/product-helpers");
 var adminHelper = require("../helpers/admin-helpers");
 var userHelper = require("../helpers/user-helpers");
+
+
 
 
 const verifyAdminLogin = (req, res, next) => {
@@ -72,9 +80,31 @@ router.get("/view-users", function (req, res, next) {
   
 });
 
-router.get("/add-products", function (req, res, next) {
-    res.render("admin/add-products", { adminAccount: true, scrollbar: true });
-});
 
+//-------------Add Products--------------
+
+// router.get("/add-products", function (req, res, next) {
+//     res.render("admin/add-products", { adminAccount: true, scrollbar: true });
+// });
+
+// router.post("/add-products", upload.single('Image'), async (req, res) => {
+//   console.log(req.body);
+
+//   console.log(req.files.Image)
+
+//   // let uploadFile = new UploadFile({ img: req.file.filename });
+//   productHelper.addProduct(req.body);
+//   res.render("admin/add-products", { adminAccount: true, scrollbar: true });
+// });
+
+
+router.get("/add-products", controller.getAddProducts);
+
+router.post(
+  "/add-products",
+  store.array("Image", 12),
+  controller.postAddProducts
+);
 
 module.exports = router;
+  

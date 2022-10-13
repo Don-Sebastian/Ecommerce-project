@@ -5,13 +5,15 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require("express-session");
 const handlebars = require("handlebars");
+var bodyParser = require("body-parser");
 
 var userRouter = require("./routes/user");
 var adminRouter = require("./routes/admin");
 var hbs = require("express-handlebars");
-var fileUpload = require("express-fileupload");
+// var fileUpload = require("express-fileupload");
 var db = require("./config/connection");
 const e = require("express");
+// var connect = require("./config/connection");
 
 var app = express();
 
@@ -36,13 +38,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use(fileUpload());
+// app.use(fileUpload());
 app.use(session({ secret: "key", cookie: { maxAge: 600000 } }));
 
 db.connect((err) => {
   if (err) console.log("Connection Error" + err);
   else console.log("Database connected to port 27017");
 });
+// require("./config/connection")();
+
+
 
 if (app.use("/", userRouter)) {
   app.use(express.static(path.join(__dirname, "public/user")));

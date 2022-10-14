@@ -5,21 +5,14 @@ const { ObjectId } = require("mongodb")
 const { ObjectID } = require("bson");
 
 module.exports = {
-  addProduct: (
-    product,
-    // image,
-    callback
-  ) => {
+  addProduct: (product, callback) => {
     // console.log(product);
-
     db.get()
       .collection(collection.PRODUCT_COLLECTION)
       .insertOne(product)
       .then((data) => {
-        console.log("-----------------");
-
-        console.log(data);
-        callback(data.insertedId);
+        
+        // callback(data.insertedId);
       });
   },
   getAllProducts: () => {
@@ -53,6 +46,8 @@ module.exports = {
         .collection(collection.PRODUCT_COLLECTION)
         .findOne({ _id: ObjectID(productId) })
         .then((product) => {
+         
+
           resolve(product);
         });
     });
@@ -69,7 +64,7 @@ module.exports = {
               Price: productDetails.Price,
               Category: productDetails.Category,
               Description: productDetails.Description,
-              fname: productDetails.fname,
+              Image: productDetails.Image,
             },
           }
         )

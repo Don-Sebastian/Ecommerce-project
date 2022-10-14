@@ -29,6 +29,8 @@ app.engine(
     partialDir: __dirname + "/views/partials",
   })
 );
+
+
 handlebars.registerHelper("inc", (value, options) => {
   return parseInt(value) + 1;
 });

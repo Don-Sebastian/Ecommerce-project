@@ -1,15 +1,13 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
 // const path = require('path')
 
-const controller = require('../server/controller/product-controller');
-const multer = require('../server/middleware/multer')
+const controller = require("../server/controller/product-controller");
+const { upload } = require("../server/middleware/multer");
 
 var productHelper = require("../helpers/product-helpers");
 var adminHelper = require("../helpers/admin-helpers");
 var userHelper = require("../helpers/user-helpers");
-
-
 
 const verifyAdminLogin = (req, res, next) => {
   if (req.session.adminLoggedIn) {
@@ -19,13 +17,16 @@ const verifyAdminLogin = (req, res, next) => {
   }
 };
 
+
+
 /* GET users listing. */
-router.get('/dashboard', function (req, res, next) {
+router.get("/dashboard", function (req, res, next) {
   let admin = req.session.admin;
   console.log(req.session);
 
   res.render("admin/dashboard", {
-    adminAccount: true, scrollbar: true,
+    adminAccount: true,
+    scrollbar: true,
     // userDetails,
     // products,
     admin,
@@ -36,7 +37,6 @@ router.get("/admin-login", (req, res) => {
   if (req.session.admin) {
     res.redirect("/admin/dashboard");
   } else {
-
     res.render("admin/admin-login", {
       adminAccount: true,
       adminloginErr: req.session.adminloginErr,
@@ -77,7 +77,7 @@ router.get("/view-users", function (req, res, next) {
         // products,
         admin,
       });
-    })
+    });
   } else {
     res.render("admin/admin-login", {
       adminAccount: true,
@@ -87,7 +87,6 @@ router.get("/view-users", function (req, res, next) {
     req.session.adminloginErr = false;
   }
 });
-
 
 //-------------Products--------------
 
@@ -105,7 +104,6 @@ router.get("/view-users", function (req, res, next) {
 //   res.render("admin/add-products", { adminAccount: true, scrollbar: true });
 // });
 
-
 router.get("/view-products", function (req, res, next) {
   let admin = req.session.admin;
   if (req.session.admin) {
@@ -113,7 +111,6 @@ router.get("/view-products", function (req, res, next) {
       res.render("admin/view-products", {
         adminAccount: true,
         scrollbar: true,
-
         products,
         admin,
       });
@@ -130,8 +127,9 @@ router.get("/view-products", function (req, res, next) {
 
 router.get("/add-products", controller.getAddProducts);
 
-router.post("/add-products",
-  store.array("Image", 12),
+router.post(
+  "/add-products",
+  upload.array('Image'),
   controller.postAddProducts
 );
 
@@ -143,26 +141,12 @@ router.get("/delete-product/:id", (req, res) => {
   });
 });
 
-router.get("/edit-product/:id", async (req, res) => {
-let admin = req.session.admin;
+router.get("/edit-product/:id", controller.getEditProductID); 
 
-  let product = await productHelper.getProductDetails(req.params.id);
-  console.log(product);
-  res.render("admin/edit-product", {
-    adminAccount: true,
-    scrollbar: true,
-    product,
-    admin,
-  });
-});
 
-router.post("/edit-product/:id", (req, res) => {
-  
-  console.log(req.params.id);
-  productHelper.updateProductreq(req.params.id, req.body).then(() => {
-    res.redirect("/admin/view-products");
-  });
-});
+router.get('/edit_Product', controller.getEditProduct); 
+ 
+
+router.post("/edit-product/:id",  upload.array("Image"),  controller.postEditProduct); 
 
 module.exports = router;
-  

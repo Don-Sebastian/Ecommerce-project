@@ -1,5 +1,5 @@
 module.exports = {
-  serviceID: "VA76093e1ecbcbc642ce74e5a5a35253a2",
+  serviceID: "VA2517a55f74b9b0aa744ad48e2c69e4fc",
   accountSID: "ACaff75764b6d0706c1279881251caf97c",
-  authToken: "2c9578a7b69b7c56e412d09dfa87c1d2",
+  authToken: "7202ddf340ca1a9f3c339c674b862afb",
 };

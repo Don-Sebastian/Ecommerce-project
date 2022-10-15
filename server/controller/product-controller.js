@@ -63,7 +63,6 @@ exports.postAddProducts = (req, res, next) => {
 
 exports.getEditProductID = (req, res) => {
 
-  let admin = req.session.admin;
   id = req.params.id 
   res.redirect('/admin/edit_Product')
  

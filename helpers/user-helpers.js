@@ -16,6 +16,7 @@ module.exports = {
         console.log("User exist");
         resolve({ userExist: true });
       } else {
+        userData.Blocked = false;
         userData.Password = await bcrypt.hash(userData.Password, 10);
         db.get()
           .collection(collection.USER_COLLECTION)
@@ -31,15 +32,13 @@ module.exports = {
 
   doLogin: (userData) => {
     return new Promise(async (resolve, reject) => {
-      
-
       let loginStatus = false;
       let response = {};
       let user = await db
         .get()
         .collection(collection.USER_COLLECTION)
         .findOne({ Email: userData.Email });
-      if (user) {
+      if (!user.Blocked) {
         bcrypt.compare(userData.Password, user.Password).then((status) => {
           if (status) {
             console.log("Login success");
@@ -56,8 +55,7 @@ module.exports = {
         resolve({ status: false });
       }
     });
-    },
-  
+  },
 
   getAllUsers: () => {
     return new Promise(async (resolve, reject) => {
@@ -67,7 +65,61 @@ module.exports = {
         .find()
         .toArray();
       resolve(userDetails);
-        console.log(userDetails);
+      console.log(userDetails);
+    });
+  },
+
+  OTPLogin: (userData) => {
+    return new Promise(async (resolve, reject) => {
+      let loginStatus = false;
+      let response = {};
+      let user = await db
+        .get()
+        .collection(collection.USER_COLLECTION)
+        .findOne({ phonenumber: userData.phonenumber });
+      if (!user.Blocked) {
+        // let status = true;
+        response.user = user;
+        response.status = true;
+        resolve(response);
+      } else {
+        console.log("Login failed User not found");
+        resolve({ status: false });
+      }
+    });
+  },
+  blockUser: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      db.get()
+        .collection(collection.USER_COLLECTION)
+        .updateOne(
+          { _id: ObjectID(userId) },
+          {
+            $set: {
+              Blocked: true,
+            },
+          }
+        )
+        .then((response) => {
+          resolve();
+        });
+    });
+  },
+  unblockUser: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      db.get()
+        .collection(collection.USER_COLLECTION)
+        .updateOne(
+          { _id: ObjectID(userId) },
+          {
+            $set: {
+              Blocked: false,
+            },
+          }
+        )
+        .then((response) => {
+          resolve();
+        });
     });
   },
 };

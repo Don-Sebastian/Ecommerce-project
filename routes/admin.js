@@ -2,7 +2,9 @@ var express = require("express");
 var router = express.Router();
 // const path = require('path')
 
-const controller = require("../server/controller/product-controller");
+const productController = require("../server/controller/product-controller");
+const userController = require("../server/controller/user-controller");
+const categoryController = require("../server/controller/category-controller");
 const { upload } = require("../server/middleware/multer");
 
 var productHelper = require("../helpers/product-helpers");
@@ -125,12 +127,12 @@ router.get("/view-products", function (req, res, next) {
   }
 });
 
-router.get("/add-products", controller.getAddProducts);
+router.get("/add-products", productController.getAddProducts);
 
 router.post(
   "/add-products",
-  upload.array('Image'),
-  controller.postAddProducts
+  upload.array("Image"),
+  productController.postAddProducts
 );
 
 router.get("/delete-product/:id", (req, res) => {
@@ -141,12 +143,25 @@ router.get("/delete-product/:id", (req, res) => {
   });
 });
 
-router.get("/edit-product/:id", controller.getEditProductID); 
+router.get("/edit-product/:id", productController.getEditProductID); 
 
 
-router.get('/edit_Product', controller.getEditProduct); 
+router.get("/edit_Product", productController.getEditProduct); 
  
 
-router.post("/edit-product/:id",  upload.array("Image"),  controller.postEditProduct); 
+router.post(
+  "/edit-product/:id",
+  upload.array("Image"),
+  productController.postEditProduct
+); 
+
+router.get("/block-user/:id", userController.getblockUser );
+
+router.get("/unblock-user/:id", userController.getUnblockUser);
+
+
+// ---------------------------------------------Categories----------------------------------------------
+
+router.get("/admin-categories", categoryController.getCategory);
 
 module.exports = router;

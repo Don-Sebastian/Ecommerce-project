@@ -2,6 +2,9 @@ var express = require('express');
 var router = express.Router();
 var userHelper = require("../helpers/user-helpers");
 const otpConfig = require("../config/otpConfig");
+const userController = require("../server/controller/user-controller");
+const productController = require("../server/controller/product-controller");
+
 
 
 const client = require("twilio")(otpConfig.accountSID, otpConfig.authToken);
@@ -9,14 +12,7 @@ const client = require("twilio")(otpConfig.accountSID, otpConfig.authToken);
 
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
-  let user = req.session.user;
-
-  res.render("users/home", {
-    title: "Fadonsta" ,navbar: true, user
-    // , products
-  });
-});
+router.get('/', userController.getAllProducts );
 
 // __________________________________________________User SignUp_____________________________________________________________________
 
@@ -52,7 +48,7 @@ router.get("/login", (req, res) => {
   if (req.session.user && req.session.userLoggedIn) {
     res.redirect("/");
   } else {
-    res.render("users/user-login", { loginErr: req.session.userloginErr ,navbar: false, verifyOTPErr: req.session.verifyOTP});
+    res.render("users/user-login", { loginErr: req.session.userloginErr ,navbar: false});
     req.session.userloginErr = false;
     
   }
@@ -88,6 +84,13 @@ router.post("/login", (req, res) => {
 });
 
 
+router.get("/logout", (req, res) => {
+  req.session.user = null;
+  req.session.userLoggedIn = false;
+  res.redirect("/");
+});
+
+
 // _________________________________________________OTP Verifification_________________________________________________________
 
 
@@ -109,27 +112,40 @@ router.get("/loginOTP", (req, res) => {
 router.post("/loginOTP", (req, res) => {
   req.session.Mobile = req.body.phonenumber;
   Mob = req.session.Mobile;
-  
+  // client.verify
+  //   .services(otpConfig.serviceID)
+  //   .verifications.create({
+  //     to: `+91${req.body.phonenumber}`,
+  //     channel: "sms",
+  //   })
+  //   .then((data) => {
+  //     // res.render("users/user-verify", { navbar: false }).send(data);
+  //     res.status(200).send(data);
+  //     console.log("login OTP");
+  //     console.log(data);
+  //   });
 
-  // userHelpers.getOTP(req.body).then((response) => {
-  //   if (response.status) {
+  userHelper.OTPLogin(req.body).then((response) => {
+    if (response.status) {
       client.verify
         .services(otpConfig.serviceID)
         .verifications.create({
           to: `+91${Mob}`,
-          channel: "sms"
+          channel: "sms",
         })
-        .then((data) => {
+        .then(() => {
           req.session.user = response.user;
           user = req.session.user;
-          console.log(data);
           res.redirect("/verifyOTP");
+        })
+        .catch((err) => {
+          console.log(err);
         });
-    // } else {
-    //   loginErrMessage = response.err;
-    //   res.redirect("/getotp");
-    // }
-  // });
+    } else {
+      loginErr = response.err;
+      res.redirect("/loginOTP");
+    }
+  });
 });
 
 
@@ -162,9 +178,18 @@ router.post("/verifyOTP", (req, res) => {
 
         res.redirect("/");
       } else {
-        loginErrMessage = "Invalid OTP";
+        req.session.userloginErr = "Invalid OTP";
         res.redirect("/loginOTP");
       }
+
+      // console.log(data.valid);
+      //       if (data.valid) {
+      //         req.session.verifyOTP = true;
+      //         res.redirect("/");
+      //       }else {
+      //         req.session.verifyOTP = "Incorrect OTP";
+      //         res.redirect("/loginOTP");
+      //       }
     });
 });
 
@@ -211,10 +236,12 @@ router.post("/verifyOTP", (req, res) => {
   
 // });
 
-router.get("/logout", (req, res) => {
-  req.session.user = null;
-  req.session.userLoggedIn = false;
-  res.redirect("/");
-});
+
+
+// ----------------------------------Product Details--------------------------------------------
+
+router.get('/product-detailID/:id', userController.getProductDetailID)
+
+router.get("/product-details", userController.getProductDetails);
 
 module.exports = router;

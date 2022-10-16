@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const { ObjectId } = require("mongodb");
 const { ObjectID } = require("bson");
 
+
 module.exports = {
   doSignup: (userData) => {
     return new Promise(async (resolve, reject) => {
@@ -38,21 +39,32 @@ module.exports = {
         .get()
         .collection(collection.USER_COLLECTION)
         .findOne({ Email: userData.Email });
-      if (!user.Blocked) {
-        bcrypt.compare(userData.Password, user.Password).then((status) => {
-          if (status) {
-            console.log("Login success");
-            response.user = user;
-            response.status = true;
-            resolve(response);
-          } else {
-            console.log("Login failed");
-            resolve({ status: false });
-          }
-        });
+      if (user) {
+        if (!user.Blocked) {
+          bcrypt.compare(userData.Password, user.Password).then((status) => {
+            if (status) {
+              console.log("Login success");
+              response.user = user;
+              response.status = true;
+              resolve(response);
+            } else {
+              console.log("Login failed");
+              response.loginErr = "Invalid Password";
+              response.status = false;
+              resolve(response);
+            }
+          });
+        } else {
+          console.log("Login failed User Blocked");
+          response.loginErr = "User is Blocked";
+          response.status = false;
+          resolve(response);
+        }
       } else {
         console.log("Login failed User not found");
-        resolve({ status: false });
+        response.loginErr = "Invalid Email ID";
+        response.status = false;
+        resolve(response);
       }
     });
   },
@@ -77,14 +89,49 @@ module.exports = {
         .get()
         .collection(collection.USER_COLLECTION)
         .findOne({ phonenumber: userData.phonenumber });
-      if (!user.Blocked) {
-        // let status = true;
-        response.user = user;
-        response.status = true;
-        resolve(response);
+      if (user) {
+        if (!user.Blocked) {
+          response.user = user;
+          response.status = true;
+          resolve(response);
+        } else {
+          console.log("Login failed User Blocked");
+          response.loginErr = "User is Blocked";
+          response.status = false;
+          resolve(response);
+        }
       } else {
         console.log("Login failed User not found");
-        resolve({ status: false });
+        response.loginErr = "Invalid Phone Number";
+        response.status = false;
+        resolve(response);
+      }
+    });
+  },
+  OTPVerify: (userData) => {
+    return new Promise(async (resolve, reject) => {
+      let loginStatus = false;
+      let response = {};
+      let user = await db
+        .get()
+        .collection(collection.USER_COLLECTION)
+        .findOne({ phonenumber: userData });
+      if (user) {
+        if (!user.Blocked) {
+          response.user = user;
+          response.status = true;
+          resolve(response);
+        } else {
+          console.log("Login failed User Blocked");
+          response.loginErr = "User is Blocked";
+          response.status = false;
+          resolve(response);
+        }
+      } else {
+        console.log("Login failed User not found");
+        response.loginErr = "Invalid Phone Number";
+        response.status = false;
+        resolve(response);
       }
     });
   },

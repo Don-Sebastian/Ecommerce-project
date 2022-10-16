@@ -1,14 +1,185 @@
 var userHelper = require("../../helpers/user-helpers");
 var productHelper = require("../../helpers/product-helpers");
+const otpConfig = require("../../config/otpConfig");
+
+
+const client = require("twilio")(otpConfig.accountSID, otpConfig.authToken);
 
 const {} = require("../middleware/multer");
-const fs = require("fs");
+
 const { response } = require("express");
 const { ObjectId } = require("mongodb");
 const { ObjectID } = require("bson");
 
 var id;
 
+
+
+
+// ..........................User SignUp......................
+
+exports.getUserSignUp = (req, res) => {
+  if (req.session.userLoggedIn) {
+    res.redirect("/");
+  } else {
+    res.render("users/user-signup", { navbar: false });
+  }
+};
+
+exports.postUserSignUp = (req, res) => {
+  userHelper.doSignup(req.body).then((response) => {
+    userExist = response.userExist;
+    req.session.user = response;
+    req.session.userLoggedIn = false;
+    if (userExist) {
+      res.render("users/user-signup", { userExist, navbar: false });
+    } else {
+      res.redirect("/login");
+    }
+  });
+};
+
+
+
+// ..........................User Login.......................
+
+exports.getUserLogin = (req, res) => {
+  if (req.session.user && req.session.userLoggedIn) {
+    res.redirect("/");
+  } else {
+    res.render("users/user-login", {
+      loginErr: req.session.userloginErr,
+      navbar: false,
+    });
+    req.session.userloginErr = false;
+  }
+};
+
+exports.postUserLogin = (req, res) => {
+  userHelper.doLogin(req.body).then((response) => {
+    if (response.status) {
+      req.session.user = response.user;
+      user = req.session.user;
+      req.session.userLoggedIn = true;
+      res.redirect("/");
+    } else {
+      req.session.userloginErr = response.loginErr;
+      res.redirect("/login");
+    }
+  })
+};
+
+// ..........................User Logout.......................
+
+exports.getUserLogout = (req, res) => {
+  req.session.user = null;
+  req.session.userLoggedIn = false;
+  res.redirect("/");
+};
+
+
+
+// _______________________________________________OTP VERIFICATION________________________________________
+
+// .........................OTP Login.........................
+
+exports.getOTPLogin = (req, res) => {
+  if (req.session.user && req.session.userLoggedIn) {
+    res.redirect("/");
+  } else {
+    res.render("users/otp-request", {
+      loginErr: req.session.userloginErr,
+      navbar: false,
+    });
+    req.session.userloginErr = false;
+    // req.session.verifyOTP = false;
+  }
+};
+
+exports.postOTPLogin = (req, res) => {
+  req.session.Mobile = req.body.phonenumber;
+  Mob = req.session.Mobile;
+  userHelper.OTPLogin(req.body).then((response) => {
+    if (response.status) {
+      client.verify
+        .services(otpConfig.serviceID)
+        .verifications.create({
+          to: `+91${Mob}`,
+          channel: "sms",
+        })
+        .then(() => {
+          // req.session.user = response.user;
+          // user = req.session.user;
+          res.redirect("/verifyOTP");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      req.session.userloginErr = response.loginErr;
+      res.redirect("/loginOTP");
+    }
+  });
+};
+
+
+// .........................OTP Verify.........................
+
+exports.getOTPVerify = (req, res) => {
+  if (req.session.user && req.session.userLoggedIn) {
+    res.redirect("/");
+  } else {
+    res.render("users/otp-verify", {
+      loginErr: req.session.userloginErr,
+      navbar: false,
+    });
+    req.session.userloginErr = false;
+    // req.session.verifyOTP = false;
+  }
+};
+
+exports.postOTPVerify = (req, res) => {
+  const { code } = req.body;
+  const Mob = req.session.Mobile;
+
+  userHelper.OTPVerify(Mob).then((response) => {
+    if (response.status) {
+      client.verify
+        .services(otpConfig.serviceID)
+        .verificationChecks.create({ to: `+91${Mob}`, code: code })
+        .then((result) => {
+          if (result.valid) {
+            req.session.user = response.user;
+            user = req.session.user;
+            req.session.userLoggedIn = true;
+            res.redirect("/");
+          } else {
+            req.session.userloginErr = "Invalid OTP";
+            res.redirect("/verifyOTP");
+          }
+        });
+    } else {
+      req.session.userloginErr = response.loginErr;
+      res.redirect("/loginOTP");
+    }
+   });
+};
+
+
+// _______________________________________________View & Block User By Admin________________________________________
+
+
+exports.getAdminViewUsers =  (req, res, next) => {
+      userHelper.getAllUsers().then((userDetails) => {
+      res.render("admin/view-users", {
+        adminAccount: true,
+        scrollbar: true,
+        userDetails,
+        // products,
+        admin,
+      });
+    });
+};
 
 exports.getblockUser = (req, res) => {
   let userId = req.params.id;
@@ -26,53 +197,9 @@ exports.getUnblockUser = (req, res) => {
   });
 };
 
-exports.getAllProducts = function (req, res, next) {
-  let user = req.session.user;
-  // if (req.session.user) {
-      productHelper.getAllProducts().then((products) => {
-          res.render("users/home", {
-              title: "Fadonsta",
-              navbar: true,
-              user,
-              products
-          });
-      });  
-   
-  // } else {
-  //   res.render("users/user-login", {
-  //     loginErr: req.session.userloginErr,
-  //     navbar: false,
-  //   });
-  //   req.session.userloginErr = false;
-  // }
-}
 
-// --------------------------------------Product Details---------------------------------------
 
-exports.getProductDetailID = (req, res) => {
-  id = req.params.id;
-  res.redirect('/product-details')
-};
 
-exports.getProductDetails = (req, res) => {
-  let user = req.session.user;
-  if (req.session.user) {
-    productHelper.getProductDetails(id).then((product) => {
-      res.render("users/product-details", {
-        title: "Fadonsta",
-        navbar: true,
-        user,
-        product,
-      });
-    });
-  } else {
-    res.render("users/user-login", {
-      loginErr: req.session.userloginErr,
-      navbar: false,
-    });
-    req.session.userloginErr = false;
-  }
-};
   
 
 

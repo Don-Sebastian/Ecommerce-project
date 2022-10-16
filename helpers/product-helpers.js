@@ -11,7 +11,6 @@ module.exports = {
       .collection(collection.PRODUCT_COLLECTION)
       .insertOne(product)
       .then((data) => {
-        
         // callback(data.insertedId);
       });
   },
@@ -46,8 +45,6 @@ module.exports = {
         .collection(collection.PRODUCT_COLLECTION)
         .findOne({ _id: ObjectID(productId) })
         .then((product) => {
-         
-
           resolve(product);
         });
     });
@@ -71,6 +68,26 @@ module.exports = {
         .then((response) => {
           resolve();
         });
+    });
+  },
+  getAllProductsAndCategory: () => {
+    return new Promise(async (resolve, reject) => {
+      let response = {};
+      let products = await db
+        .get()
+        .collection(collection.PRODUCT_COLLECTION)
+        .find()
+        .toArray();
+      let category = await db
+        .get()
+        .collection(collection.CATEGORY_COLLECTION)
+        .find()
+        .toArray();
+      response.products = products;
+      response.category = category;
+      console.log("--------------------------------");
+      console.log(response);
+      resolve(response);
     });
   },
 };

@@ -18,15 +18,15 @@
 
                     <div class="card-body">
 
-                      {{#if productAdded}}
+                      {{#if CategoryAdded}}
                     <div class="alert alert-success" role="alert">
-                        Product has been added
+                        Category has been added
                     </div>
                     {{/if}}
-                      <form action="/admin/add-category" method="POST" role="form" enctype="multipart/form-data">
+                      <form action="/admin/add-category" method="POST" role="form" >
                         <div class="mb-3">
                           <label class="form-label" for="basic-default-fullname">Category Name</label>
-                          <input type="text" name="CategoryName" class="form-control" id="basic-default-fullname" placeholder="Lightweight Jacket" required/>
+                          <input type="text" name="CategoryName" class="form-control" id="basic-default-fullname" placeholder="Men" required/>
                         </div>
                         
                         
@@ -35,7 +35,7 @@
                           <input
                             id="basic-default-message"  name="CategoryDescription"
                             class="form-control"
-                            placeholder="About the product!" required
+                            placeholder="This is for Men" required
                           ></input>
                         </div>
 
@@ -61,15 +61,15 @@
                       </tr>
                     </thead>
                     <tbody class="table-border-bottom-0">
-                      {{#each category}}
+                      {{#each categories}}
                       <tr>
                         <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{inc @index}}</strong></td>
                         <td>{{this.CategoryName}}</td>
                         <td>{{this.CategoryDescription}}</td>
                         
                         <td>
-                            <a href="/admin/edit-product/{{this._id}}" class="btn btn-primary">Edit</a>
-                            <a href="/admin/delete-product/{{this._id}}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{this.Name}} ?')">Delete</a>
+                            <a href="/admin/edit-category/{{this._id}}" class="btn btn-primary">Edit</a>
+                            <a href="/admin/delete-category/{{this._id}}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{this.CategoryName}} ?')">Delete</a>
                         </td>
                         
                       </tr>

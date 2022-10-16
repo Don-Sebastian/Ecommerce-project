@@ -7,25 +7,29 @@ const { ObjectID } = require("bson");
 
 var id;
 
-exports.getAddProducts = (req, res) => {
-  let admin = req.session.admin;
-  if (req.session.admin) {
-    res.render("admin/add-products", { adminAccount: true, scrollbar: true });
-  } else {
-    res.render("admin/admin-login", {
-      adminAccount: true,
-      adminloginErr: req.session.adminloginErr,
-      scrollbar: false,
+
+// --------------------------------------------Admin  Products ---------------------------------------------------
+
+// _____________________View Products__________________________
+
+exports.getAdminViewProducts = (req, res, next) => {
+      productHelper.getAllProducts().then((products) => {
+      res.render("admin/view-products", {
+        adminAccount: true,
+        scrollbar: true,
+        products,
+        admin,
+      });
     });
-    req.session.adminloginErr = false;
-  }
+  };
+
+// _____________________Add Products__________________________
+
+exports.getAddProductsAdmin = (req, res) => {
+  res.render("admin/add-products", { adminAccount: true, scrollbar: true });
 };
 
-
-exports.postAddProducts = (req, res, next) => {
-  let admin = req.session.admin;
-  if (req.session.admin) {
-
+exports.postAddProductsAdmin = (req, res, next) => {
     const files = req.files;
     const file = files.map((file) => {
       return file;
@@ -49,25 +53,15 @@ exports.postAddProducts = (req, res, next) => {
           scrollbar: true,
           productAdded: true, 
         });
-     
-  } else {
-    res.render("admin/admin-login", {
-      adminAccount: true,
-      adminloginErr: req.session.adminloginErr,
-      scrollbar: false,
-    });
-    req.session.adminloginErr = false;
-  }
-}
+     }
 
+// _____________________Edit Product__________________________
 
 exports.getEditProductID = (req, res) => {
-
   id = req.params.id 
   res.redirect('/admin/edit_Product')
  
 };
-
 
 exports.getEditProduct = async(req, res) => {
   let product = await productHelper.getProductDetails(id);
@@ -81,9 +75,6 @@ exports.getEditProduct = async(req, res) => {
 };
 
 exports.postEditProduct = (req, res) => {
-
-  if (req.session.admin) {
-
     const files = req.files;
     const file = files.map((file) => {
       return file;
@@ -104,12 +95,60 @@ exports.postEditProduct = (req, res) => {
     productHelper.updateProductreq(id, productedit).then(() => {
       res.redirect("/admin/view-products");
     });
-  } else {
-    res.render("admin/admin-login", {
-      adminAccount: true,
-      adminloginErr: req.session.adminloginErr,
-      scrollbar: false,
+  
+};
+
+// _____________________Delete Product__________________________
+
+exports.getDeleteProduct = (req, res) => {
+  let productId = req.params.id;
+  console.log(productId);
+  productHelper.deleteProduct(productId).then(() => {
+    res.redirect("/admin/view-products");
+  });
+};
+
+
+
+
+
+// --------------------------------------Product Details For User ---------------------------------------
+
+// _____________________All Product for user__________________________
+
+
+exports.getAllProductsAndCategory = function (req, res, next) {
+  let user = req.session.user;
+  productHelper.getAllProductsAndCategory().then((response) => {
+    products = response.products;
+    category = response.category;
+    res.render("users/home", {
+      title: "Fadonsta",
+      navbar: true,
+      user,
+      products,
+      category,
     });
-    req.session.adminloginErr = false;
-  }
+  });
+};
+
+// _____________________ Detail of one Product for user__________________________
+
+
+exports.getProductDetailID = (req, res) => {
+  id = req.params.id;
+  res.redirect("/product-details");
+};
+
+exports.getProductDetails = (req, res) => {
+ 
+    productHelper.getProductDetails(id).then((product) => {
+      res.render("users/product-details", {
+        title: "Fadonsta",
+        navbar: true,
+        user,
+        product,
+      });
+    });
+  
 };

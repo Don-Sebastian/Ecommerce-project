@@ -15,12 +15,16 @@ module.exports = {
           resolve(response);
         } else {
           console.log("Login failed");
-          resolve({ adminstatus: false });
+          response.adminloginErr = "Invalid Password";
+          response.adminstatus = false;
+          resolve(response);
         }
         //   });
       } else {
         console.log("Login failed User not found");
-        resolve({ adminstatus: false });
+        response.adminloginErr = "Invalid Email ID";
+        response.adminstatus = false;
+        resolve(response);
       }
     });
   },

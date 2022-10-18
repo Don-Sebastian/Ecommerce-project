@@ -1,0 +1,52 @@
+<!-- Content wrapper -->
+          <div class="content-wrapper">
+            <!-- Content -->
+
+            <div class="container-xxl flex-grow-1 container-p-y">
+              <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Products /</span> All Products</h4>
+
+              <!-- Basic Bootstrap Table -->
+              <div class="card">
+                <h5 class="card-header">User List</h5>
+                <div class="table-responsive text-nowrap">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>No.</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Image</th>
+                        <th>Options</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                      <%let index = 1; products.forEach(element => {  %>
+                      <tr>
+                        <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong><%= index %></strong></td>
+                        <td><%=  element.Name%></td>
+                        <td><%=  element.Price%></td>
+                        <td><%=  element.Category%></td>
+                        <td><%=  element.Description%></td>
+                        <td><img style="width: 3em; height: 3em" src="/uploads/<%= element.Image[0] %>  " alt="<%= element.Image[0] %>"></td>
+                        <td>
+                            <a href="/admin/edit-product/<%= element._id %> " class="btn btn-primary">Edit</a>
+                            <a href="/admin/delete-product/<%= element._id %>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete <%= element.Name %> ?')">Delete</a>
+                        </td>
+                        
+                      </tr>
+                      <tr>
+                      <% index++;  }) %> 
+                       
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!--/ Basic Bootstrap Table -->
+
+              
+              <!--/ Responsive Table -->
+            </div>
+            <!-- / Content -->
+          </div>

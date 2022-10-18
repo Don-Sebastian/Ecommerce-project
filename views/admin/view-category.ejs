@@ -1,0 +1,99 @@
+<!-- Content wrapper -->
+          <div class="content-wrapper">
+            <!-- Content -->
+
+            <div class="container-xxl flex-grow-1 container-p-y">
+              <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Category/</span> Category List</h4>
+
+              <!-- Basic Layout -->
+              <div class="row">
+                <div class="col-xl-4">
+                  <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h5 class="mb-0">Add Category</h5>
+                      <small class="text-muted float-end"></small>
+                    </div>
+
+                    
+
+                    <div class="card-body">
+                      <% if (CategoryAdded) { %>
+                    <div class="alert alert-success" role="alert">
+                        Category has been added
+                    </div>
+                    <% } %> 
+                      <form action="/admin/add-category" method="POST" role="form" enctype="multipart/form-data">
+                        <div class="mb-3">
+                          <label class="form-label" for="basic-default-fullname">Category Name</label>
+                          <input type="text" name="CategoryName" class="form-control" id="basic-default-fullname" placeholder="Men" required/>
+                        </div>
+                        
+                        
+                        <div class="mb-3">
+                          <label class="form-label" for="basic-default-message">Category Description</label>
+                          <input
+                            id="basic-default-message"  name="CategoryDescription"
+                            class="form-control"
+                            placeholder="This is for Men" required
+                          ></input>
+                        </div>
+
+                        <div class="mb-3">
+                          <label for="formFileMultiple" class="form-label">Upload image</label>
+                          <input class="form-control" name="CategoryImage" type="file" id="formFileMultiple" multiple />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary ">Add Category</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                
+
+                <div class="col-xl-8">
+                    <!-- Basic Bootstrap Table -->
+              <div class="card">
+                <h5 class="card-header">Category List</h5>
+                <div class="table-responsive text-nowrap">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>No.</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Image</th>
+                        <th>Options</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                      <%let index = 1; categories.forEach(element => {  %>
+                      <tr>
+                        <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong><%= index %></strong></td>
+                        <td><%=  element.CategoryName%></td>
+                        <td><%=  element.CategoryDescription%></td>
+                        <td><img style="width: 3em; height: 3em" src="/uploads/category/<%= element.CategoryImage%>  " alt="<%= element.CategoryImage %>"></td>
+
+                        
+                        <td>
+                            <a href="/admin/edit-category/<%=  element._id%>" class="btn btn-primary">Edit</a>
+                            <a href="/admin/delete-category/<%=  element._id%>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete <%=  element.CategoryName%> ?')">Delete</a>
+                        </td>
+                        
+                      </tr>
+                      <tr>
+                      <% index++;  }) %> 
+                       
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!--/ Basic Bootstrap Table -->
+
+                </div>
+                
+                
+                  
+                </div>
+              </div>
+            </div>
+            <!-- / Content -->

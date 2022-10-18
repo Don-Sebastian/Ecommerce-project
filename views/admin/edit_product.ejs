@@ -1,0 +1,58 @@
+<!-- Content wrapper -->
+          <div class="content-wrapper">
+            <!-- Content -->
+
+            <div class="container-xxl flex-grow-1 container-p-y">
+              <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Products/</span> Edit Products</h4>
+
+              <!-- Basic Layout -->
+              <div class="row">
+                <div class="col-xl">
+                  <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h5 class="mb-0">Edit Products</h5>
+                      <small class="text-muted float-end"></small>
+                    </div>
+                    <div class="card-body">
+                      <form action="/admin/edit-product/<%= product._id %>" method="POST" role="form" enctype="multipart/form-data">
+                        <div class="mb-3">
+                          <label class="form-label" for="basic-default-fullname">Name</label>
+                          <input type="text" name="Name" class="form-control" id="basic-default-fullname" value="<%= product.Name %>" required />
+                        </div>
+                        <div class="mb-3">
+                          <label class="form-label" for="basic-default-company">Price</label>
+                          <input type="text" name="Price" class="form-control" id="basic-default-company" value="<%= product.Price %>" required />
+                        </div>
+                        <div class="mb-3">
+                          <label class="form-label" for="basic-default-company">Category</label>
+                          <input type="text" name="Category" class="form-control" id="basic-default-company" value="<%= product.Category %>" required />
+                        </div>
+                        
+                        <div class="mb-3">
+                          <label class="form-label" for="basic-default-message">Description</label>
+                          <input
+                            id="basic-default-message"  name="Description"
+                            class="form-control"
+                            value="<%= product.Description %>" required
+                          ></input>
+                        </div>
+
+                        <div class="mb-3">
+                          <label for="formFileMultiple" class="form-label">Upload image</label>
+                          <img style="width: 5em; height: 6em" src="/uploads/<%= product.Image %>  " alt="<%= product.Image %>">
+                          <input class="form-control mt-3" name="Image" type="file" id="formFileMultiple" multiple />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary ">Update </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                  
+                  
+                </div>
+              </div>
+            </div>
+            <!-- / Content -->
+
+          

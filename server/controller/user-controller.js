@@ -22,7 +22,7 @@ exports.getUserSignUp = (req, res) => {
   if (req.session.userLoggedIn) {
     res.redirect("/");
   } else {
-    res.render("users/user-signup", { navbar: false });
+    res.render("users/user-signup", { adminAccount: false, navbar: false });
   }
 };
 
@@ -32,7 +32,11 @@ exports.postUserSignUp = (req, res) => {
     req.session.user = response;
     req.session.userLoggedIn = false;
     if (userExist) {
-      res.render("users/user-signup", { userExist, navbar: false });
+      res.render("users/user-signup", {
+        adminAccount: false,
+        userExist,
+        navbar: false,
+      });
     } else {
       res.redirect("/login");
     }
@@ -48,6 +52,7 @@ exports.getUserLogin = (req, res) => {
     res.redirect("/");
   } else {
     res.render("users/user-login", {
+      adminAccount: false,
       loginErr: req.session.userloginErr,
       navbar: false,
     });
@@ -87,7 +92,7 @@ exports.getOTPLogin = (req, res) => {
   if (req.session.user && req.session.userLoggedIn) {
     res.redirect("/");
   } else {
-    res.render("users/otp-request", {
+    res.render("users/otp-request", {adminAccount: false,
       loginErr: req.session.userloginErr,
       navbar: false,
     });
@@ -170,10 +175,12 @@ exports.postOTPVerify = (req, res) => {
 
 
 exports.getAdminViewUsers =  (req, res, next) => {
-      userHelper.getAllUsers().then((userDetails) => {
+  userHelper.getAllUsers().then((userDetails) => {
+    adminAccount = true;
+    scrollbar = true;
       res.render("admin/view-users", {
-        adminAccount: true,
-        scrollbar: true,
+        adminAccount,
+        scrollbar,
         userDetails,
         // products,
         admin,

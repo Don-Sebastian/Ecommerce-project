@@ -6,11 +6,9 @@ const productController = require("../server/controller/product-controller");
 const adminController = require("../server/controller/admin-controller");
 const userController = require("../server/controller/user-controller");
 const categoryController = require("../server/controller/category-controller");
-const { upload } = require("../server/middleware/multer");
+const { upload, upload2 } = require("../server/middleware/multer");
 
-var productHelper = require("../helpers/product-helpers");
 
-var userHelper = require("../helpers/user-helpers");
 
 const verifyAdminLogin = (req, res, next) => {
   if (req.session.adminLoggedIn) {
@@ -77,7 +75,7 @@ router.get(
 
 router.get("/edit_Product", verifyAdminLogin, productController.getEditProduct); 
 
-router.post(
+router.put(
   "/edit-product/:id", 
   upload.array("Image"),
   productController.postEditProduct
@@ -86,12 +84,6 @@ router.post(
 // _____________________Delete Product__________________________
 
 router.get("/delete-product/:id", productController.getDeleteProduct);
-
-
- 
-
-
-
 
 
 
@@ -109,6 +101,7 @@ router.get(
 router.post(
   "/add-category",
   verifyAdminLogin,
+  upload2.array("CategoryImage"),
   categoryController.postAddCategory
 );
 
@@ -126,9 +119,10 @@ router.get(
   categoryController.getEditCategory
 );
 
-router.post(
+router.put(
   "/edit-category/:id",
   verifyAdminLogin,
+  upload2.array("CategoryImage"),
   categoryController.postEditCategory
 ); 
 

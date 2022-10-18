@@ -26,7 +26,11 @@ exports.getAdminViewProducts = (req, res, next) => {
 // _____________________Add Products__________________________
 
 exports.getAddProductsAdmin = (req, res) => {
-  res.render("admin/add-products", { adminAccount: true, scrollbar: true });
+  res.render("admin/add-products", {
+    adminAccount: true,
+    scrollbar: true,
+    productAdded: false,
+  });
 };
 
 exports.postAddProductsAdmin = (req, res, next) => {
@@ -122,7 +126,7 @@ exports.getAllProductsAndCategory = function (req, res, next) {
   productHelper.getAllProductsAndCategory().then((response) => {
     products = response.products;
     category = response.category;
-    res.render("users/home", {
+    res.render("users/home", {adminAccount: false,
       title: "Fadonsta",
       navbar: true,
       user,
@@ -141,10 +145,11 @@ exports.getProductDetailID = (req, res) => {
 };
 
 exports.getProductDetails = (req, res) => {
- 
+    
     productHelper.getProductDetails(id).then((product) => {
       res.render("users/product-details", {
         title: "Fadonsta",
+        adminAccount: false,
         navbar: true,
         user,
         product,

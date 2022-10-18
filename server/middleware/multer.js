@@ -52,7 +52,7 @@ const upload = multer({ storage: storage });
 // handle storage using multer
 const storage2 = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "public/images/brand");
+    cb(null, "public/admin/uploads/category");
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + "-" + file.originalname);

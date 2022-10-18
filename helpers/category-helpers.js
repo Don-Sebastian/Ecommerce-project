@@ -44,6 +44,7 @@ module.exports = {
             $set: {
               CategoryName: categoryDetails.CategoryName,
               CategoryDescription: categoryDetails.CategoryDescription,
+              CategoryImage: categoryDetails.CategoryImage,
             },
           }
         )

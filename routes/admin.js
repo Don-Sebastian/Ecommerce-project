@@ -75,7 +75,7 @@ router.get(
 
 router.get("/edit_Product", verifyAdminLogin, productController.getEditProduct); 
 
-router.put(
+router.post(
   "/edit-product/:id", 
   upload.array("Image"),
   productController.postEditProduct

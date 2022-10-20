@@ -39,8 +39,8 @@
 
                         <div class="mb-3">
                           <label for="formFileMultiple" class="form-label">Upload image</label>
-                          <img style="width: 5em; height: 6em" src="/uploads/<%= product.Image %>  " alt="<%= product.Image %>">
-                          <input class="form-control mt-3" name="Image" type="file" id="formFileMultiple" multiple />
+                          <img style="width: 5em; height: 6em" src="/uploads/<%= product.Image %> " alt="<%= product.Image %>" id="imgView">
+                          <input class="form-control mt-3" name="Image" type="file" id="formFileMultiple" onchange="viewImage(event)" multiple />
                         </div>
 
                         <button type="submit" class="btn btn-primary ">Update </button>
@@ -54,5 +54,11 @@
               </div>
             </div>
             <!-- / Content -->
+
+            <script>
+              function viewImage(event){
+                document.getElementById('imgView').src = URL.createObjectURL(event.target.files[0])
+              }
+            </script>
 
           

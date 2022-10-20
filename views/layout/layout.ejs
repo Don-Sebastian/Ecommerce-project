@@ -1,8 +1,5 @@
 <!DOCTYPE html>
 <% if (adminAccount) { %>
- 
-
-<!-- // {{#if adminAccount}} -->
 
 <html
   lang="en"
@@ -61,8 +58,6 @@
     <body>
 		<%- include('../partials/admin-header.ejs') %>
 			<%- body %>
-			<!-- {{>admin-header}}
-            {{{body}}} -->
 
 
     <!-- Core JS -->
@@ -93,8 +88,6 @@
 
 
 <% } else {%>
-<!-- {{else}} -->
-
 <html lang="en">
 <head>
 	<title>Fadonsta</title>
@@ -140,8 +133,6 @@
 
 	<%- include('../partials/user-header.ejs') %>
 		<main><%- body %></main>
-    <!-- {{>user-header}}
-    {{{body}}} -->
 
     
     
@@ -255,10 +246,12 @@
 
 <script src="https://cdn.jsdelivr.net/gh/igorlino/elevatezoom-plus@1.2.3/src/jquery.ez-plus.js"></script>
 <script>
-	$('#zoom').ezPlus({
+	$('.zoom').ezPlus({
 		easing: true
 	});
 </script>
+
+<script src="js/script.js"></script>
                                     
 
 </body>

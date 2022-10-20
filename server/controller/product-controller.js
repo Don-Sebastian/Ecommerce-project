@@ -1,4 +1,5 @@
 var productHelper = require("../../helpers/product-helpers");
+var cartHelper = require("../../helpers/cart-helpers");
 const {  } = require("../middleware/multer");
 const fs = require("fs");
 const { response } = require("express");
@@ -6,7 +7,7 @@ const { ObjectId } = require("mongodb");
 const { ObjectID } = require("bson");
 
 var id;
-
+var cartCount
 
 // --------------------------------------------Admin  Products ---------------------------------------------------
 
@@ -121,17 +122,24 @@ exports.getDeleteProduct = (req, res) => {
 // _____________________All Product for user__________________________
 
 
-exports.getAllProductsAndCategory = function (req, res, next) {
+exports.getAllProductsAndCategory =async function (req, res, next) {
   let user = req.session.user;
+  cartCount = null;
+  if (req.session.user) {
+    cartCount =await cartHelper.getCartCount(req.session.user._id);
+  }
+  console.log(cartCount);
   productHelper.getAllProductsAndCategory().then((response) => {
     products = response.products;
     category = response.category;
-    res.render("users/home", {adminAccount: false,
+    res.render("users/home", {
+      adminAccount: false,
       title: "Fadonsta",
       navbar: true,
       user,
       products,
       category,
+      cartCount,
     });
   });
 };
@@ -146,13 +154,14 @@ exports.getProductDetailID = (req, res) => {
 
 exports.getProductDetails = (req, res) => {
     
-    productHelper.getProductDetails(id).then((product) => {
+  productHelper.getProductDetails(id).then((product) => {
       res.render("users/product-details", {
         title: "Fadonsta",
         adminAccount: false,
         navbar: true,
         user,
         product,
+        cartCount, id,
       });
     });
   

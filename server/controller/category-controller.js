@@ -104,6 +104,7 @@ exports.getUserCategoryDetail = (req, res) => {
         adminAccount: false,
         navbar: true,
         products,
+        cartCount,
       });
     })
 }

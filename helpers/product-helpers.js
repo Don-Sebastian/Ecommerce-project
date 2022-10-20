@@ -85,8 +85,6 @@ module.exports = {
         .toArray();
       response.products = products;
       response.category = category;
-      console.log("--------------------------------");
-      console.log(response);
       resolve(response);
     });
   },

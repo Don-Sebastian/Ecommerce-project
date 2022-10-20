@@ -4,11 +4,14 @@ var router = express.Router();
 const userController = require("../server/controller/user-controller");
 const productController = require("../server/controller/product-controller");
 const categoryController = require("../server/controller/category-controller");
+const cartController = require("../server/controller/cart-controller");
+var cartHelper = require("../helpers/cart-helpers");
 
 
-
-const verifyLogin = (req, res, next) => {
+const verifyLogin = async (req, res, next) => {
   if (req.session.userLoggedIn) {
+    req.session.cartCount = await cartHelper.getCartCount(req.session.user._id);
+    cartCount = req.session.cartCount;
     next();
   } else {
     res.redirect("/");
@@ -55,7 +58,7 @@ router.post("/loginOTP", userController.postOTPLogin);
 
 // ___________________OTP Verify____________________________
 
-router.get("/verifyOTP", userController.getOTPVerify);
+router.get("/verifyOTP",userController.getOTPVerify);
 
 router.post("/verifyOTP", userController.postOTPVerify);
 
@@ -85,6 +88,21 @@ router.get(
   verifyLogin,
   categoryController.getUserCategoryDetail
 );
+
+
+
+
+// ----------------------------------Cart Details--------------------------------------------
+
+// ___________________Add to Cart____________________________
+
+router.get("/add-to-cartID/:id", verifyLogin, cartController.getAddToCartID); 
+
+// router.get("/add-to-cart", verifyLogin, cartController.getAddToCart); 
+
+router.get('/cart', verifyLogin, cartController.getCartItems)
+
+router.post('/change-product-quantity', cartController.postChangeProductQuantity);
 
 
 module.exports = router;

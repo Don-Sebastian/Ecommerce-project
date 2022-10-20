@@ -134,7 +134,7 @@ exports.getOTPVerify = (req, res) => {
   if (req.session.user && req.session.userLoggedIn) {
     res.redirect("/");
   } else {
-    res.render("users/otp-verify", {
+    res.render("users/otp-verify", {adminAccount:false,
       loginErr: req.session.userloginErr,
       navbar: false,
     });

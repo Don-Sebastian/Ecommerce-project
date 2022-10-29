@@ -13,15 +13,49 @@
               <!-- Display Address -->
               <div class="m-l-25">
                 <% for( let i = 0; i < address.length; i++ ) { %>
-                  <div class="form-check m-b-22" >
-                
-                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="<%= address[i].Address._id %>" >
-                  <label class="form-check-label" for="flexRadioDefault1">
-                    <span><%= address[i].Address.name %>, <%= address[i].Address.address %>, <%= address[i].Address.city %>, <%= address[i].Address.state %>, <%= address[i].Address.zip %>, <%= address[i].Address.country %></span>
-                  </label>  
+                 <% if (i == 0){ %>
+                <div class="form-check m-b-22">
+                  <% addressId = address[i].Address._id + "-" + i%>
+                  <input
+                    
+                    class="form-check-input"
+                    type="radio"
+                    name="AddressRadio" value="<%= address[i].Address._id%>"
+                    id="<%= address[i].Address._id%>"
+                    checked
+                  />
+                  <label class="form-check-label" for="flexRadioDefault">
+                    <span
+                      ><%= address[i].Address.name %>, <%=
+                      address[i].Address.address %>, <%= address[i].Address.city
+                      %>, <%= address[i].Address.state %>, <%=
+                      address[i].Address.zip %>, <%= address[i].Address.country
+                      %></span
+                    >
+                  </label>
                 </div>
-                <% } %>
-                
+                <% } else {%>
+                <div class="form-check m-b-22">
+                  <% addressId = address[i].Address._id + "-" + i%>
+                  <input
+                    
+                    class="form-check-input"
+                    type="radio"
+                    name="AddressRadio" value="<%= address[i].Address._id%>"
+                    id="<%= address[i].Address._id%>" checked
+                  />
+                  <label class="form-check-label" for="flexRadioDefault">
+                    <span
+                      ><%= address[i].Address.name %>, <%=
+                      address[i].Address.address %>, <%= address[i].Address.city
+                      %>, <%= address[i].Address.state %>, <%=
+                      address[i].Address.zip %>, <%= address[i].Address.country
+                      %></span
+                    >
+                  </label>
+                </div>
+                <% } %> <% } %>
+
                 <!-- <div class="form-check m-b-22">
                   <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
                   <label class="form-check-label" for="flexRadioDefault2">
@@ -29,7 +63,6 @@
                   </label>
                 </div> -->
               </div>
-              
 
               <span
                 >Want to add new address?<button
@@ -127,13 +160,21 @@
                     ></textarea>
                   </label>
 
-                  <input type="text" name="userId" id="" value="<%= user._id %>" hidden>
+                  <input
+                    type="text"
+                    name="userId"
+                    id=""
+                    value="<%= user._id %>"
+                    hidden
+                  />
 
                   <div class="mb-3">
                     <button
                       type="submit"
                       class="flex-c-m stext-110 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
-                      style="width: 50%">Add Address
+                      style="width: 50%"
+                    >
+                      Add Address
                     </button>
                   </div>
                 </form>
@@ -149,43 +190,74 @@
         >
           <h4 class="mtext-109 cl2 p-b-30">Payment Method</h4>
           <hr />
-
-          <div class="flex-w flex-t bor12 p-t-15 p-b-30">
-            <div class="payment">
-              <label for="" class="radio-inline">
+          <!-- <form action="" id="checkout-form"> -->
+            <div class="flex-w flex-t bor12 p-t-15 p-b-30">
+              <div class="payment m-l-25">
+                <div class="form-check m-b-10">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="payment-method"
+                    value="COD"
+                    id=""
+                    checked
+                  />
+                  <label class="form-check-label" for="flexRadioDefault">
+                    <span>COD</span>
+                  </label>
+                </div>
+                <div class="form-check m-b-10">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="payment-method"
+                    value="ONLINE"
+                    id=""
+                  />
+                  <label class="form-check-label" for="flexRadioDefault">
+                    <span>Online Payment</span>
+                  </label>
+                </div>
+                <!-- <input type="text" name="userID" value="<%#= user._id %> " hidden>  -->
+                <!-- <%# console.log(document.querySelector("[name=fruit]:checked").value) %>  -->
+                <!-- <%#   addressIdValue = document.querySelector("[name=AddressRadio]:checked").value %> 
+                <input type="text" name="addressID" value="<%#= addressIdValue %> " > -->
+                <!-- <label for="" class="radio-inline">
                 <input
                   type="radio"
                   name="payment-method"
-                  value="COD"
-                  checked
+                  value="ONLINE"
+                  
                 />COD
               </label>
               <label for="" class="radio-inline mt-2">
                 <input
                   type="radio"
                   name="payment-method"
-                  value="ONLINE"
+                  value=""
                 />Online Payment
-              </label>
-              <!-- <button class="btn btn-primary float-right" type="submit">Checkout</button> -->
-            </div>
-          </div>
-
-          <div class="flex-w flex-t p-t-27 p-b-33">
-            <div class="size-208">
-              <span class="mtext-101 cl2"> Total: </span>
+              </label> -->
+              </div>
             </div>
 
-            <div class="size-209 p-t-1">
-              <span class="mtext-110 cl2"> Rs.<%= total %> </span>
-            </div>
-          </div>
+            <div class="flex-w flex-t p-t-27 p-b-33">
+              <div class="size-208">
+                <span class="mtext-101 cl2"> Total: </span>
+              </div>
 
-          <button
-            class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
-          >
-            Proceed to Checkout
-          </button>
+              <div class="size-209 p-t-1">
+                <span class="mtext-110 cl2"> Rs.<%= total %> </span>
+              </div>
+            </div>
+            <% console.log(user._id) %> 
+            <button
+              class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
+              id="proceedToCheckout"
+              onclick="proceedToCheckout('<%=user._id%>')"
+            >
+              Proceed to Checkout
+            </button>
+          <!-- </form> -->
         </div>
       </div>
     </div>

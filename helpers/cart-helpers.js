@@ -158,14 +158,13 @@ module.exports = {
           }
         )
         .then((response) => {
-          
           resolve({ status: true });
         });
       // }
     });
   },
   removeProductFromCart: (details) => {
-    let response = {}
+    let response = {};
     return new Promise(async (resolve, reject) => {
       db.get()
         .collection(collection.CART_COLLECTION)
@@ -176,8 +175,8 @@ module.exports = {
           }
         )
         .then((response) => {
-          response.productId = details.product
-          response.removeProduct = true
+          response.productId = details.product;
+          response.removeProduct = true;
           resolve(response);
         });
     });
@@ -277,6 +276,12 @@ module.exports = {
       console.log(totalAmountProduct);
       resolve(totalAmountProduct);
     });
+  },
+  getCartProductsList: (userId) => {
+    return new Promise(async(resolve, reject) => {
+      let cart = await db.get().collection(collection.CART_COLLECTION).findOne({user: ObjectId(userId)})
+      resolve(cart.products)
+    })
   },
 };
 

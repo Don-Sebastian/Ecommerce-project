@@ -123,10 +123,21 @@ router.post("/delete-from-cart", cartController.postRemoveProductFromCart);
 
 router.get("/checkout", verifyLogin, cartController.getCheckOut);
 
-// router.post('/place-order', verifyLogin, orderController.getPaymentMethod)
+router.post('/place-order', verifyLogin, orderController.getPaymentMethod)
 
 // ___________________Add Address__________________________________
 
 router.post('/add-address', userController.postAddAddress)
+
+
+
+// ----------------------------------Order Details--------------------------------------------
+
+// ___________________Add Address__________________________________
+
+router.get("/order-success", verifyLogin, orderController.getOrderSuccess);
+
+
+
 
 module.exports = router;

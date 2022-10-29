@@ -61,15 +61,38 @@ function deleteFromCart(cartId, productId) {
       if (response.removeProduct) {
         alert("Product removed from cart");
         // location.reload();
-        console.log(response.productId);
+        //console.log(response.productId);
         prodIdRow = "#" + productId + "-tr";
-        $(prodIdRow).remove("id");
+        $(prodIdRow).remove();
         
       }
+      
     }
   })
 }
 
+// proceed to checkout COD
+
+function proceedToCheckout(userId) {
+  let address = $('input[name="AddressRadio"]:checked').val();
+  let paymentMethod = $('input[name="payment-method"]:checked').val();
+  $.ajax({
+    url: "/place-order",
+    method: "post",
+    data: {
+      user: userId,
+      addressId: address,
+      paymentMethod: paymentMethod
+    },
+    success: (response) => {
+      alert(response)
+      if (response.status) {
+          location.href= '/order-success'
+        }
+    }
+  });
+}
+// }
 
 // jquery COD ONLINE checkout form
 
@@ -84,3 +107,6 @@ function deleteFromCart(cartId, productId) {
 //     }
 //   })
 // });
+
+
+

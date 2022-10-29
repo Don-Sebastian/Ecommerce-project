@@ -22,10 +22,13 @@ exports.getAddToCartID = (req, res) => {
 
 exports.getCartItems =async (req, res) => { 
   let products = await cartHelper.getCartProducts(req.session.user._id)
-  let totalValue = await cartHelper.getTotalAmount(req.session.user._id)
+  if (products.length == 0) {
+    totalValue = false;
+  } else {
+    totalValue = await cartHelper.getTotalAmount(req.session.user._id);
+  }
+  
   let totalAmountProduct = await cartHelper.getTotalAmountProduct(req.session.user._id);
-  console.log("///////////////////////////");
-  console.log(totalAmountProduct);
     res.render("users/view-cart", {
       adminAccount: false,
       navbar: true,
@@ -42,8 +45,6 @@ exports.postChangeProductQuantity = (req, res, next) => {
   cartHelper.changeProductQuantity(req.body).then(async(response) => {
     response.total = await cartHelper.getTotalAmount(req.body.user)
     response.totalAmountProduct = await cartHelper.getTotalAmountProduct(req.body.user);
-    console.log("+++++++++++++++++++++++++");
-    console.log(response);
     res.json(response)
   });
 };
@@ -59,7 +60,6 @@ exports.getChangeProductQuantity = (req, res, next) => {
 
 exports.postRemoveProductFromCart = (req, res, next) => {
   cartHelper.removeProductFromCart(req.body).then((response) => {
-    console.log(response.productId);
     res.json(response)
   })
 };

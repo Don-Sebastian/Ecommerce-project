@@ -22,7 +22,7 @@ exports.getUserSignUp = (req, res) => {
   if (req.session.userLoggedIn) {
     res.redirect("/");
   } else {
-    res.render("users/user-signup", { adminAccount: false, navbar: false });
+    res.render("users/user-signup", { adminAccount: false, navbar: false, userExist: false });
   }
 };
 
@@ -207,6 +207,13 @@ exports.getUnblockUser = (req, res) => {
 
 
 
+// _______________________________________________Add Address to the User_______________________________________
+
+exports.postAddAddress = (req, res) => {
+  userHelper.addAddress(req.body).then(() => {
+    res.redirect("/checkout")
+  })
+};
   
 
 

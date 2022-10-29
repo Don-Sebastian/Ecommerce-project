@@ -23,8 +23,9 @@ body, html {
 }
 
 /*---------------------------------------------*/
-a:focus {outline: none;}
-a:hover {text-decoration: none;}
+a{color: #003333;}
+a:focus {outline: none; }
+a:hover {text-decoration: none; color: #007fe0;}
 
 /*---------------------------------------------*/
 h1,h2,h3,h4,h5,h6,p {margin: 0px;}

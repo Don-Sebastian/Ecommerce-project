@@ -5,6 +5,8 @@ const userController = require("../server/controller/user-controller");
 const productController = require("../server/controller/product-controller");
 const categoryController = require("../server/controller/category-controller");
 const cartController = require("../server/controller/cart-controller");
+const orderController = require("../server/controller/order-controller");
+
 var cartHelper = require("../helpers/cart-helpers");
 
 
@@ -102,7 +104,29 @@ router.get("/add-to-cartID/:id", verifyLogin, cartController.getAddToCartID);
 
 router.get('/cart', verifyLogin, cartController.getCartItems)
 
+// router.get(
+//   "/change-product-quantity/:id",
+//   verifyLogin,
+//   cartController.getChangeProductQuantity
+// ); 
+
 router.post('/change-product-quantity', cartController.postChangeProductQuantity);
 
+router.post("/delete-from-cart", cartController.postRemoveProductFromCart);
+
+
+
+
+// ----------------------------------Checkout Details--------------------------------------------
+
+// ___________________Address selection____________________________
+
+router.get("/checkout", verifyLogin, cartController.getCheckOut);
+
+// router.post('/place-order', verifyLogin, orderController.getPaymentMethod)
+
+// ___________________Add Address__________________________________
+
+router.post('/add-address', userController.postAddAddress)
 
 module.exports = router;

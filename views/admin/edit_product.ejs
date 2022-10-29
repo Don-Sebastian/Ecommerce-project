@@ -39,7 +39,10 @@
 
                         <div class="mb-3">
                           <label for="formFileMultiple" class="form-label">Upload image</label>
-                          <img style="width: 5em; height: 6em" src="/uploads/<%= product.Image %> " alt="<%= product.Image %>" id="imgView">
+                          <% for( let index = 0; index < product.Image.length; index++ ) { %>
+                            <img style="width: 5em; height: 6em" src="/uploads/<%= product.Image[index] %> " alt="<%= product.Image %>" id="imgView">
+                          <% } %>
+                          
                           <input class="form-control mt-3" name="Image" type="file" id="formFileMultiple" onchange="viewImage(event)" multiple />
                         </div>
 

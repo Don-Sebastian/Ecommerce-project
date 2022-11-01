@@ -5,13 +5,11 @@ const { ObjectId } = require("mongodb")
 const { ObjectID } = require("bson");
 
 module.exports = {
-  addProduct: (product, callback) => {
-    // console.log(product);
+  addProduct: (product) => {
     db.get()
       .collection(collection.PRODUCT_COLLECTION)
       .insertOne(product)
-      .then((data) => {
-        // callback(data.insertedId);
+      .then(() => {
       });
   },
   getAllProducts: () => {

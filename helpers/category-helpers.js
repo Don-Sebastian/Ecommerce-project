@@ -69,25 +69,28 @@ module.exports = {
     });
   },
   getCategoryProducts: (categoryID) => {
-    let result = {}
+    let result = {};
+    return new Promise(async (resolve, reject) => {
+      let category = await db
+        .get()
+        .collection(collection.CATEGORY_COLLECTION)
+        .findOne({ _id: ObjectId(categoryID) });
+
+      result.CategoryName = category.CategoryName;
+      resolve(result);
+    }).then((result) => {
       return new Promise(async (resolve, reject) => {
-          let category = await db
-            .get()
-            .collection(collection.CATEGORY_COLLECTION)
-              .findOne({ _id: ObjectId(categoryID) });
-         
-        result.CategoryName = category.CategoryName;
-        resolve(result);
-      }).then((result) => {
-          return new Promise(async (resolve, reject) => {
-              let products = await db
-                .get()
-                .collection(collection.PRODUCT_COLLECTION)
-                .find({ Category: result.CategoryName })
-                .toArray();
-            
-              resolve(products);
-          })
-      })
-  }
+        let products = await db
+          .get()
+          .collection(collection.PRODUCT_COLLECTION)
+          .find({ Category: result.CategoryName })
+          .toArray();
+
+        resolve(products);
+      });
+    });
+  },
+  getCategoryNames: () => {
+    
+  },
 };

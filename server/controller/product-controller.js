@@ -5,6 +5,7 @@ const fs = require("fs");
 const { response } = require("express");
 const { ObjectId } = require("mongodb");
 const { ObjectID } = require("bson");
+const categoryHelpers = require("../../helpers/category-helpers");
 
 var id;
 var cartCount
@@ -51,7 +52,7 @@ exports.postAddProductsAdmin = (req, res, next) => {
       error.httpStatusCode = 400;
       return next(error);
     }
-    
+    let category = categoryHelpers.getCategoryNames()
     productHelper.addProduct(req.body)
     res.render("admin/add-products", {
           adminAccount: true,

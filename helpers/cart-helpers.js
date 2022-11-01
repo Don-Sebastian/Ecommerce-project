@@ -273,7 +273,6 @@ module.exports = {
           },
         ])
         .toArray();
-      console.log(totalAmountProduct);
       resolve(totalAmountProduct);
     });
   },

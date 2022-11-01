@@ -1,4 +1,4 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
 
 const userController = require("../server/controller/user-controller");
@@ -6,9 +6,9 @@ const productController = require("../server/controller/product-controller");
 const categoryController = require("../server/controller/category-controller");
 const cartController = require("../server/controller/cart-controller");
 const orderController = require("../server/controller/order-controller");
+const profileController = require("../server/controller/profile-controller");
 
 var cartHelper = require("../helpers/cart-helpers");
-
 
 const verifyLogin = async (req, res, next) => {
   if (req.session.userLoggedIn) {
@@ -20,12 +20,9 @@ const verifyLogin = async (req, res, next) => {
   }
 };
 
-
-
 // ___________________Home Page__________________________
 
 router.get("/", productController.getAllProductsAndCategory);
-
 
 // ......................................................SignUp & Login...............................................
 
@@ -35,9 +32,8 @@ router.get("/signup", userController.getUserSignUp);
 
 router.post("/signup", userController.postUserSignUp);
 
-
 // ___________________User Login__________________________
-  
+
 router.get("/login", userController.getUserLogin);
 
 router.post("/login", userController.postUserLogin);
@@ -45,9 +41,6 @@ router.post("/login", userController.postUserLogin);
 // ___________________User Logout__________________________
 
 router.get("/logout", userController.getUserLogout);
-
-
-
 
 // ........................................................OTP Verifification...............................................
 
@@ -57,14 +50,11 @@ router.get("/loginOTP", userController.getOTPLogin);
 
 router.post("/loginOTP", userController.postOTPLogin);
 
-
 // ___________________OTP Verify____________________________
 
-router.get("/verifyOTP",userController.getOTPVerify);
+router.get("/verifyOTP", userController.getOTPVerify);
 
 router.post("/verifyOTP", userController.postOTPVerify);
-
-
 
 // ----------------------------------Product Details--------------------------------------------
 
@@ -75,7 +65,6 @@ router.get(
   verifyLogin,
   productController.getProductDetails
 );
-
 
 // ----------------------------------Get Category Details------------------------------------------
 
@@ -91,31 +80,28 @@ router.get(
   categoryController.getUserCategoryDetail
 );
 
-
-
-
 // ----------------------------------Cart Details--------------------------------------------
 
 // ___________________Add to Cart____________________________
 
-router.get("/add-to-cartID/:id", verifyLogin, cartController.getAddToCartID); 
+router.get("/add-to-cartID/:id", verifyLogin, cartController.getAddToCartID);
 
-// router.get("/add-to-cart", verifyLogin, cartController.getAddToCart); 
+// router.get("/add-to-cart", verifyLogin, cartController.getAddToCart);
 
-router.get('/cart', verifyLogin, cartController.getCartItems)
+router.get("/cart", verifyLogin, cartController.getCartItems);
 
 // router.get(
 //   "/change-product-quantity/:id",
 //   verifyLogin,
 //   cartController.getChangeProductQuantity
-// ); 
+// );
 
-router.post('/change-product-quantity', cartController.postChangeProductQuantity);
+router.post(
+  "/change-product-quantity",
+  cartController.postChangeProductQuantity
+);
 
 router.post("/delete-from-cart", cartController.postRemoveProductFromCart);
-
-
-
 
 // ----------------------------------Checkout Details--------------------------------------------
 
@@ -123,20 +109,40 @@ router.post("/delete-from-cart", cartController.postRemoveProductFromCart);
 
 router.get("/checkout", verifyLogin, cartController.getCheckOut);
 
-router.post('/place-order', verifyLogin, orderController.getPaymentMethod)
+router.post("/place-order", verifyLogin, orderController.getPaymentMethod);
 
 // ___________________Add Address__________________________________
 
-router.post('/add-address', userController.postAddAddress)
+router.post("/add-address", userController.postAddAddress);
+
+
 
 
 
 // ----------------------------------Order Details--------------------------------------------
 
-// ___________________Add Address__________________________________
+// ___________________Order process__________________________________
 
 router.get("/order-success", verifyLogin, orderController.getOrderSuccess);
 
+router.get("/orders", verifyLogin, orderController.getOrderDetails);
+
+router.get(
+  "/view-order-product/:id",
+  verifyLogin,
+  orderController.getViewOrderProductsID
+);
+
+router.get("/view-order-products", verifyLogin, orderController.getViewOrderProducts);
+
+
+//=======================================================================================
+//                             ------Profile------
+//=======================================================================================
+
+// ___________________Profile Page__________________________________
+
+router.get("/profile", verifyLogin, profileController.getProfileDetails);
 
 
 

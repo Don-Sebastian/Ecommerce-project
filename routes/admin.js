@@ -6,6 +6,9 @@ const productController = require("../server/controller/product-controller");
 const adminController = require("../server/controller/admin-controller");
 const userController = require("../server/controller/user-controller");
 const categoryController = require("../server/controller/category-controller");
+const orderController = require("../server/controller/order-controller");
+
+
 const { upload, upload2 } = require("../server/middleware/multer");
 
 
@@ -133,5 +136,19 @@ router.get(
   verifyAdminLogin,
   categoryController.getDeleteCategory
 );
+
+
+
+// ---------------------------------------------Admin Orders----------------------------------------------
+
+//___________________View Orders_____________________________
+
+router.get(
+  "/admin-orders",
+  verifyAdminLogin,
+  orderController.getAdminViewOrders
+);
+
+router.post("/update-orderStatus", verifyAdminLogin, orderController.postUpdateOrderStatus);
 
 module.exports = router;

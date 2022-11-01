@@ -190,7 +190,6 @@ exports.getAdminViewUsers =  (req, res, next) => {
 
 exports.getblockUser = (req, res) => {
   let userId = req.params.id;
-  console.log(userId);
   userHelper.blockUser(userId).then(() => {
     res.redirect("/admin/view-users");
   });
@@ -198,7 +197,6 @@ exports.getblockUser = (req, res) => {
 
 exports.getUnblockUser = (req, res) => {
   let userId = req.params.id;
-  console.log(userId);
   userHelper.unblockUser(userId).then(() => {
     res.redirect("/admin/view-users");
   });

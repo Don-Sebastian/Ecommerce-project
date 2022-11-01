@@ -31,6 +31,16 @@
                 <td class="column-3" id="<%= element.productDetails._id %>-Price"><%= element.productDetails.Price%></td>
                 <td class="column-4">
                   <div class="wrap-num-product flex-w m-l-auto m-r-0">
+
+                    <% if (element.quantity == 1) { %>
+                    <div
+                      class="btn btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m disabled"
+                      id="minus"
+                      onclick="changeQuantity('<%= element._id%>', '<%= element.productDetails._id%>','<%= user._id%>', -1)"
+                    >
+                      <i class="fs-16 zmdi zmdi-minus"></i>
+                    </div>
+                    <% } else { %>
                     <div
                       class="btn btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m"
                       id="minus"
@@ -38,13 +48,13 @@
                     >
                       <i class="fs-16 zmdi zmdi-minus"></i>
                     </div>
+                    <% } %> 
 
                     <!-- <input class="mtext-104 cl3 txt-center num-product" id="<% element.productDetails._id %>" type="number" name="num-product1" value= <%= element.quantity %> > -->
                     <span
                       class="mtext-104 cl3 txt-center num-product"
                       id="<%= element.productDetails._id %>"
-                      ><%= element.quantity %></span
-                    >
+                      ><%= element.quantity %></span>
 
                     <div
                       class="btn btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m"
@@ -93,13 +103,13 @@
           <h4 class="mtext-109 cl2 p-b-30">Cart Totals</h4>
 
           <div class="flex-w flex-t bor12 p-b-13">
-            <div class="size-208">
+            <!-- <div class="size-208">
               <span class="stext-110 cl2"> Subtotal: </span>
             </div>
 
             <div class="size-209">
               <span class="mtext-110 cl2"> $79.65 </span>
-            </div>
+            </div> -->
           </div>
 
           <div class="flex-w flex-t bor12 p-t-15 p-b-30">

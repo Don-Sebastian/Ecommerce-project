@@ -35,6 +35,8 @@ function changeQuantity(cartId, productId,userId, count) {
       //   location.reload();
       // } else {
       document.getElementById(productId).innerHTML = quantity + count;
+      let totolcount = quantity + count
+      console.log(totolcount);
       prodIdRow = "#" + productId + "-tr";
       if (quantity + count == 1) {
         $(prodIdRow + " .btn-num-product-down").addClass("disabled");
@@ -85,7 +87,6 @@ function proceedToCheckout(userId) {
       paymentMethod: paymentMethod
     },
     success: (response) => {
-      alert(response)
       if (response.status) {
           location.href= '/order-success'
         }

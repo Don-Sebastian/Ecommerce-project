@@ -27,7 +27,8 @@ exports.getAdminViewProducts = (req, res, next) => {
 
 // _____________________Add Products__________________________
 
-exports.getAddProductsAdmin = (req, res) => {
+exports.getAddProductsAdmin = async(req, res) => {
+  let category =await categoryHelpers.getCategoryNames();
   res.render("admin/add-products", {
     adminAccount: true,
     scrollbar: true,
@@ -52,7 +53,7 @@ exports.postAddProductsAdmin = (req, res, next) => {
       error.httpStatusCode = 400;
       return next(error);
     }
-    let category = categoryHelpers.getCategoryNames()
+    
     productHelper.addProduct(req.body)
     res.render("admin/add-products", {
           adminAccount: true,
@@ -108,8 +109,14 @@ exports.postEditProduct = (req, res) => {
 
 exports.getDeleteProduct = (req, res) => {
   let productId = req.params.id;
-  console.log(productId);
+  
   productHelper.deleteProduct(productId).then(() => {
+    fs.unlink("/uploads/category/", (err) => {
+      if (err) console.log(err);
+      else {
+        console.log("\nDeleted file: example_file.txt");
+      }
+    });
     res.redirect("/admin/view-products");
   });
 };

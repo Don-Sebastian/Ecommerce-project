@@ -24,8 +24,7 @@ module.exports = {
   },
   deleteProduct: (productId) => {
     return new Promise(async (resolve, reject) => {
-      console.log(productId);
-
+      
       let delProduct = await db
         .get()
         .collection(collection.PRODUCT_COLLECTION)

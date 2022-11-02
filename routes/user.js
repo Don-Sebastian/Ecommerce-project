@@ -75,7 +75,7 @@ router.get(
 );
 
 router.get(
-  "/get-CategoryProducts",
+  "/categoryProducts",
   verifyLogin,
   categoryController.getUserCategoryDetail
 );
@@ -105,7 +105,7 @@ router.post("/delete-from-cart", cartController.postRemoveProductFromCart);
 
 // ----------------------------------Checkout Details--------------------------------------------
 
-// ___________________Address selection____________________________
+// ___________________Order Checkout and Address selection____________________________
 
 router.get("/checkout", verifyLogin, cartController.getCheckOut);
 
@@ -114,6 +114,10 @@ router.post("/place-order", verifyLogin, orderController.getPaymentMethod);
 // ___________________Add Address__________________________________
 
 router.post("/add-address", userController.postAddAddress);
+
+// ___________________Payment verification__________________________________
+
+router.post("/verify-payment", orderController.postVerifyPayment);
 
 
 

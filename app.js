@@ -17,6 +17,8 @@ const e = require("express");
 const ejs = require("ejs");
 const expressLayouts = require("express-ejs-layouts");
 
+require("dotenv").config();
+
 var app = express();
 
 // view engine setup

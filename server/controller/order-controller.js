@@ -1,14 +1,24 @@
 var orderHelper = require("../../helpers/order-helpers");
 const { response } = require("express");
 const cartHelpers = require("../../helpers/cart-helpers");
+const userHelpers = require("../../helpers/user-helpers");
 
 var id, userID;
 
-exports.getPaymentMethod =async (req, res) => {
+exports.getPaymentMethod = async (req, res) => {
     let products = await cartHelpers.getCartProductsList(req.body.user)
     let totalPrice = await cartHelpers.getTotalAmount(req.body.user)
-    orderHelper.placeOrder(req.body, products, totalPrice).then((response) => {
-        res.json({status: true})
+    orderHelper.placeOrder(req.body, products, totalPrice).then(async(orderId) => {
+        if (req.body.paymentMethod == "COD") {
+          res.json({ codSuccess: true });
+        } else {
+            await orderHelper
+              .generateRazorpay(orderId, totalPrice)
+              .then((response) => {
+                  res.json(response)
+              });
+        }
+        
     });
 }
 
@@ -44,6 +54,19 @@ exports.getViewOrderProducts = async (req, res) => {
       cartCount,
       products,
     });
+};
+
+exports.postVerifyPayment = (req, res) => {
+    console.log(req.body);
+    orderHelper.verifyPayment(req.body).then((response) => {
+      orderHelper.changePaymentStatus(req.body['order[receipt]']).then(() => {
+        console.log("Payment Successfull"); 
+        res.json({ status: true })
+      })
+    }).catch((err) => {
+      console.log(err);
+      res.json({ status: false, errMsg: ""})
+    })
 };
 
 

@@ -16,9 +16,14 @@ exports.getPaymentMethod = async (req, res) => {
               .generateRazorpay(orderId, totalPrice)
               .then((response) => {
                   res.json(response)
+              }).catch((err) => {
+                console.log(err);
               });
         }
         
+    }).catch((err) => {
+      console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+      console.log(err);
     });
 }
 
@@ -58,11 +63,13 @@ exports.getViewOrderProducts = async (req, res) => {
 
 exports.postVerifyPayment = (req, res) => {
     console.log(req.body);
-    orderHelper.verifyPayment(req.body).then((response) => {
-      orderHelper.changePaymentStatus(req.body['order[receipt]']).then(() => {
-        console.log("Payment Successfull"); 
-        res.json({ status: true })
-      })
+    orderHelper.verifyPayment(req.body).then((receipt) => {
+      orderHelper.changePaymentStatus(receipt).then(() => {
+        console.log("Payment Successfull");
+        res.json({ status: true });
+      }).catch((err) => {
+        console.log(err);
+      });
     }).catch((err) => {
       console.log(err);
       res.json({ status: false, errMsg: ""})

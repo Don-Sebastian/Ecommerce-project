@@ -84,7 +84,7 @@ function proceedToCheckout(userId) {
     data: {
       user: userId,
       addressId: address,
-      paymentMethod: paymentMethod
+      paymentMethod: paymentMethod,
     },
     success: (response) => {
       if (response.codSuccess) {
@@ -92,7 +92,7 @@ function proceedToCheckout(userId) {
       } else {
         razorpayPayment(response);
       }
-    }
+    },
   });
 }
 
@@ -104,7 +104,7 @@ function razorpayPayment(order) {
     currency: "INR",
     name: "Fadonsta",
     description: "Test Transaction",
-    image: "https://example.com/your_logo",
+    image: "/images/Fadonsta_LOGO-.png",
     order_id: order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
     handler: function (response) {
       verifyPayment(response, order);

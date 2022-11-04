@@ -1,6 +1,7 @@
 <!-- Shoping Cart -->
 <form class="bg0 p-t-75 p-b-85 m-t-40">
   <div class="container">
+    
     <% if (products.length == 0) { %>
     <h1 class="text-center mt-5">No Products in Order</h1>
     <% } else { %>
@@ -15,25 +16,56 @@
                 <th class="column-3">Price</th>
                 <th class="column-4">Quantity</th>
                 <th class="column-5">Total</th>
+                <th class="column-6">Status</th>
+                <th class="column-7">Cancel</th>
               </tr>
-              <% (products).forEach(element => { %>
-              <tr class="table_row" id="<%= element.productDetails._id %>-tr">
+              <% for( let i = 0; i < products.length; i++ ) { %>
+              
+              
+              <tr class="table_row" id="<%= products[i].products.productDetails._id %>-tr">
                 <td class="column-1">
                   <div class="how-itemcart1">
                     <img
-                      src="../uploads/<%= element.productDetails.Image[0] %>"
+                      src="../uploads/<%= products[i].products.productDetails.Image[0] %>"
                       alt="IMG"
                     />
                   </div>
                 </td>
-                <td class="column-2"><%= element.productDetails.Name %></td>
-                <td class="column-3"><%= element.productDetails.Price%></td>
-                <td class="column-4"><%= element.quantity%> item</td>
+                <td class="column-2"><%= products[i].products.productDetails.Name %></td>
+                <td class="column-3"><%= products[i].products.productDetails.Price%></td>
+                <td class="column-4"><%= products[i].products.quantity%> item</td>
                 <td class="column-5">
-                  Rs.<%= element.quantity * element.productDetails.Price%>
+                  Rs.<%= products[i].products.quantity * products[i].products.productDetails.Price%>
+                </td>
+                
+                <td class="column-6">
+                <% if (products[i].products.productDetails.productStatus == "ordered") { %>
+                <span class="text-warning" id="<%= products[i].products.productDetails._id%>-orderStatus-ordered">Ordered</span>
+                <% } else if(products[i].products.productDetails.productStatus == "shipped") { %>
+                <span class="text-secondary" id="<%= products[i].products.productDetails._id%>-orderStatus-shipped">Shipped</span>
+                <% } else if(products[i].products.productDetails.productStatus == "delivered") { %>
+                <span class="text-primary " id="<%= products[i].products.productDetails._id%>-orderStatus-delivered">Delivered</span>
+                <% } else if(products[i].products.productDetails.productStatus == "canceled") { %>
+                <span class="text-danger " id="<%= products[i].products.productDetails._id%>-orderStatus-canceled">Canceled</span>
+                <% } else if(products[i].products.productDetails.productStatus == "completed") { %>
+                <span class="text-success " id="<%= products[i].products.productDetails._id%>-orderStatus-completed">Completed</span>
+                <% } else if(products[i].products.productDetails.productStatus == "returned") { %>
+                <span class="text-info " id="<%= products[i].products.productDetails._id%>-orderStatus-returned">Returned</span>
+                <% } else if(products[i].products.productDetails.productStatus == "refunded") { %>
+                <span class="text-info " id="<%= products[i].products.productDetails._id%>-orderStatus-refunded">Refunded</span>
+                <% } %> 
+                </td>
+                
+                
+                <td class="column-7">
+                  <% if (products[i].products.productDetails.productStatus == 'ordered' || products[i].products.productDetails.productStatus == 'shipped') { %>
+                    <button type="button" class="btn btn-outline-secondary" style="border-radius: 5px;" onclick="cancelProductOrder('<%= products[i].products.productDetails._id%>', '<%= order._id%> ')">Cancel</button>
+                  <% } else if(products[i].products.productDetails.productStatus == 'delivered') { %>
+                    <button type="button" class="btn btn-outline-dark" style="border-radius: 5px;">Return</button>
+                  <% } %> 
                 </td>
               </tr>
-              <% }) %>
+              <% } %>
             </table>
           </div>
 

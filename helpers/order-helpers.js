@@ -47,6 +47,7 @@ module.exports = {
           {
             $project: {
               item: "$products.item",
+              quantity: "$products.quantity",
             },
           },
           {
@@ -59,8 +60,13 @@ module.exports = {
           },
           {
             $project: {
-              productDetails: 1,
+              item: 1,
+              quantity: 1,
+              productDetails: { $arrayElemAt: ["$productDetails", 0] },
             },
+          },
+          {
+            $addFields: { "productDetails.productStatus": "ordered" },
           },
         ])
         .toArray();
@@ -68,7 +74,7 @@ module.exports = {
         userId: ObjectId(order.user),
         deliveryDetails: address[0].Address,
         paymentMethod: order.paymentMethod,
-        products: products,
+        products: productsInCart,
         totalAmount: total,
         status: status,
         Date: new Date(),
@@ -94,6 +100,7 @@ module.exports = {
         .get()
         .collection(collection.ORDER_COLLECTION)
         .find({ userId: ObjectId(userId) })
+        .sort({ _id: -1 })
         .toArray();
       resolve(orders);
     });
@@ -110,29 +117,11 @@ module.exports = {
           {
             $unwind: "$products",
           },
-          {
-            $project: {
-              item: "$products.item",
-              quantity: "$products.quantity",
-            },
-          },
-          {
-            $lookup: {
-              from: collection.PRODUCT_COLLECTION,
-              localField: "item",
-              foreignField: "_id",
-              as: "productDetails",
-            },
-          },
-          {
-            $project: {
-              item: 1,
-              quantity: 1,
-              productDetails: { $arrayElemAt: ["$productDetails", 0] },
-            },
-          },
         ])
         .toArray();
+
+      console.log("------------------------", orderItems);
+      console.log();
       resolve(orderItems);
     });
   },
@@ -189,7 +178,7 @@ module.exports = {
       hmac = hmac.digest("hex");
 
       if (hmac == details["payment[razorpay_signature]"]) {
-        resolve(details["payment[receipt]"]);
+        resolve();
       } else {
         reject();
       }
@@ -213,5 +202,17 @@ module.exports = {
           resolve();
         });
     });
+  },
+  orderProducts: (orderId) => {
+    return new Promise((resolve, reject) => {
+      db.get().collection(collection.ORDER_COLLECTION).aggregate;
+    });
+  },
+  orderDetails: (orderId) => {
+    return new Promise(async(resolve, reject) => {
+      let order = await db.get().collection(collection.ORDER_COLLECTION).findOne({ _id: ObjectId(orderId) })
+      resolve(order);
+      
+    })
   },
 };

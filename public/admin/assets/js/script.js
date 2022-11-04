@@ -15,7 +15,6 @@ function changeOrderStatus(orderId) {
           console.log(response);
           console.log(orderId + "-orderStatus-" + response.orderStatus);
           document.getElementById(orderId + "-orderStatus-" + response.orderStatus).innerHTML = response.orderStatus;
-          
       }
     },
   });

@@ -132,7 +132,7 @@ router.get("/order-success", verifyLogin, orderController.getOrderSuccess);
 router.get("/orders", verifyLogin, orderController.getOrderDetails);
 
 router.get(
-  "/view-order-product/:id",
+  "/view-Order-Product/:id",
   verifyLogin,
   orderController.getViewOrderProductsID
 );
@@ -144,10 +144,24 @@ router.get("/view-order-products", verifyLogin, orderController.getViewOrderProd
 //                             ------Profile------
 //=======================================================================================
 
-// ___________________Profile Page__________________________________
-
+// PROFILE PAGE
 router.get("/profile", verifyLogin, profileController.getProfileDetails);
 
+// RESET PASSWORD
+router.post("/reset-profile-password", verifyLogin, profileController.postResetPassword);
+
+// EDIT ADDRESS
+router.get("/edit-Address/:id", profileController.getEditAddressID);
+
+router.get("/edit-address", verifyLogin, profileController.getEditAddress);
+
+// DELETE ADDRESS
+router.post("/delete-address/:id", verifyLogin, profileController.postDeleteAddress);
+
+// VIEW ORDERS
+// router.get("/view-Order-Products/:id", profileController.getOrderID);
+
+// router.get("/view-order-products", verifyLogin, profileController.getOrderProducts);
 
 
 module.exports = router;

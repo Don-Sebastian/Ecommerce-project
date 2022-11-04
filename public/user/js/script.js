@@ -1,5 +1,3 @@
-
-
 function addToCart(productId) {
   $.ajax({
     url: "/add-to-cartID/" + productId,
@@ -14,9 +12,9 @@ function addToCart(productId) {
   });
 }
 
-function changeQuantity(cartId, productId,userId, count) {
+function changeQuantity(cartId, productId, userId, count) {
   let quantity = parseInt(document.getElementById(productId).innerHTML);
-  let price = parseInt(document.getElementById(productId+"-Price").innerHTML);
+  let price = parseInt(document.getElementById(productId + "-Price").innerHTML);
   count = parseInt(count);
 
   $.ajax({
@@ -35,7 +33,7 @@ function changeQuantity(cartId, productId,userId, count) {
       //   location.reload();
       // } else {
       document.getElementById(productId).innerHTML = quantity + count;
-      let totolcount = quantity + count
+      let totolcount = quantity + count;
       console.log(totolcount);
       prodIdRow = "#" + productId + "-tr";
       if (quantity + count == 1) {
@@ -43,8 +41,9 @@ function changeQuantity(cartId, productId,userId, count) {
       } else {
         $(prodIdRow + " .btn-num-product-down").removeClass("disabled");
       }
-      document.getElementById("total").innerHTML = response.total
-      document.getElementById(productId + "-productAmount").innerHTML = (quantity + count) * price;
+      document.getElementById("total").innerHTML = response.total;
+      document.getElementById(productId + "-productAmount").innerHTML =
+        (quantity + count) * price;
       // }
     },
   });
@@ -55,22 +54,20 @@ function deleteFromCart(cartId, productId) {
     url: "/delete-from-cart",
     data: {
       cart: cartId,
-      product: productId
+      product: productId,
     },
     method: "post",
     success: (response) => {
-      console.log(response)
+      console.log(response);
       if (response.removeProduct) {
         alert("Product removed from cart");
         // location.reload();
         //console.log(response.productId);
         prodIdRow = "#" + productId + "-tr";
         $(prodIdRow).remove();
-        
       }
-      
-    }
-  })
+    },
+  });
 }
 
 // proceed to checkout COD
@@ -96,7 +93,6 @@ function proceedToCheckout(userId) {
   });
 }
 
-
 function razorpayPayment(order) {
   var options = {
     key: "rzp_test_ABYYBYRSszOaqh", // Enter the Key ID generated from the Dashboard
@@ -110,24 +106,19 @@ function razorpayPayment(order) {
       verifyPayment(response, order);
     },
     prefill: {
-      name: "Gaurav Kumar",
-      email: "gaurav.kumar@example.com",
+      name: "Don Seb",
+      email: "don.seb@example.com",
       contact: "9999999999",
     },
     notes: {
-      address: "Razorpay Corporate Office",
+      address: "Fadonsta",
     },
     theme: {
-      color: "#3399cc",
+      color: "#000000",
     },
   };
   var rzp1 = new Razorpay(options);
   rzp1.open();
-  rzp1.on("payment.failed", function (response) {
-    verifyPayment(response, order);
-  });
-      
-
 }
 
 function verifyPayment(payment, order) {
@@ -142,27 +133,124 @@ function verifyPayment(payment, order) {
       if (response.status) {
         location.href = "/order-success";
       } else {
-        alert('Payment failed')
+        alert("Payment failed");
       }
+    },
+  });
+}
+
+// submit new password
+function returnToPreviousPage() {
+  window.history.back();
+}
+
+
+$("#newPasswordFormId").on("submit", function (e) {
+  let formDetails = $(this).serialize();
+  let status = true;
+  if (
+    $("#oldPassword").val() == "" ||
+    $("#newPassword").val() == "" ||
+    $("#newPasswordConfirm").val() == ""
+  ) {
+    console.log($("#oldPassword").val());
+    //check 2
+    // returnToPreviousPage();
+
+    status = false;
+    console.log("This field should not be empty ");
+    e.preventDefault();
+  }
+  if ($("#oldPassword").val() == $("#newPassword").val()) {
+    //check 1
+    alert("This Is Your Old Password,Please Provide A New Password");
+    // returnToPreviousPage();
+    status = false;
+    console.log("This Is Your Old Password,Please Provide A New Password");
+    document.getElementById("oldNewPasswordCheck").innerHTML =
+      "This Is Your Old Password,Please Provide A New Password";
+    e.preventDefault();
+  }
+  if ($("#newPassword").val() != $("#confirmPassword").val()) {
+    //check 3
+    // returnToPreviousPage();
+    console.log($("#newPassword").val());
+    console.log($("#confirmPassword").val());
+    status = false;
+    console.log("Confirm password is not same as you new password.");
+
+    document.getElementById("passwordConfirmationCheck").innerHTML =
+      "Confirm password is not same as you new password.";
+    e.preventDefault();
+  }
+  if (status) {
+     e.preventDefault();
+    $.ajax({
+      url: "/reset-profile-password",
+      data: formDetails,
+      method: "post",
+      success: (response) => {
+        if (response.status) {
+          
+          swal("Password changed successfully!", "", "success").then((success) => {
+            if (success) {
+              location.reload();
+            }
+          })
+          
+        }
+      },
+    });
+  }
+});
+
+function newPassword(e) {
+  e.preventDefault();
+  let formDetails = document.getElementById("newPasswordFormId").submit();
+  alert(formDetails);
+  
+}
+
+function editAddressSWT(e) {
+  e = e || window.event;
+  e.preventDefault();
+  swal("Can't edit, Only delete", "Will be updated");
+}
+
+function deleteAddressSWT(addressId, e) {
+  e.preventDefault();
+  swal({
+    title: "Are you sure this address?",
+    text: "This action is irrevesible",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+  }).then((willDelete) => {
+    if (willDelete) {
+      $.ajax({
+        url: "/delete-address/" + addressId,
+        method: "post",
+        success: (response) => {
+          if (response.status) {
+            swal("Poof! Address has been deleted!", {
+              icon: "success",
+            });
+            $("#" + addressId).remove();
+          } else {
+            swal("Addess not deleted", {
+              icon: "success",
+            });
+          }
+        },
+      });
+    } else {
+      swal("Address is safe!");
     }
   });
 }
 
-// }
-
-// jquery COD ONLINE checkout form
-
-// $("#checkout-form").submit((e) => {
-//   e.preventDefault()
-//   $.ajax({
-//     url: '/place-order',
-//     method: 'post',
-//     data: $('#checkout-form').serialize(),
-//     success: (response) => {
-//       alert(response)
-//     }
-//   })
-// });
-
-
-
+function cancelProductOrder(productId, orderId) {
+  $.ajax({
+    
+  })
+}

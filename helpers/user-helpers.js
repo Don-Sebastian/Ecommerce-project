@@ -171,44 +171,118 @@ module.exports = {
     });
   },
   addAddress: (details) => {
-
     details._id = ObjectId();
     return new Promise(async (resolve, reject) => {
       db.get()
-          .collection(collection.USER_COLLECTION)
-          .updateOne(
-            { _id: ObjectID(details.userId) },
-            {
-              $push: {
-                "Address": details},
-            }
-          )
-          .then((response) => {
-            resolve(response);
-          });
-      })
+        .collection(collection.USER_COLLECTION)
+        .updateOne(
+          { _id: ObjectID(details.userId) },
+          {
+            $push: {
+              Address: details,
+            },
+          }
+        )
+        .then((response) => {
+          resolve(response);
+        });
+    });
   },
   getAddress: (userId) => {
     return new Promise(async (resolve, reject) => {
-      
-      let addressDetail = await db.get().collection(collection.USER_COLLECTION).aggregate([
-        {
-          $match:{_id: ObjectId(userId)}
-        },
-        {
-          $project: {"Address": 1, _id: 0},
-        },
-        {
-          $unwind:"$Address",
-        }
-      ]).toArray()
+      let addressDetail = await db
+        .get()
+        .collection(collection.USER_COLLECTION)
+        .aggregate([
+          {
+            $match: { _id: ObjectId(userId) },
+          },
+          {
+            $project: { Address: 1, _id: 0 },
+          },
+          {
+            $unwind: "$Address",
+          },
+        ])
+        .toArray();
       resolve(addressDetail);
-    })
+    });
   },
   getUserDetails: (userId) => {
-    return new Promise(async(resolve, reject) => {
-      let userDetails =await db.get().collection(collection.USER_COLLECTION).findOne({_id: ObjectId(userId)})
+    return new Promise(async (resolve, reject) => {
+      let userDetails = await db
+        .get()
+        .collection(collection.USER_COLLECTION)
+        .findOne({ _id: ObjectId(userId) });
       resolve(userDetails);
+    });
+  },
+  resetPassword: (passwordDetails, userId) => {
+    return new Promise(async (resolve, reject) => {
+      let user = await db
+        .get()
+        .collection(collection.USER_COLLECTION)
+        .findOne({ _id: ObjectId(userId) });
+      if (user) {
+        if (!user.Blocked) {
+          bcrypt
+            .compare(passwordDetails.Password, user.Password)
+            .then(async () => {
+              passwordDetails.nPassword = await bcrypt.hash(
+                passwordDetails.nPassword,
+                10
+              );
+              await db
+                .get()
+                .collection(collection.USER_COLLECTION)
+                .updateOne(
+                  { _id: ObjectId(userId) },
+                  {
+                    $set: { Password: passwordDetails.nPassword },
+                  }
+                )
+                .then((response) => {
+                  resolve();
+                })
+                .catch((err) => {
+                  console.log(err);
+                  reject();
+                });
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      }
+    });
+  },
+  editAddress: (addressId, userId) => {
+    return new Promise(async (resolve, reject) => {
+      let address = await db
+        .get()
+        .collection(collection.USER_COLLECTION)
+        .aggregate([
+          {
+            $match: { _id: ObjectId(userId) },
+          },
+          {
+            $unwind: "$Address",
+          },
+          {
+            $project: { _id: 0, Address: 1 },
+          },
+        ])
+        .toArray();
+      resolve(address);
+    });
+  },
+  deleteAddress: (addressId, userId) => {
+    return new Promise((resolve, reject) => {
+      db.get().collection(collection.USER_COLLECTION).updateOne({ _id: ObjectId(userId) }, {
+        $pull: { Address: { _id: ObjectId(addressId)}}
+      }).then((response) => {
+        resolve(response);
+      })
     })
-  }
+  },
 };

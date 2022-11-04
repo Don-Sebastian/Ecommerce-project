@@ -15,7 +15,7 @@
                 <th class="column-3">Price</th>
                 <th class="column-4">Quantity</th>
                 <th class="column-5">Total</th>
-                <th class="column-6 ">Remove</th>
+                <th class="column-8 ">Remove</th>
               </tr>
               <% (products).forEach(element => { %>
               <tr class="table_row" id="<%= element.productDetails._id %>-tr">
@@ -65,7 +65,7 @@
                   </div>
                 </td>
                 <td class="column-5">Rs.<span id="<%= element.productDetails._id%>-productAmount"><%= element.quantity *  element.productDetails.Price%> </span></td>
-                <td class="column-6 "><a class="zmdi zmdi-delete" onclick="deleteFromCart('<%= element._id%>', '<%= element.productDetails._id%>')"></a></td>
+                <td class="column-8"><a class="zmdi zmdi-delete" onclick="deleteFromCart('<%= element._id%>', '<%= element.productDetails._id%>')"></a></td>
               </tr>
               <% }) %>
             </table>

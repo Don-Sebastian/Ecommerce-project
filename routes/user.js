@@ -11,6 +11,7 @@ const profileController = require("../server/controller/profile-controller");
 var cartHelper = require("../helpers/cart-helpers");
 
 const verifyLogin = async (req, res, next) => {
+  req
   if (req.session.userLoggedIn) {
     req.session.cartCount = await cartHelper.getCartCount(req.session.user._id);
     cartCount = req.session.cartCount;
@@ -119,6 +120,8 @@ router.post("/add-address", userController.postAddAddress);
 
 router.post("/verify-payment", orderController.postVerifyPayment);
 
+router.get("/success", orderController.getSuccessPaypal)
+
 
 
 
@@ -158,10 +161,12 @@ router.get("/edit-address", verifyLogin, profileController.getEditAddress);
 // DELETE ADDRESS
 router.post("/delete-address/:id", verifyLogin, profileController.postDeleteAddress);
 
-// VIEW ORDERS
-// router.get("/view-Order-Products/:id", profileController.getOrderID);
+// UPDATE PRODUCT ORDER STATUS
+router.post(
+  "/update-OrderStatus",
+  orderController.postUpdateProductOrderStatus
+);
 
-// router.get("/view-order-products", verifyLogin, profileController.getOrderProducts);
 
 
 module.exports = router;

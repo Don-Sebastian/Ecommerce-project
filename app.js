@@ -1,8 +1,9 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+require("dotenv").config();
+var createError = require("http-errors");
+var express = require("express");
+var path = require("path");
+var cookieParser = require("cookie-parser");
+var logger = require("morgan");
 var session = require("express-session");
 const handlebars = require("handlebars");
 var bodyParser = require("body-parser");
@@ -17,16 +18,13 @@ const e = require("express");
 const ejs = require("ejs");
 const expressLayouts = require("express-ejs-layouts");
 
-require("dotenv").config();
-
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.set("views", path.join(__dirname, "views"));
 app.use(expressLayouts);
 app.set("layout", "./layout/layout");
 app.set("view engine", "ejs");
-
 
 // app.set('views', path.join(__dirname, 'views'));
 // app.set('view engine', 'hbs');
@@ -40,12 +38,11 @@ app.set("view engine", "ejs");
 //   })
 // );
 
-
 handlebars.registerHelper("inc", (value, options) => {
   return parseInt(value) + 1;
 });
 
-app.use(logger('dev'));
+app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -59,18 +56,16 @@ db.connect((err) => {
 });
 // require("./config/connection")();
 
-
-
 if (app.use("/", userRouter)) {
   app.use(express.static(path.join(__dirname, "public/user")));
-};
+}
 
 if (app.use("/admin", adminRouter)) {
   app.use(express.static(path.join(__dirname, "public/admin")));
-};
+}
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 

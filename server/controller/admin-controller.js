@@ -1,7 +1,9 @@
 var adminHelper = require("../../helpers/admin-helpers");
+var orderhelpers = require("../../helpers/order-helpers")
 
 exports.getDashboardAdmin = (req, res, next) => {
   let admin = req.session.admin;
+  let sales = orderhelpers.totalSales
   res.render("admin/dashboard", {
     adminAccount: true,
     scrollbar: true,

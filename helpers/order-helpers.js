@@ -1,5 +1,6 @@
 var db = require("../config/connection");
 const Razorpay = require("razorpay");
+const paypal = require("paypal-rest-sdk");
 
 var collection = require("../config/collections");
 const { ObjectId } = require("mongodb");
@@ -7,9 +8,20 @@ const { ObjectID } = require("bson");
 const { response } = require("express");
 const { resolve } = require("node:path");
 
+const CC = require("currency-converter-lt");
+let currencyConverter = new CC();
+
+
 var instance = new Razorpay({
   key_id: "rzp_test_ABYYBYRSszOaqh",
   key_secret: "YNQjPnQYsnX6mCkHEQZJcYhm",
+});
+
+
+paypal.configure({
+  mode: "sandbox", //sandbox or live
+  client_id: process.env.CLIENT_ID,
+  client_secret:process.env.CLIENT_SECRET
 });
 
 module.exports = {
@@ -66,7 +78,12 @@ module.exports = {
             },
           },
           {
-            $addFields: { "productDetails.productStatus": "ordered" },
+            $addFields: {
+              productStatus: "ordered",
+              totalOfProduct: {
+                $multiply: ["$quantity", { $toInt: "$productDetails.Price" }],
+              },
+            },
           },
         ])
         .toArray();
@@ -87,9 +104,11 @@ module.exports = {
         .insertOne(orderObj)
         .then((response) => {
           let orderId = response.insertedId;
-          // db.get()
-          //   .collection(collection.CART_COLLECTION)
-          //   .deleteOne({ user: ObjectId(order.user) });
+          if (order.paymentMethod === "COD") {
+            // db.get()
+            //   .collection(collection.CART_COLLECTION)
+            //   .deleteOne({ user: ObjectId(order.user) });
+          }
           resolve(orderId);
         });
     });
@@ -119,9 +138,6 @@ module.exports = {
           },
         ])
         .toArray();
-
-      console.log("------------------------", orderItems);
-      console.log();
       resolve(orderItems);
     });
   },
@@ -151,8 +167,12 @@ module.exports = {
         });
     });
   },
-  generateRazorpay: (orderId, totalPrice) => {
-    return new Promise((resolve, reject) => {
+  generateRazorpay: (orderId, totalPrice, userId) => {
+    return new Promise(async (resolve, reject) => {
+      await db
+        .get()
+        .collection(collection.CART_COLLECTION)
+        .deleteOne({ user: ObjectId(userId) });
       var options = {
         amount: totalPrice * 100, // amount in the smallest currency unit
         currency: "INR",
@@ -161,6 +181,52 @@ module.exports = {
       instance.orders.create(options, function (err, order) {
         console.log("New Order: ", order);
         resolve(order);
+      });
+    });
+  },
+  generatePaypal: (orderId, totalPrice, userId) => {
+    return new Promise(async (resolve, reject) => {
+      await db
+        .get()
+        .collection(collection.CART_COLLECTION)
+        .deleteOne({ user: ObjectId(userId) });
+      let totalPriceUSD = await currencyConverter
+        .from("INR")
+        .to("USD")
+        .amount(totalPrice)
+        .convert();
+      totalPriceUSD = parseFloat(totalPriceUSD).toFixed(2);
+      const create_payment_json = {
+        intent: "sale",
+        payer: {
+          payment_method: "paypal",
+        },
+        redirect_urls: {
+          return_url: "http://localhost:3000/success",
+          cancel_url: "http://localhost:3000/cancel",
+        },
+        transactions: [
+          {
+            amount: {
+              currency: "USD",
+              total: totalPriceUSD,
+            },
+            description: orderId,
+          },
+        ],
+      };
+      paypal.payment.create(create_payment_json, function (error, payment) {
+        if (error) {
+          console.log(error);
+          throw error;
+        } else {
+          for (let i = 0; i < payment.links.length; i++) {
+            if (payment.links[i].rel === "approval_url") {
+              resolve(payment.links[i].href);
+              // res.redirect(payment.links[i].href);
+            }
+          }
+        }
       });
     });
   },
@@ -203,16 +269,51 @@ module.exports = {
         });
     });
   },
-  orderProducts: (orderId) => {
-    return new Promise((resolve, reject) => {
-      db.get().collection(collection.ORDER_COLLECTION).aggregate;
+  orderDetails: (orderId) => {
+    return new Promise(async (resolve, reject) => {
+      let order = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .findOne({ _id: ObjectId(orderId) });
+      resolve(order);
     });
   },
-  orderDetails: (orderId) => {
-    return new Promise(async(resolve, reject) => {
-      let order = await db.get().collection(collection.ORDER_COLLECTION).findOne({ _id: ObjectId(orderId) })
-      resolve(order);
-      
+  updateProductOrderStatus: (details) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collection.ORDER_COLLECTION)
+        .updateOne(
+          {
+            _id: ObjectId(details.orderId),
+            "products.item": ObjectId(details.productId),
+          },
+          {
+            $set: {
+              "products.$.productStatus": details.value,
+            },
+          }
+        )
+        .then((response) => {
+          response.productStatus = details.value;
+          response.status = true;
+          resolve(response);
+        });
+    });
+  },
+  totalSales: () => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $group: {
+              _id: { day: { $dayOfYear: "$date" }, year: { $year: "$date" } },
+              sales: {
+                $sum: {},
+              },
+            },
+          },
+        ]);
     })
   },
 };

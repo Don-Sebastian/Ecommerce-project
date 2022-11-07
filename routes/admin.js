@@ -22,10 +22,14 @@ const verifyAdminLogin = (req, res, next) => {
 };
 
 
-// _____________________Admin Dashboard_______________________
+// =======================================================================================================
+// ---------------------------------------------DASHBOARD-------------------------------------------------
+// =======================================================================================================
 
-/* GET users listing. */
-router.get("/dashboard",verifyAdminLogin, adminController.getDashboardAdmin );
+
+// DASHBOARD CONTENTS
+router.get("/dashboard", verifyAdminLogin, adminController.getDashboardAdmin);
+
 
 
 
@@ -150,5 +154,23 @@ router.get(
 );
 
 router.post("/update-orderStatus", verifyAdminLogin, orderController.postUpdateOrderStatus);
+
+// VIEW ORDER PRODUCTS 
+router.get(
+  "/view-AdminProductOrder/:id",
+  orderController.getAdminProductOrderID
+);
+
+router.get("/view-order-products-admin", verifyAdminLogin, orderController.getAdminOrderProducts);
+
+router.post(
+  "/update-product-order-status",
+  verifyAdminLogin,
+  orderController.postAdminOrderProducts
+);
+
+
+
+
 
 module.exports = router;

@@ -12,11 +12,44 @@ function changeOrderStatus(orderId) {
     },
     success: (response) => {
         if (response.status) {
-          console.log(response);
-          console.log(orderId + "-orderStatus-" + response.orderStatus);
-          document.getElementById(orderId + "-orderStatus-" + response.orderStatus).innerHTML = response.orderStatus;
+          location.reload();
       }
     },
   });
 }
 
+
+function changeProductOrderStatus(productId, orderId) {
+  let productOrderStatus = document.getElementById(orderId + "-" + productId + "-select").value;
+  $.ajax({
+    url: "/admin/update-product-order-status",
+    method: "POST",
+    data: {
+      orderId: orderId,
+      productId: productId,
+      value: productOrderStatus,
+    },
+    success: (response) => {
+      if (response.status) {
+        location.reload();
+      }
+    },
+  });
+}
+
+function changeProductOrderStatusButton(productId, orderId, value) {
+  $.ajax({
+    url: "/admin/update-product-order-status",
+    method: "POST",
+    data: {
+      orderId: orderId,
+      productId: productId,
+      value: value,
+    },
+    success: (response) => {
+      if (response.status) {
+        location.reload();
+      }
+    },
+  });
+}

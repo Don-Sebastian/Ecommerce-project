@@ -1,3 +1,4 @@
+
 function addToCart(productId) {
   $.ajax({
     url: "/add-to-cartID/" + productId,
@@ -86,8 +87,10 @@ function proceedToCheckout(userId) {
     success: (response) => {
       if (response.codSuccess) {
         location.href = "/order-success";
-      } else {
+      } else if (response.razorPayStatus) {
         razorpayPayment(response);
+      } else if (response.paypalStatus) {
+        location.href = response.response
       }
     },
   });
@@ -249,8 +252,39 @@ function deleteAddressSWT(addressId, e) {
   });
 }
 
-function cancelProductOrder(productId, orderId) {
-  $.ajax({
-    
-  })
+function changeProductOrder(productId, orderId, value) {
+  swal({
+    title: "Are you sure?",
+    text: "Once "+ value+ ", you will not be able to change the desicion!",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+  }).then((willDelete) => {
+    if (willDelete) {
+      $.ajax({
+        url: "/update-OrderStatus",
+        data: {
+          productId: productId,
+          orderId: orderId,
+          value: value,
+        },
+        method: "post",
+        success: (response) => {
+          if (response.status) {
+            location.reload();
+            swal("Poof! Your has been " + response.productStatus + "!", {
+              icon: "success",
+            });
+            
+          } else {
+            swal("Poof! Your has not been " + response.productStatus + "!");
+          }
+        },
+      });
+      
+    } else {
+      swal("Your product will not be "+value+"!");
+    }
+  });
+  
 }

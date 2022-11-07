@@ -39,7 +39,25 @@
               <% noOfProducts = element.products.length %> 
               <td><%= noOfProducts%> item</td>
               <td><%= element.totalAmount%></td>
-              <td><%= element.status%></td>
+              <td><%= element.orderStatus%></td>
+              <td >
+                <% if (element.orderStatus == "ordered") { %>
+                <span class="text-warning" >Ordered</span>
+                <% } else if(element.orderStatus == "shipped") { %>
+                <span class="text-secondary" >Shipped</span>
+                <% } else if(element.orderStatus == "delivered") { %>
+                <span class="text-primary " >Delivered</span>
+                <% } else if(element.orderStatus == "canceled") { %>
+                <span class="text-danger " >Canceled</span>
+                <% } else if(element.orderStatus == "completed") { %>
+                <span class="text-success " >Completed</span>
+                <% } else if(element.orderStatus == "returned") { %>
+                <span class="text-info " >Returned</span>
+                <% } else if(element.orderStatus == "refunded") { %>
+                <span class="text-info " >Refunded</span>
+                <% } %> 
+                </td>
+
               <td>
                 <a href="/view-Order-Product/<%= element._id %>" >View Products</a>
               </td>

@@ -24,6 +24,7 @@
               <th>Total Amount</th>
               <th>Status</th>
               <th>Options</th>
+              <th>View</th>
             </tr>
           </thead>
           <tbody class="table-border-bottom-0">
@@ -42,7 +43,8 @@
                 </pre>
               </td>
               <td><%= element.paymentMethod%></td>
-              <td><%= element.products.lenght%> items</td>
+              <% noOfProduts = element.products.lenght %> 
+              <td><%= noOfProduts%> item</td>
               <td><%= element.totalAmount%></td>
 
               <td>
@@ -80,6 +82,7 @@
                   <option value="refunded">Refunded</option>
                 </select>
               </td>
+              <td><a href="/admin/view-AdminProductOrder/<%= element._id %>">View Product</a></td>
             </tr>
 
             <% }) %>

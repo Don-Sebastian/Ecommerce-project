@@ -11,7 +11,7 @@ const profileController = require("../server/controller/profile-controller");
 var cartHelper = require("../helpers/cart-helpers");
 
 const verifyLogin = async (req, res, next) => {
-  req
+  
   if (req.session.userLoggedIn) {
     req.session.cartCount = await cartHelper.getCartCount(req.session.user._id);
     cartCount = req.session.cartCount;

@@ -1,15 +1,25 @@
 var adminHelper = require("../../helpers/admin-helpers");
 var orderhelpers = require("../../helpers/order-helpers")
 
-exports.getDashboardAdmin = (req, res, next) => {
+exports.getDashboardAdmin = async(req, res, next) => {
   let admin = req.session.admin;
-  let sales = orderhelpers.totalSales
+  let totalSales = await orderhelpers.totalSales()
+  let totalPaymentMethod = await orderhelpers.totalPaymentMethod()
+  let noOfSales = await orderhelpers.noOfSales()
+  let monthlySales = await orderhelpers.monthlySales()
+  let salesEachMonthSales = await orderhelpers.salesEachMonthSales();
+  let lastDateSales = await orderhelpers.lastDateSales()
+
+  console.log("===================", lastDateSales);
   res.render("admin/dashboard", {
     adminAccount: true,
     scrollbar: true,
-    // userDetails,
-    // products,
     admin,
+    totalSales,
+    totalPaymentMethod,
+    noOfSales,
+    monthlySales,
+    lastDateSales,
   });
 };
 

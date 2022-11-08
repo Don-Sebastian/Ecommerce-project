@@ -301,19 +301,153 @@ module.exports = {
     });
   },
   totalSales: () => {
-    return new Promise((resolve, reject) => {
-      db.get()
+    return new Promise(async (resolve, reject) => {
+      let sales = await db
+        .get()
         .collection(collection.ORDER_COLLECTION)
         .aggregate([
           {
             $group: {
-              _id: { day: { $dayOfYear: "$date" }, year: { $year: "$date" } },
+              _id: null,
               sales: {
-                $sum: {},
+                $sum: "$totalAmount",
               },
             },
           },
-        ]);
+        ])
+        .toArray();
+      resolve(sales);
+    });
+  },
+  totalPaymentMethod: () => {
+    return new Promise(async (resolve, reject) => {
+      let sales = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $group: {
+              _id: "$paymentMethod",
+              sales: {
+                $sum: "$totalAmount",
+              },
+              // totalPercent: {
+              //   $push: {
+              //     _id: "$paymentMethod",
+              //     totalAmount: "$totalAmount",
+              //   },
+              // },
+            },
+          },
+          // {
+          //   $unwind: {
+          //     path: "$totalPercent",
+          //   },
+          // },
+          // {
+          //   $project: {
+          //     _id: "$totalPercent._id",
+          //     sales: "$totalPercent.totalAmount",
+          //     sum: "$sales",
+          //     percent: {
+          //       $multiply: [
+          //         { $divide: ["$totalPercent.totalAmount", "$sales"] },
+          //         100,
+          //       ],
+          //     },
+          //   },
+          // },
+          {
+            $sort: { _id: 1 },
+          },
+        ])
+        .toArray();
+      resolve(sales);
+    });
+  },
+  noOfSales: () => {
+    return new Promise((resolve, reject) => {
+      let noOfSales = db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .find()
+        .count();
+      resolve(noOfSales);
+    });
+  },
+  monthlySales: () => {
+    return new Promise((resolve, reject) => {
+      let monthlySales = db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          // {
+          //   $match: {
+          //     "Date": {
+          //       $gte: new Date("2022-01-01"),
+          //       $lt: new Date("2023-01-01"),
+          //     },
+          //   },
+          // },
+          // {
+          //   $group: {
+          //     _id: { $dateToString: { format: "%Y-%m-%d", date: "$Date" } },
+          //     totalSaleAmount: { $sum: "$totalAmount" },
+          //   },
+          // },
+          {
+            $group: {
+              _id: {
+                month: { $month: "$Date" },
+                year: { $year: "$Date" },
+              },
+              total: {
+                $sum: "$totalAmount",
+              },
+            },
+          },
+          {
+            $sort: { _id : -1},
+          },
+        ])
+        .toArray();
+      resolve(monthlySales);
+    });
+  },
+  salesEachMonthSales: () => {
+    return new Promise(async (resolve, reject) => {
+      let result = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $group: {
+              _id: { $dateToString: { format: "%Y-%m-%d", date: "$Date" } },
+              totalSales: { $sum: "$totalAmount" },
+            },
+          },
+        ])
+        .toArray();
+      resolve(result);
+    });
+  },
+  lastDateSales: () => {
+    return new Promise(async(resolve, reject) => {
+      let result = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          { $sort: { Date: 1 } },
+          {
+            $group: {
+              _id: null,
+              lastSalesDate: { $last: "$Date" },
+              lastDateAmount: { $last: { $sum: "$totalAmount" } },
+            },
+          },
+        ])
+        .toArray();
+      resolve(result)
     })
   },
 };

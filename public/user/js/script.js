@@ -5,12 +5,32 @@ function addToCart(productId) {
     method: "get",
     success: (response) => {
       if (response.status) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener("mouseenter", Swal.stopTimer);
+            toast.addEventListener("mouseleave", Swal.resumeTimer);
+          },
+        });
+
+        Toast.fire({
+          icon: "success",
+          title: "Item added to cart successfully",
+        });
         let count = $("#cart-count").html();
         count = parseInt(count) + 1;
         $("#cart-count").html(count);
+      } else {
+        location.href = "/login";
       }
     },
   });
+  
+  
 }
 
 function changeQuantity(cartId, productId, userId, count) {
@@ -51,24 +71,75 @@ function changeQuantity(cartId, productId, userId, count) {
 }
 
 function deleteFromCart(cartId, productId) {
-  $.ajax({
-    url: "/delete-from-cart",
-    data: {
-      cart: cartId,
-      product: productId,
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-success",
+      cancelButton: "btn btn-danger",
     },
-    method: "post",
-    success: (response) => {
-      console.log(response);
-      if (response.removeProduct) {
-        alert("Product removed from cart");
-        // location.reload();
-        //console.log(response.productId);
-        prodIdRow = "#" + productId + "-tr";
-        $(prodIdRow).remove();
-      }
-    },
+    buttonsStyling: false,
   });
+
+  swalWithBootstrapButtons
+    .fire({
+      title: "Are you sure?",
+      text: "You want to delete this product?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+      reverseButtons: true,
+    })
+    .then((result) => {
+      if (result.isConfirmed) {
+        
+        $.ajax({
+          url: "/delete-from-cart",
+          data: {
+            cart: cartId,
+            product: productId,
+          },
+          method: "post",
+          success: (response) => {
+            if (response.removeProduct) {
+              swalWithBootstrapButtons.fire(
+                "Deleted!",
+                "Your file has been deleted.",
+                "success"
+              );
+              // location.reload();
+              //console.log(response.productId);
+              prodIdRow = "#" + productId + "-tr";
+              $(prodIdRow).remove();
+            }
+          },
+        });
+      } else if (
+        /* Read more about handling dismissals below */
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        swalWithBootstrapButtons.fire(
+          "Cancelled",
+          "This product is safe :)",
+          "error"
+        );
+      }
+    });
+  // ============================
+  // swal({
+  //   title: "Are you sure?",
+  //   text: "",
+  //   icon: "warning",
+  //   buttons: true,
+  //   dangerMode: true,
+  // }).then((willDelete) => {
+  //   if (willDelete) {
+  //     ;
+      
+  //   } else {
+  //     swal("This product is safe!");
+  //   }
+  // });
+  
 }
 
 // proceed to checkout COD
@@ -110,8 +181,8 @@ function razorpayPayment(order) {
     },
     prefill: {
       name: "Don Seb",
-      email: "don.seb@example.com",
-      contact: "9999999999",
+      email: "donseb@gmail.com",
+      contact: "9947722703",
     },
     notes: {
       address: "Fadonsta",

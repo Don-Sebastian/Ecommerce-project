@@ -63,7 +63,6 @@ router.get("/product-detailID/:id", productController.getProductDetailID);
 
 router.get(
   "/product-details",
-  verifyLogin,
   productController.getProductDetails
 );
 
@@ -71,13 +70,11 @@ router.get(
 
 router.get(
   "/get-categoryID/:id",
-  verifyLogin,
   categoryController.getUserCategoryDetailID
 );
 
 router.get(
   "/categoryProducts",
-  verifyLogin,
   categoryController.getUserCategoryDetail
 );
 
@@ -85,7 +82,8 @@ router.get(
 
 // ___________________Add to Cart____________________________
 
-router.get("/add-to-cartID/:id", verifyLogin, cartController.getAddToCartID);
+
+router.get("/add-to-cartID/:id", cartController.getAddToCartID);
 
 // router.get("/add-to-cart", verifyLogin, cartController.getAddToCart);
 
@@ -121,6 +119,8 @@ router.post("/add-address", userController.postAddAddress);
 router.post("/verify-payment", orderController.postVerifyPayment);
 
 router.get("/success", orderController.getSuccessPaypal)
+
+router.get("/cancel", orderController.getCancelPaypal);
 
 
 

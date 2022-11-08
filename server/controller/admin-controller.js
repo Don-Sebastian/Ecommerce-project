@@ -9,8 +9,10 @@ exports.getDashboardAdmin = async(req, res, next) => {
   let monthlySales = await orderhelpers.monthlySales()
   let salesEachMonthSales = await orderhelpers.salesEachMonthSales();
   let lastDateSales = await orderhelpers.lastDateSales()
+  let weeklySales = await orderhelpers.weeklySales()
+  let yearlySales = await orderhelpers.yearlySales();
 
-  console.log("===================", lastDateSales);
+  console.log("===================", yearlySales);
   res.render("admin/dashboard", {
     adminAccount: true,
     scrollbar: true,
@@ -20,6 +22,8 @@ exports.getDashboardAdmin = async(req, res, next) => {
     noOfSales,
     monthlySales,
     lastDateSales,
+    weeklySales,
+    yearlySales,
   });
 };
 

@@ -136,7 +136,6 @@ exports.getAllProductsAndCategory =async function (req, res, next) {
   if (req.session.user) {
     cartCount =await cartHelper.getCartCount(req.session.user._id);
   }
-  console.log(cartCount);
   productHelper.getAllProductsAndCategory().then((response) => {
     products = response.products;
     category = response.category;
@@ -160,8 +159,12 @@ exports.getProductDetailID = (req, res) => {
   res.redirect("/product-details");
 };
 
-exports.getProductDetails = (req, res) => {
-    
+exports.getProductDetails = async(req, res) => {
+  let user = req.session.user;
+  cartCount = null;
+  if (req.session.user) {
+    cartCount =await cartHelper.getCartCount(req.session.user._id);
+  }
   productHelper.getProductDetails(id).then((product) => {
       res.render("users/product-details", {
         title: "Fadonsta",

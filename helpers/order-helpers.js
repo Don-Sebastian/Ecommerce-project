@@ -28,6 +28,7 @@ module.exports = {
   placeOrder: (order, products, total) => {
     return new Promise(async (resolve, reject) => {
       let status = order.paymentMethod === "COD" ? "placed" : "pending";
+      let Orderstatus = order.paymentMethod === "COD" ? "success" : "failed";
       let address = await db
         .get()
         .collection(collection.USER_COLLECTION)
@@ -95,7 +96,7 @@ module.exports = {
         totalAmount: total,
         status: status,
         Date: new Date(),
-        orderStatus: "ordered",
+        orderStatus: Orderstatus,
       };
 
       await db
@@ -105,9 +106,9 @@ module.exports = {
         .then((response) => {
           let orderId = response.insertedId;
           if (order.paymentMethod === "COD") {
-            // db.get()
-            //   .collection(collection.CART_COLLECTION)
-            //   .deleteOne({ user: ObjectId(order.user) });
+            db.get()
+              .collection(collection.CART_COLLECTION)
+              .deleteOne({ user: ObjectId(order.user) });
           }
           resolve(orderId);
         });
@@ -261,6 +262,7 @@ module.exports = {
           {
             $set: {
               status: "placed",
+              orderStatus: "success",
             },
           }
         )
@@ -375,6 +377,32 @@ module.exports = {
       resolve(noOfSales);
     });
   },
+  weeklySales: () => {
+    return new Promise((resolve, reject) => {
+      let result = db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $group: {
+              _id: {
+                week: { $week: "$Date" },
+                year: { $year: "$Date" },
+              },
+              total: {
+                $sum: "$totalAmount",
+              },
+              
+            },
+          },
+          {
+            $sort: { _id: 1 },
+          },
+        ])
+        .toArray();
+      resolve(result);
+    })
+  },
   monthlySales: () => {
     return new Promise((resolve, reject) => {
       let monthlySales = db
@@ -407,12 +435,38 @@ module.exports = {
             },
           },
           {
-            $sort: { _id : -1},
+            $sort: { _id : 1},
           },
         ])
         .toArray();
       resolve(monthlySales);
     });
+  },
+  yearlySales: () => {
+    return new Promise((resolve, reject) => {
+      let result = db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $group: {
+              _id: {
+               
+                year: { $year: "$Date" },
+              },
+              total: {
+                $sum: "$totalAmount",
+              },
+              
+            },
+          },
+          {
+            $sort: { _id: 1 },
+          },
+        ])
+        .toArray();
+      resolve(result);
+    })
   },
   salesEachMonthSales: () => {
     return new Promise(async (resolve, reject) => {

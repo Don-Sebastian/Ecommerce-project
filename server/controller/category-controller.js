@@ -99,17 +99,26 @@ exports.getDeleteCategory = (req, res) => {
   });
 };
 
-exports.getUserCategoryDetailID = (req, res) => {
-  id = req.params.id;
-  res.redirect("/categoryProducts");
+exports.getUserCategoryDetailID = async(req, res) => {
+  
+    id = req.params.id;
+    res.redirect("/categoryProducts");
+  
+  
 };
 
-exports.getUserCategoryDetail = (req, res) => {
+exports.getUserCategoryDetail = async(req, res) => {
+  let user = req.session.user;
+  cartCount = null;
+  if (req.session.user) {
+    cartCount =await cartHelper.getCartCount(req.session.user._id);
+  }
   categoryHelper.getCategoryProducts(id).then((products) => {
     res.render("users/view-categoryProducts", {
       adminAccount: false,
       navbar: true,
       products,
+      user,
       cartCount,
     });
   });

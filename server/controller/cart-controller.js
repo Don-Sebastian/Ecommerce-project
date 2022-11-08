@@ -4,12 +4,20 @@ const { response } = require("express");
 
 var id, userID;
 
-exports.getAddToCartID = (req, res) => {
-  id = req.params.id;
-  userID = req.session.user._id;
-      cartHelper.addToCart(id, userID).then(() => {
-          res.json({status: true})
-    })
+exports.getAddToCartID = async(req, res) => {
+  let user = req.session.user;
+  cartCount = null;
+  if (user) {
+    cartCount = await cartHelper.getCartCount(req.session.user._id);
+    id = req.params.id;
+    userID = req.session.user._id;
+    cartHelper.addToCart(id, userID).then(() => {
+      res.json({ status: true });
+    });
+  } else {
+    res.json({status:false})
+  }
+  
   // res.redirect('/add-to-cart');
 };
 

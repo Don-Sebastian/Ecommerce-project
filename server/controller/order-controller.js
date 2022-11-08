@@ -136,6 +136,10 @@ exports.getSuccessPaypal = async(req, res) => {
   );
 };
 
+exports.getCancelPaypal = (req, res) => {
+  res.redirect("/checkout");
+};
+
 exports.postUpdateProductOrderStatus = (req, res) => {
   orderHelper.updateProductOrderStatus(req.body).then((response) => {
     res.json(response);

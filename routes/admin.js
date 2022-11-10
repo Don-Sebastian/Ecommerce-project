@@ -59,8 +59,9 @@ router.get("/block-user/:id", userController.getblockUser);
 router.get("/unblock-user/:id", userController.getUnblockUser);
 
 
-
-// --------------------------------------------Admin  Products ---------------------------------------------------
+// =======================================================================================================
+// ---------------------------------------------ADMIN PRODUCTS--------------------------------------------
+// =======================================================================================================
 
 // _____________________View Products__________________________
 
@@ -112,6 +113,7 @@ router.post(
   categoryController.postAddCategory
 );
 
+
 //___________________Edit Category_____________________________
 
 router.get(
@@ -126,7 +128,7 @@ router.get(
   categoryController.getEditCategory
 );
 
-router.put(
+router.post(
   "/edit-category/:id",
   verifyAdminLogin,
   upload2.array("CategoryImage"),
@@ -139,6 +141,34 @@ router.get(
   "/delete-category/:id",
   verifyAdminLogin,
   categoryController.getDeleteCategory
+);
+
+// VIEW SUBCATEGORY
+router.get(
+  "/admin-sub-categories",
+  verifyAdminLogin,
+  categoryController.getSubCategory
+);
+
+// ADD SUBCATEGORY
+router.post(
+  "/add-sub-category",
+  verifyAdminLogin,
+  upload2.array("CategoryImage"),
+  categoryController.postAddSubCategory
+);
+
+// EDIT SUBCATEGORY
+router.get(
+  "/admin/edit-sub-category/:id",
+  verifyAdminLogin,
+  categoryController.getEditSubCategoryID
+);
+
+router.get(
+  "/edit_sub_category",
+  verifyAdminLogin,
+  categoryController.getEditSubCategory
 );
 
 

@@ -66,10 +66,12 @@ exports.getChangeProductQuantity = (req, res, next) => {
   })
 }
 
-exports.postRemoveProductFromCart = (req, res, next) => {
-  cartHelper.removeProductFromCart(req.body).then((response) => {
-    res.json(response)
-  })
+exports.postRemoveProductFromCart = async(req, res, next) => {
+  let totalAmountProduct = await cartHelper.getTotalAmountProduct(req.session.user._id)
+  let count = totalAmountProduct.length;
+  await cartHelper.removeProductFromCart(req.body, count).then((response) => {
+    res.json(response);
+  });
 };
 
 

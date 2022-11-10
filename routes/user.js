@@ -15,6 +15,7 @@ const verifyLogin = async (req, res, next) => {
   if (req.session.userLoggedIn) {
     req.session.cartCount = await cartHelper.getCartCount(req.session.user._id);
     cartCount = req.session.cartCount;
+    req.session.historyUrl = req.originalUrl;
     next();
   } else {
     res.redirect("/");

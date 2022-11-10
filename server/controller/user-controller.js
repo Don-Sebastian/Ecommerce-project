@@ -66,7 +66,11 @@ exports.postUserLogin = (req, res) => {
       req.session.user = response.user;
       user = req.session.user;
       req.session.userLoggedIn = true;
-      res.redirect("/");
+      if (req.session.historyUrl) {
+        res.redirect(req.session.historyUrl)
+      } else {
+         res.redirect("/");
+      }
     } else {
       req.session.userloginErr = response.loginErr;
       res.redirect("/login");

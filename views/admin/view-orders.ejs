@@ -16,14 +16,13 @@
         <table class="table">
           <thead>
             <tr>
-              <!-- <th>Date</th> -->
+              <th>Date</th>
               <!-- <th>UserId</th> -->
               <th>Address</th>
               <th>Payment Method</th>
               <th>Products</th>
               <th>Total Amount</th>
               <th>Status</th>
-              <th>Options</th>
               <th>View</th>
             </tr>
           </thead>
@@ -37,51 +36,34 @@
               </td> -->
               <!-- <td><span><%#= element.userId%></span></td> -->
               <td>
+                <% let date = element.Date%>
+<%date = date.toISOString().slice(0,10) %> 
+                <%= date %> 
+              </td>
+              <td>
                 <pre>
-<%= element.deliveryDetails.name%>,<%= element.deliveryDetails.address%>,<%= element.deliveryDetails.city%>,
-<%= element.deliveryDetails.state%>,<%= element.deliveryDetails.country%>. Pin code: <%= element.deliveryDetails.zip%>
+<%= element.deliveryDetails.name%>,
+<%= element.deliveryDetails.address%>,
+<%= element.deliveryDetails.city%>..
+Pin:<%= element.deliveryDetails.zip%>.
                 </pre>
               </td>
               <td><%= element.paymentMethod%></td>
-              <% noOfProduts = element.products.lenght %> 
+              <% noOfProduts = element.products.length %> 
               <td><%= noOfProduts%> item</td>
               <td><%= element.totalAmount%></td>
 
               <td>
-                <% if (element.orderStatus == "ordered") { %>
-                <span class="badge bg-label-warning me-1" id="<%= element._id%>-orderStatus-ordered">Ordered</span>
-                <% } else if(element.orderStatus == "shipped") { %>
-                <span class="badge bg-label-secondary me-1" id="<%= element._id%>-orderStatus-shipped">Shipped</span>
-                <% } else if(element.orderStatus == "delivered") { %>
-                <span class="badge bg-label-primary me-1" id="<%= element._id%>-orderStatus-delivered">Delivered</span>
-                <% } else if(element.orderStatus == "canceled") { %>
-                <span class="badge bg-label-danger me-1" id="<%= element._id%>-orderStatus-canceled">Canceled</span>
-                <% } else if(element.orderStatus == "completed") { %>
-                <span class="badge bg-label-success me-1" id="<%= element._id%>-orderStatus-completed">Completed</span>
-                <% } else if(element.orderStatus == "returned") { %>
-                <span class="badge bg-label-info me-1" id="<%= element._id%>-orderStatus-returned">Returned</span>
-                <% } else if(element.orderStatus == "refunded") { %>
-                <span class="badge bg-label-info me-1" id="<%= element._id%>-orderStatus-refunded">Refunded</span>
+                <% if (element.orderStatus == "success") { %>
+                <span class="badge bg-label-success me-1" id="<%= element._id%>-orderStatus-success">Success</span>
+                <% } else if(element.orderStatus == "failed") { %>
+                <span class="badge bg-label-danger me-1" id="<%= element._id%>-orderStatus-failed">Failed</span>
+                
 
                 <% } %>
               </td>
 
-              <td scope="col-5">
-                <select
-                  class="form-select"
-                  aria-label="Default select example"
-                  id="<%= element._id%>-select"
-                  onchange="changeOrderStatus('<%= element._id%>')"
-                >
-                  <option selected><%= element.orderStatus%></option>
-                  <option value="shipped">Shipped</option>
-                  <option value="delivered">Delivered</option>
-                  <option value="canceled">Canceled</option>
-                  <option value="completed">Completed</option>
-                  <option value="returned">Returned</option>
-                  <option value="refunded">Refunded</option>
-                </select>
-              </td>
+              
               <td><a href="/admin/view-AdminProductOrder/<%= element._id %>">View Product</a></td>
             </tr>
 

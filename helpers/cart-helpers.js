@@ -163,8 +163,7 @@ module.exports = {
       // }
     });
   },
-  removeProductFromCart: (details) => {
-    let response = {};
+  removeProductFromCart: (details, count) => {
     return new Promise(async (resolve, reject) => {
       db.get()
         .collection(collection.CART_COLLECTION)
@@ -175,6 +174,8 @@ module.exports = {
           }
         )
         .then((response) => {
+          count--;
+          response.count = count;
           response.productId = details.product;
           response.removeProduct = true;
           resolve(response);

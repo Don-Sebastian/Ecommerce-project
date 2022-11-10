@@ -1,0 +1,159 @@
+<!-- Content wrapper -->
+          <div class="content-wrapper">
+            <!-- Content -->
+
+            <div class="container-xxl flex-grow-1 container-p-y">
+              <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Category/</span>Sub Category List</h4>
+
+              <!-- Basic Layout -->
+              <div class="row">
+                <div class="col-xl-4">
+                  <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h5 class="mb-0">Add Sub Category</h5>
+                      <small class="text-muted float-end"></small>
+                    </div>
+
+                    
+
+                    <div class="card-body">
+                      <% if (CategoryAdded) { %>
+                    <div class="alert alert-success" role="alert">
+                        Category has been added
+                    </div>
+                    <% } %> 
+                      <form action="/admin/add-sub-category" method="POST" role="form" enctype="multipart/form-data">
+                        <div class="mb-3">
+                          <label class="form-label" for="basic-default-fullname">Category Name</label>
+                          <select class="form-select" name="CategoryName" aria-label="Default select example" id="category-value">
+                              <option selected>Open this select menu</option>
+                              <% categories.forEach(element => { %>
+                               <option value="<%= element.CategoryName %>"><%= element.CategoryName %></option>
+                              <% }) %>
+                          </select>
+                        </div>
+                        
+
+                        <div class="mb-3">
+                          <label class="form-label" for="basic-default-message">Sub Category</label>
+                          <input
+                            id="basic-default-message"  name="subCategoryName"
+                            class="form-control"
+                            placeholder="Sub Category" required
+                          ></input>
+                        </div>
+
+                        
+                        
+                        <div class="mb-3">
+                          <label class="form-label" for="basic-default-message">Sub Category Description</label>
+                          <input
+                            id="basic-default-message"  name="CategoryDescription"
+                            class="form-control"
+                            placeholder="" required
+                          ></input>
+                        </div>
+
+                        <div class="mb-3">
+                          <label for="formFileMultiple" class="form-label">Upload image</label>
+                          <input class="form-control" name="CategoryImage" type="file" id="formFileMultiple" multiple />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary ">Add Category</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                
+
+                <div class="col-xl-8">
+                    <!-- Basic Bootstrap Table -->
+              <div class="card">
+                <h5 class="card-header">Category List</h5>
+                <div class="table-responsive text-nowrap">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>No.</th>
+                        <th>Name</th>
+                        <th>SubCategory</th>
+                        <th>Description</th>
+                        <th>Image</th>
+                        <th>Options</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                      <%let index = 1 ; for( let i = 0 , index = 1; i < categories.length; i++ ) { %>
+                          
+                          
+                          <tr>
+                            <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong><%= index %></strong></td>
+                            <td><%=  categories[i].CategoryName%></td>
+                            <td>
+                              <table class="innerTable">                                 
+                              <% if (categories[i].subCategory) { %>
+                                <% for( let j = 0; j < (categories[i].subCategory).length; j++ ) { %>
+                                    <tbody >
+                                      <td><%= categories[i].subCategory[j].subCategoryName %></td>
+                                    </tbody>
+                                <% } %>
+                              <% } %>
+                              </table>
+                            </td>
+                            <td>
+                              <table class="innerTable">                                 
+                              <% if (categories[i].subCategory) { %>
+                                <% for( let j = 0; j < (categories[i].subCategory).length; j++ ) { %>
+                                    <tbody >
+                                      <td><%= categories[i].subCategory[j].CategoryDescription %></td>
+                                    </tbody>
+                                <% } %>
+                              <% } %>
+                              </table>
+                            </td>
+                            <td>
+                              <table class="innerTable">                                 
+                              <% if (categories[i].subCategory) { %>
+                                <% for( let j = 0; j < (categories[i].subCategory).length; j++ ) { %>
+                                    <tbody >
+                                      <td><img style="width: 2.5em; height: 2.5em" src="/uploads/category/<%= categories[i].subCategory[j].CategoryImage%>  " alt="<%= categories[i].subCategory[j].CategoryImage %>"></td>
+                                    </tbody>
+                                <% } %>
+                              <% } %>
+                              </table>
+                            </td>
+                            <td>
+                              <table class="innerTable">                                 
+                              <% if (categories[i].subCategory) { %>
+                                <% for( let j = 0; j < (categories[i].subCategory).length; j++ ) { %>
+                                    <tbody >
+                                      <td>
+                                        <!-- <a href="/admin/edit-sub-category/<%=  categories[i].subCategory[j]._id%>" class="btn btn-outline-primary">Edit</a>
+                                        <a href="/admin/delete-sub-category/<%=  categories[i].subCategory[j]._id%>" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to delete <%=  categories[i].subCategory[j].CategoryName%> ?')">Delete</a></td> -->
+                                    </tbody>
+                                <% } %>
+                              <% } %>
+                              </table>
+                            </td>
+                                
+                            </td>
+                            
+                          </tr>
+                      <tr>
+                      <%index++; } %>
+                       
+                       
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!--/ Basic Bootstrap Table -->
+
+                </div>
+                
+                
+                  
+                </div>
+              </div>
+            </div>
+            <!-- / Content -->

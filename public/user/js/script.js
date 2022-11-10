@@ -101,15 +101,25 @@ function deleteFromCart(cartId, productId) {
           method: "post",
           success: (response) => {
             if (response.removeProduct) {
-              swalWithBootstrapButtons.fire(
-                "Deleted!",
-                "Your file has been deleted.",
-                "success"
-              );
-              // location.reload();
-              //console.log(response.productId);
-              prodIdRow = "#" + productId + "-tr";
-              $(prodIdRow).remove();
+              if (response.count == 0) {
+                swalWithBootstrapButtons.fire(
+                  "Deleted!",
+                  "Your product has been deleted.",
+                  "success"
+                );
+                setTimeout(function () {
+                  location.reload();
+                },1000)
+              }
+              else {
+                swalWithBootstrapButtons.fire(
+                  "Deleted!",
+                  "Your product has been deleted.",
+                  "success"
+                );
+                prodIdRow = "#" + productId + "-tr";
+                $(prodIdRow).remove();
+              }
             }
           },
         });

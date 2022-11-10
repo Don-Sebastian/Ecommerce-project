@@ -14,8 +14,9 @@ var cartCount
 
 // _____________________View Products__________________________
 
-exports.getAdminViewProducts = (req, res, next) => {
-      productHelper.getAllProducts().then((products) => {
+exports.getAdminViewProducts = async (req, res, next) => {
+  
+     await productHelper.getAllProducts().then((products) => {
       res.render("admin/view-products", {
         adminAccount: true,
         scrollbar: true,
@@ -28,11 +29,12 @@ exports.getAdminViewProducts = (req, res, next) => {
 // _____________________Add Products__________________________
 
 exports.getAddProductsAdmin = async(req, res) => {
-  let category =await categoryHelpers.getCategoryNames();
+  let categories = await categoryHelpers.getAllCategories();
   res.render("admin/add-products", {
     adminAccount: true,
     scrollbar: true,
     productAdded: false,
+    categories,
   });
 };
 

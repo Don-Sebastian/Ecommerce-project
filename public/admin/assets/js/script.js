@@ -53,3 +53,12 @@ function changeProductOrderStatusButton(productId, orderId, value) {
     },
   });
 }
+
+
+$("select")
+  .find("option")
+  .click(function () {
+    var optionSelected = $(this);
+    var valueSelected = optionSelected.val();
+    var textSelected = optionSelected.text();
+  });

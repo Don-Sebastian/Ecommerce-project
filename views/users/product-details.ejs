@@ -10,33 +10,33 @@
 							<div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
 
 							<div class="slick3 gallery-lb">
-								<div class="item-slick3" data-thumb="../uploads/<%= product.Image[0] %> ">
+								<div class="item-slick3" data-thumb="../uploads/<%= product[0].Image[0] %> ">
 									<div class="wrap-pic-w pos-relative">
-										<img class="zoom" src="../uploads/<%= product.Image[0] %>" alt="<%= product.Image[0] %>data-zoom-image="<%= product.Image[0] %>">
+										<img class="zoom" src="../uploads/<%= product[0].Image[0] %>" alt="<%= product[0].Image[0] %>data-zoom-image="<%= product[0].Image[0] %>">
 
-										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="../uploads/<%= product.Image[0] %>">
+										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="../uploads/<%= product[0].Image[0] %>">
 											<i class="fa fa-expand"></i>
 										</a>
 									</div>
 								</div>
                                 
-								<% if (product.Image[1] != undefined) {%> 
-								<div class="item-slick3" data-thumb="../uploads/<%= product.Image[1] %>">
+								<% if (product[0].Image[1] != undefined) {%> 
+								<div class="item-slick3" data-thumb="../uploads/<%= product[0].Image[1] %>">
 									<div class="wrap-pic-w pos-relative">
-										<img class="zoom" src="../uploads/<%= product.Image[1] %>" alt="<%= product.Image[1] %> data-zoom-image="<%= product.Image[1] %> ">
+										<img class="zoom" src="../uploads/<%= product[0].Image[1] %>" alt="<%= product[0].Image[1] %> data-zoom-image="<%= product[0][0].Image[1] %> ">
 
-										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="../uploads/<%= product.Image[1] %>">
+										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="../uploads/<%= product[0].Image[1] %>">
 											<i class="fa fa-expand"></i>
 										</a>
 									</div>
 								</div>
 								<% } %> 
-								<% if (product.Image[2] != undefined) {%> 
-								<div class="item-slick3" data-thumb="../uploads/<%= product.Image[2] %>">
+								<% if (product[0].Image[2] != undefined) {%> 
+								<div class="item-slick3" data-thumb="../uploads/<%= product[0].Image[2] %>">
 									<div class="wrap-pic-w pos-relative">
-										<img class="zoom" src="../uploads/<%= product.Image[2] %>" alt="<%= product.Image[2] %>data-zoom-image="<%= product.Image[2] %>">
+										<img class="zoom" src="../uploads/<%= product[0].Image[2] %>" alt="<%= product[0].Image[2] %>data-zoom-image="<%= product[0].Image[2] %>">
 
-										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="../uploads/<%= product.Image[2] %>">
+										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="../uploads/<%= product[0].Image[2] %>">
 											<i class="fa fa-expand"></i>
 										</a>
 									</div>
@@ -50,15 +50,27 @@
 				<div class="col-md-6 col-lg-5 p-b-30">
 					<div class="p-r-50 p-t-5 p-lr-0-lg">
 						<h4 class="mtext-105 cl2 js-name-detail p-b-14">
-							<%= product.Name %>
+							<%= product[0].Name %>
 						</h4>
 
-						<span class="mtext-106 cl2">
-							Rs.<%= product.Price %>
-						</span>
-
+						<% if (product[0].finalPrice === null) { %>
+								 <span class="stext-105 cl3">
+									Rs.<%= product[0].Price%>
+								</span>
+						<% } else { %>
+								<span class="stext-105 cl3">
+									<span style="font-weight: bold;">
+										Rs.<%= product[0].finalPrice%>
+									</span>
+									<span class=" m-l-10" style="opacity: 0.6; font-size: small;"><del>
+										Rs.<%= product[0].Price%></del>
+									</span>
+									<span class="m-l-5" style=" font-size: small;"><%= product[0].biggerDiscount%>% discount</span>
+								</span>
+						<% } %>
+								
 						<p class="stext-102 cl3 p-t-23">
-							<%= product.Description %>
+							<%= product[0].Description %>
 						</p>
 						
 						<!--  -->

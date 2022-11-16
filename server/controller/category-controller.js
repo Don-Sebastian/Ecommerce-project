@@ -6,6 +6,8 @@ var id;
 
 exports.getCategory = (req, res) => {
   let admin = req.session.admin;
+  CategoryAdded = req.session.categoryAdded;
+  req.session.categoryAdded = false; 
   if (req.session.admin) {
     categoryHelper.getAllCategories().then((categories) => {
       res.render("admin/view-category", {
@@ -13,7 +15,7 @@ exports.getCategory = (req, res) => {
         scrollbar: true,
         categories,
         admin,
-        CategoryAdded: req.session.categoryAdded,
+        CategoryAdded,
       });
     });
   } else {
@@ -27,13 +29,17 @@ exports.getCategory = (req, res) => {
 };
 
 exports.getSubCategory = (req, res) => {
+
+  CategoryAdded = req.session.categoryAdded;
+  req.session.categoryAdded = false; 
+
   categoryHelper.getAllCategories().then((categories) => {
     res.render("admin/view-sub-category", {
       adminAccount: true,
       scrollbar: true,
       categories,
       admin,
-      CategoryAdded: req.session.categoryAdded,
+      CategoryAdded,
     });
   })
 };
@@ -86,7 +92,6 @@ exports.postAddCategory = (req, res) => {
 exports.getEditSubCategoryID = (req, res) => {
 
   id = req.params.id;
-  console.log("999999999999999999999999999999999",id);
   res.redirect("/admin/edit_sub_category");
 };;
 
@@ -149,6 +154,16 @@ exports.getDeleteCategory = (req, res) => {
   });
 };
 
+exports.removeImageCategory = (req, res) => {
+  fs.unlink("/uploads/category/" + req.imageName, (err) => {
+    if (err) console.log(err);
+    else {
+      console.log("\nDeleted file: " + req.imageName);
+      
+    }
+  });
+};
+
 exports.getUserCategoryDetailID = async(req, res) => {
   
     id = req.params.id;
@@ -171,5 +186,12 @@ exports.getUserCategoryDetail = async(req, res) => {
       user,
       cartCount,
     });
+  });
+};
+
+
+exports.postCategorySubcategory = (req, res) => {
+  categoryHelper.categorySubcategory(req.body).then((response) => {
+    res.json(response);
   });
 };

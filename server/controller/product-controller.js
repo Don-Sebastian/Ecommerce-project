@@ -38,31 +38,39 @@ exports.getAddProductsAdmin = async(req, res) => {
   });
 };
 
-exports.postAddProductsAdmin = (req, res, next) => {
-    const files = req.files;
-    const file = files.map((file) => {
-      return file;
-    });
-    const fileName = file.map((file) => {
-      return file.filename;
-    });
-    const product = req.body;
-    product.Image = fileName;
+exports.postAddProductsAdmin = async(req, res, next) => {
+  const files = req.files;
+  const file = files.map((file) => {
+    return file;
+  });
+  const fileName = file.map((file) => {
+    return file.filename;
+  });
+  const product = req.body;
+  product.Image = fileName;
+  if (req.body.productOffer) {
+    product.salePrice = (((req.body.productOffer)*(req.body.Price))/100);
+  } 
+  product.Date = new Date();
 
 
-    if (!req.files) {
-      const error = new Error("Please choose files");
-      error.httpStatusCode = 400;
-      return next(error);
-    }
+  if (!req.files) {
+    const error = new Error("Please choose files");
+    error.httpStatusCode = 400;
+    return next(error);
+  }
     
-    productHelper.addProduct(req.body)
-    res.render("admin/add-products", {
-          adminAccount: true,
-          scrollbar: true,
-          productAdded: true, 
-        });
-     }
+  await productHelper.addProduct(req.body)
+  let categories = await categoryHelpers.getAllCategories();
+  res.render("admin/add-products", {
+    adminAccount: true,
+    scrollbar: true,
+    productAdded: true,
+    categories,
+  });
+};
+     
+
 
 // _____________________Edit Product__________________________
 
@@ -74,13 +82,13 @@ exports.getEditProductID = (req, res) => {
 
 exports.getEditProduct = async(req, res) => {
   let product = await productHelper.getProductDetails(id);
-  
+  let categories = await categoryHelpers.getAllCategories();
   res.render("admin/edit_product", {
     adminAccount: true,
     scrollbar: true,
-    product
-    
-  })
+    product,
+    categories,
+  });
 };
 
 exports.postEditProduct = (req, res) => {
@@ -112,14 +120,18 @@ exports.postEditProduct = (req, res) => {
 exports.getDeleteProduct = (req, res) => {
   let productId = req.params.id;
   
-  productHelper.deleteProduct(productId).then(() => {
-    fs.unlink("/uploads/category/", (err) => {
-      if (err) console.log(err);
-      else {
-        console.log("\nDeleted file: example_file.txt");
+  productHelper.deleteProduct(productId).then((response) => {
+    if (response.productDetails.Image[0]) {
+      for (let i = 0; i < response.productDetails.Image.length; i++) {
+        fs.unlink("C:/Users/donsw/OneDrive/Desktop/Web Development/web-devolps/1.Project1/Ecommerce-project/public/admin/uploads/" + response.productDetails.Image[i], (err) => {
+          if (err) console.log(err);
+          else {
+            console.log("\nDeleted file: " + response.productDetails.Image[i]);
+          }
+        });
       }
-    });
-    res.redirect("/admin/view-products");
+    }
+    res.json(response);
   });
 };
 

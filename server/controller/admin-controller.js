@@ -11,8 +11,6 @@ exports.getDashboardAdmin = async(req, res, next) => {
   let lastDateSales = await orderhelpers.lastDateSales()
   let weeklySales = await orderhelpers.weeklySales()
   let yearlySales = await orderhelpers.yearlySales();
-
-  console.log("===================", yearlySales);
   res.render("admin/dashboard", {
     adminAccount: true,
     scrollbar: true,

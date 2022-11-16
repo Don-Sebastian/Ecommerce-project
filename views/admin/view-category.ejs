@@ -60,6 +60,24 @@
                             class="form-control"  hidden
                           ></input>
 
+                        <div class="row mb-3">
+                          <div class="col">
+                            <label class="form-label" for="basic-default-message">Category Offer</label>
+                          <input type="number"
+                            id="basic-default-message"  name="CategoryOffer"
+                            class="form-control"
+                            placeholder="Enter offer in %" 
+                          ></input>
+                          </div>
+                          <div class="col">
+                            <label class="form-label" for="basic-default-message">Category Offer Expiry</label>
+                          <input type="date"
+                            id="basic-default-message"  name="CategoryaExpiryDate"
+                            class="form-control"
+                          ></input>
+                          </div>
+                        </div>
+
                         <div class="mb-3">
                           <label for="formFileMultiple" class="form-label">Upload image</label>
                           <input class="form-control" name="CategoryImage" type="file" id="formFileMultiple" multiple />
@@ -83,6 +101,7 @@
                         <th>No.</th>
                         <th>Name</th>
                         <th>Description</th>
+                        <th>Offer%</th>
                         <th>Image</th>
                         <th>Options</th>
                       </tr>
@@ -95,9 +114,15 @@
                             <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong><%= index %></strong></td>
                             <td><%=  categories[i].CategoryName%></td>
                             <td><%=  categories[i].CategoryDescription%></td>
-                            <td><img style="width: 3em; height: 3em" src="/uploads/category/<%= categories[i].CategoryImage%>  " alt="<%= categories[i].CategoryImage %>"></td>
-                            
-                            
+                            <% if (categories[i].CategoryOffer) { %>
+                              <td><%=  categories[i].CategoryOffer%>%</td>
+                            <% } else { %>
+                              <td></td>
+                            <% } %>
+                            <td>
+                              <% if ((categories[i].CategoryImage).length != 0) { %>
+                               <img style="width: 3em; height: 3em" src="/uploads/category/<%= categories[i].CategoryImage%>  " alt="<%= categories[i].CategoryImage %>"></td>
+                              <% } %>
                             <td>
                                 <a href="/admin/edit-category/<%=  categories[i]._id%>" class="btn btn-primary">Edit</a>
                                 <a href="/admin/delete-category/<%=  categories[i]._id%>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete <%=  categories[i].CategoryName%> ?')">Delete</a>

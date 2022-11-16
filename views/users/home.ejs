@@ -434,9 +434,28 @@
 									<%= element.Name %>
 								</a>
 
-								<span class="stext-105 cl3">
+								<% if (element.finalPrice === null) { %>
+								 <span class="stext-105 cl3">
 									Rs.<%= element.Price%>
 								</span>
+								<% } else { %>
+								<span class="stext-105 cl3">
+									<sapn style="font-weight: bold;">
+										Rs.<%= element.finalPrice%>
+									</sapn>
+									<sapn class=" m-l-10" style="opacity: 0.6; font-size: small;"><del>
+										Rs.<%= element.Price%></del>
+									</sapn>
+								</span>
+								 <!-- <span class="stext-105 cl3 ">
+									Rs.<%#= element.Price%>
+								</span>
+								<span class="stext-105 cl3 m-l-80" style="opacity: 0.6;"><del>
+									Rs.<%#= element.Price%></del>
+								</span> -->
+								<% } %>
+
+								
 							</div>
 
 							<div class="block2-txt-child2 flex-r p-t-3">

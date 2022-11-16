@@ -115,9 +115,12 @@
                               <table class="innerTable">                                 
                               <% if (categories[i].subCategory) { %>
                                 <% for( let j = 0; j < (categories[i].subCategory).length; j++ ) { %>
-                                    <tbody >
+                                  <% console.log("--------------", categories[i].subCategory[j].CategoryImage) %> 
+                                  <% if ((categories[i].subCategory[j].CategoryImage).length != 0) { %>
+                                   <tbody >
                                       <td><img style="width: 2.5em; height: 2.5em" src="/uploads/category/<%= categories[i].subCategory[j].CategoryImage%>  " alt="<%= categories[i].subCategory[j].CategoryImage %>"></td>
                                     </tbody>
+                                  <% } %>
                                 <% } %>
                               <% } %>
                               </table>

@@ -7,6 +7,7 @@ const adminController = require("../server/controller/admin-controller");
 const userController = require("../server/controller/user-controller");
 const categoryController = require("../server/controller/category-controller");
 const orderController = require("../server/controller/order-controller");
+const couponcontroller = require("../server/controller/coupon-controller");
 
 
 const { upload, upload2 } = require("../server/middleware/multer");
@@ -71,7 +72,12 @@ router.get("/view-products", verifyAdminLogin, productController.getAdminViewPro
 
 router.get("/add-products", verifyAdminLogin, productController.getAddProductsAdmin);
 
-router.post( "/add-products", verifyAdminLogin, upload.array("Image"), productController.postAddProductsAdmin);
+router.post("/add-products", verifyAdminLogin, upload.array("Image"), productController.postAddProductsAdmin);
+
+router.post(
+  "/category-subcategory",
+  categoryController.postCategorySubcategory
+);
 
 // _____________________Edit Product__________________________
 
@@ -134,6 +140,8 @@ router.post(
   upload2.array("CategoryImage"),
   categoryController.postEditCategory
 ); 
+
+router.post("/remove-image-category", categoryController.removeImageCategory);
 
 //___________________Delete Category_____________________________
 
@@ -199,6 +207,31 @@ router.post(
   orderController.postAdminOrderProducts
 );
 
+// =======================================================================================================
+// -----------------------------------------COUPON MANAGMENT----------------------------------------------
+// =======================================================================================================
+
+router.get("/admin-coupons", verifyAdminLogin, couponcontroller.getAdminCoupon);
+
+// ADD COUPON
+router.post("/add-coupon", verifyAdminLogin, couponcontroller.postAddCoupon);
+
+// EDIT COUPON
+router.get(
+  "/edit_coupon/:id",
+  verifyAdminLogin,
+  couponcontroller.getEditCouponID
+);
+
+router.get("/edit-coupon", verifyAdminLogin, couponcontroller.getEditCoupon);
+
+router.post(
+  "/edit-coupon/:id",
+  verifyAdminLogin,
+  couponcontroller.postEditCoupon
+);
+
+router.get("/delete-coupon/:id", verifyAdminLogin, couponcontroller.getDeleteCoupon);
 
 
 

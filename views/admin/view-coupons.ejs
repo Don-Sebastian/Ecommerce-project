@@ -1,0 +1,139 @@
+<!-- Content wrapper -->
+          <div class="content-wrapper">
+            <!-- Content -->
+
+            <div class="container-xxl flex-grow-1 container-p-y">
+              <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Coupon/</span> Coupon List</h4>
+
+              <!-- Basic Layout -->
+              <div class="row">
+                <div class="col-xl-4">
+                  <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h5 class="mb-0">Add Coupon</h5>
+                      <small class="text-muted float-end"></small>
+                    </div>
+
+                    
+
+                    <div class="card-body">
+                      <% if (couponAdded) { %>
+                    <div class="alert alert-success" role="alert">
+                        Coupon has been added
+                    </div>
+                    <% } %> 
+                      <form action="/admin/add-coupon" method="POST" role="form" >
+                        
+                        
+
+                        <div class="mb-3">
+                          <label class="form-label" for="basic-default-message">Coupon</label>
+                          <input
+                            id="basic-default-message"  name="CouponName"
+                            class="form-control"
+                            placeholder="Coupon name" required
+                          ></input>
+                        </div>
+
+                        
+                        
+                        <div class="mb-3">
+                          <label class="form-label" for="basic-default-message">Coupon Description</label>
+                          <input
+                            id="basic-default-message"  name="CouponDescription"
+                            class="form-control"
+                            placeholder="Coupon description (optional)" 
+                          ></input>
+                        </div>
+
+                        <div class="row mb-3">
+                          <div class="col">
+                            <label class="form-label" for="basic-default-message">Coupon Offer</label>
+                          <input type="number"
+                            id="basic-default-message"  name="CouponOffer"
+                            class="form-control"
+                            placeholder="Enter offer in %" required
+                          ></input>
+                          </div>
+                          <div class="col">
+                            <label class="form-label" for="basic-default-message">Coupon Offer Expiry</label>
+                          <input type="date"
+                            id="basic-default-message"  name="CouponExpiryDate"
+                            class="form-control" required
+                          ></input>
+                          </div>
+                        </div>
+                        <input
+                            id="basic-default-message"  name="CouponExpiryStatus" value="valid"
+                            class="form-control" hidden
+                          ></input>
+
+                        <button type="submit" class="btn btn-primary ">Add Coupon</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                
+
+                <div class="col-xl-8">
+                    <!-- Basic Bootstrap Table -->
+              <div class="card">
+                <h5 class="card-header">Category List</h5>
+                <div class="table-responsive text-nowrap">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>No.</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Offer%</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                        <th>Options</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                      <%let index = 1 ; for( let i = 0 , index = 1; i < coupons.length; i++ ) { %>
+                          
+                          
+                          <tr>
+                            <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong><%= index %></strong></td>
+                            <td><%=  coupons[i].CouponName%></td>
+                            <td><%=  coupons[i].CouponDescription%></td>
+                            <% if (coupons[i].CouponOffer) { %>
+                              <td><%=  coupons[i].CouponOffer%>%</td>
+                            <% } else { %>
+                              <td></td>
+                            <% } %>
+                            <td><%=  coupons[i].CouponExpiryDate%></td>
+                            <% const [currentDate, currentMonth, currentYear] = new Date().toLocaleDateString().split('/') %> 
+                            <% const dateNow = currentYear + '-' + currentMonth + '-'+ currentDate %> 
+                            <% if (dateNow < (coupons[i].CouponExpiryDate)) { %>
+                                <td><span class="badge bg-label-primary me-1">Valid</span></td>
+                            <% } else { %>
+                                <td><span class="badge bg-label-warning me-1">Expired</span></td>
+                            <% } %>
+                            <td>
+                                <a href="/admin/edit_coupon/<%=  coupons[i]._id%>" class="btn btn-primary">Edit</a>
+                                <button  class="btn btn-danger" onclick="removeCouponAdmin('<%=  coupons[i]._id%>')">Delete</button>
+                            </td>
+                            
+                          </tr>
+                      <tr>
+                      <%index++; } %>
+                       
+                       
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!--/ Basic Bootstrap Table -->
+
+                </div>
+                
+                
+                  
+                </div>
+              </div>
+            </div>
+            <!-- / Content -->

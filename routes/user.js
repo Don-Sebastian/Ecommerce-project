@@ -7,6 +7,7 @@ const categoryController = require("../server/controller/category-controller");
 const cartController = require("../server/controller/cart-controller");
 const orderController = require("../server/controller/order-controller");
 const profileController = require("../server/controller/profile-controller");
+const couponController = require("../server/controller/coupon-controller");
 
 var cartHelper = require("../helpers/cart-helpers");
 
@@ -167,6 +168,13 @@ router.post(
   "/update-OrderStatus",
   orderController.postUpdateProductOrderStatus
 );
+
+
+//=======================================================================================
+//                             ------Coupon------
+//=======================================================================================
+
+router.post("/apply-coupon", verifyLogin, couponController.postApplyCoupon);
 
 
 

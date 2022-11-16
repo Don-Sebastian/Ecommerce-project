@@ -14,13 +14,12 @@
                       <tr>
                         <th>No.</th>
                         <th>Name</th>
-                        <th>Price</th>
-                        <th>Category</th>
-                        <th>Sub Category</th>
-                        <th>Offer %</th>
-                        <th>Description</th>
                         <th>Image</th>
-                        <th>Options</th>
+                        <th>Original Price</th>
+                        <th>Offer %</th>
+                        <th>Status</th>
+                        <th>Option</th>
+                        <th>Edit</th>
                       </tr>
                     </thead>
                     <tbody class="table-border-bottom-0">
@@ -31,24 +30,11 @@
                         <td><%=  element.Price%></td>
                         <td><%=  element.Category%></td>
                         <td><%=  element.subCategory%></td>
-                        <% if (element.productOffer) { %>
-                         <td><%=  element.productOffer%>%</td>
-                        <% } else { %>
-                          <td></td>
-                        <% } %>
-                        
-                         
-                        
                         <td><%=  element.Description%></td>
-                        <% if (element.Image[0]) { %>
-                         <td><img style="width: 3em; height: 3em" src="/uploads/<%= element.Image[0] %>  " alt="<%= element.Image[0] %>"></td>
-                        <% } else { %>
-                          <td></td>
-                        <% } %>
-                        
+                        <td><img style="width: 3em; height: 3em" src="/uploads/<%= element.Image[0] %>  " alt="<%= element.Image[0] %>"></td>
                         <td>
                             <a href="/admin/edit-product/<%= element._id %> " class="btn btn-primary">Edit</a>
-                            <button  class="btn btn-danger" onclick="removeProductAdmin('<%= element._id %>')">Delete</button>
+                            <a href="/admin/delete-product/<%= element._id %>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete <%= element.Name %> ?')">Delete</a>
                         </td>
                         
                       </tr>

@@ -369,3 +369,20 @@ function changeProductOrder(productId, orderId, value) {
   });
   
 }
+
+$("#submitCoupon").click(function (event) {
+  event.preventDefault()
+  let form = $("#formCoupon");
+  let url = form.attr("action");
+  let method = form.attr("method");
+  $.ajax({
+    url: "/apply-coupon", 
+    method: "post",
+    data: form.serialize(),
+    success: (response) => {
+      if (response.couponResponse) {
+        
+      }
+    }
+  })
+});

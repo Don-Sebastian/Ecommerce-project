@@ -111,7 +111,7 @@ module.exports = {
               .deleteOne({ user: ObjectId(order.user) });
           }
           resolve(orderId);
-        });
+         });
     });
   },
   getUserOrders: (userId) => {

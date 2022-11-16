@@ -17,16 +17,7 @@ exports.getAddToCartID = async(req, res) => {
   } else {
     res.json({status:false})
   }
-  
-  // res.redirect('/add-to-cart');
 };
-
-// exports.getAddToCart = (req, res) => {
-//     console.log("api call");
-//     userHelper.addToCart(id, userID).then(() => {
-//         res.json({status: true})
-//   })
-// };
 
 exports.getCartItems =async (req, res) => { 
   let products = await cartHelper.getCartProducts(req.session.user._id)
@@ -35,7 +26,7 @@ exports.getCartItems =async (req, res) => {
   } else {
     totalValue = await cartHelper.getTotalAmount(req.session.user._id);
   }
-  
+  // let discount = await cartHelper.getDiscountAmount(req.session.user._id);
   let totalAmountProduct = await cartHelper.getTotalAmountProduct(req.session.user._id);
     res.render("users/view-cart", {
       adminAccount: false,

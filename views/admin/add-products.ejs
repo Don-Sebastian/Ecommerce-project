@@ -29,18 +29,26 @@
                         </div>
                         <div class="mb-3">
                           <label class="form-label" for="basic-default-company">Price</label>
-                          <input type="text" name="Price" class="form-control" id="basic-default-company" placeholder="9999" required/>
+                          <input type="number" name="Price" class="form-control" id="basic-default-company" placeholder="9999" required/>
                         </div>
                         
                         <div class="mb-3">
                           <label class="form-label" for="basic-default-fullname">Category</label>
-                          <select class="form-select" name="CategoryName" aria-label="Default select example" id="category-value">
+                          <select class="form-select" name="Category" aria-label="Default select example" id="category-selection">
                               <option selected>Open this select menu</option>
                               <% categories.forEach(element => { %>
                                <option value="<%= element.CategoryName %>"><%= element.CategoryName %></option>
                               <% }) %>
                           </select>
                         </div>
+
+                          <div class="mb-3">
+                          <label class="form-label" for="basic-default-fullname">Sub Category</label>
+                          <select class="form-select" name="subCategory" aria-label="Default select example" id="subcategory-selection">
+                              
+                          </select>
+                        </div>
+                        
 
                         <div class="mb-3">
                           <label class="form-label" for="basic-default-message">Description</label>
@@ -49,6 +57,24 @@
                             class="form-control"
                             placeholder="About the product!" required
                           ></input>
+                        </div>
+
+                        <div class="row mb-3">
+                          <div class="col">
+                            <label class="form-label" for="basic-default-message">Offer</label>
+                          <input type="number"
+                            id="basic-default-message"  name="productOffer"
+                            class="form-control"
+                            placeholder="Enter offer in %" 
+                          ></input>
+                          </div>
+                          <div class="col">
+                            <label class="form-label" for="basic-default-message">Stock</label>
+                          <input type="number"
+                            id="basic-default-message"  name="Stock"
+                            class="form-control"
+                          ></input>
+                          </div>
                         </div>
 
                         <div class="mb-3">

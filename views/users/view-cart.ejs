@@ -28,7 +28,18 @@
                   </div>
                 </td>
                 <td class="column-2"><%= element.productDetails.Name %></td>
-                <td class="column-3" id="<%= element.productDetails._id %>-Price"><%= element.productDetails.Price%></td>
+                <td class="column-3" >
+                  <% if (element.totalAfterDiscount === null) { %>
+                   <span id="<%= element.productDetails._id %>-Price"><%= element.productDetails.Price%></span>
+                  <% } else { %>
+                    Rs.<sapn id="<%= element.productDetails._id %>-Price" style="font-weight: bold;">
+										<%= element.priceAfterDiscount%>
+									</sapn>
+									<sapn class=" m-l-10" style="opacity: 0.6; font-size: small;"><del>
+										Rs.<%= element.productDetails.Price%></del>
+									</sapn>
+                  <% } %>
+                  </td>
                 <td class="column-4">
                   <div class="wrap-num-product flex-w m-l-auto m-r-0">
 
@@ -64,7 +75,13 @@
                     </div>
                   </div>
                 </td>
-                <td class="column-5">Rs.<span id="<%= element.productDetails._id%>-productAmount"><%= element.quantity *  element.productDetails.Price%> </span></td>
+                <td class="column-5">
+                  <% if (element.totalAfterDiscount === null) { %>
+                   Rs.<span id="<%= element.productDetails._id%>-productAmount"><%= element.totalQuantityPrice%> </span>
+                  <% } else { %>
+                   Rs.<span id="<%= element.productDetails._id%>-productAmount"><%= element.totalAfterDiscount%> </span> 
+                  <% } %>
+                  </td>
                 <td class="column-8"><a class="fa fa-trash" onclick="deleteFromCart('<%= element._id%>', '<%= element.productDetails._id%>')"></a></td>
               </tr>
               <% }) %>
@@ -72,26 +89,7 @@
           </div>
 
           <div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
-            <div class="flex-w flex-m m-r-20 m-tb-5">
-              <input
-                class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5"
-                type="text"
-                name="coupon"
-                placeholder="Coupon Code"
-              />
-
-              <div
-                class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5"
-              >
-                Apply coupon
-              </div>
-            </div>
-
-            <div
-              class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10"
-            >
-              Update Cart
-            </div>
+            
           </div>
         </div>
       </div>

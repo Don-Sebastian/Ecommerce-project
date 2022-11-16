@@ -29,13 +29,35 @@
                             value="<%= category.CategoryDescription %>" required
                           ></input>
                         </div>
+
+                        <div class="row mb-3">
+                          <div class="col">
+                            <label class="form-label" for="basic-default-message">Offer</label>
+                          <input type="number"
+                            id="basic-default-message"  name="CategoryOffer"
+                            class="form-control" value="<%=  category.CategoryOffer%>"
+                            placeholder="Enter offer in %" 
+                          ></input>
+                          </div>
+                          <div class="col">
+                            <label class="form-label" for="basic-default-message">Expiry date</label>
+                          <input type="date"
+                            id="basic-default-message"  name="CategoryExpiryDate" value="<%=  category.CategoryExpiryDate%>"
+                            class="form-control"
+                          ></input>
+                          </div>
+                        </div>
+
                         <div class="mb-3">
                           <label for="formFileMultiple" class="form-label">Upload image</label>
                           <input class="form-control" name="CategoryImage" type="file" id="formFileMultiple"  multiple />
-                          <div class="<%= category.CategoryImage[0]%>" style="position: relative;margin-top: 20px;">
-                            <img style="width: 10em; height: 10em" src="/uploads/category/<%= category.CategoryImage[0]%>  " alt="<%= category.CategoryImage[0] %>">
-                            <button onclick="removeImageInEdit('<%= category.CategoryImage[0]%>')"  style="position: absolute; color: #ff4c4c; border-radius: 20px;border-color: #ff4c4c;">X</button>
-                          </div>
+                          <% if ((category.CategoryImage).length != 0) { %>
+                            <div id="<%= category._id %>" style="position: relative;margin-top: 20px;">
+                              <img style="width: 10em; height: 10em" src="/uploads/category/<%= category.CategoryImage[0]%>  " alt="<%= category.CategoryImage[0] %>">
+                              <button onclick="removeImageInEdit('<%= category.CategoryImage[0]%>', '<%= category._id %>')"  style="position: absolute; color: #ff4c4c; border-radius: 20px;border-color: #ff4c4c;">X</button>
+                            </div>
+                          <% } %>
+                         
                           
                         </div>                                                                          
 

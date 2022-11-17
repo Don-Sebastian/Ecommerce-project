@@ -19,22 +19,28 @@ var id;
 // ..........................User SignUp......................
 
 exports.getUserSignUp = (req, res) => {
-  if (req.session.userLoggedIn) {
-    res.redirect("/");
+  if (req.query.ReferalCode) {
+    console.log(req.query);
+    res.render("users/user-signup", { adminAccount: false, navbar: false, userExist: false, invalidReferalCode:false, referalCode: req.query.ReferalCode});
   } else {
-    res.render("users/user-signup", { adminAccount: false, navbar: false, userExist: false });
+    if (req.session.userLoggedIn) {
+      res.redirect("/");
+    } else {
+      res.render("users/user-signup", { adminAccount: false, navbar: false, userExist: false ,invalidReferalCode:false,});
+    }
   }
 };
 
 exports.postUserSignUp = (req, res) => {
   userHelper.doSignup(req.body).then((response) => {
+    invalidReferalCode = response.invalidReferalCode;
     userExist = response.userExist;
     req.session.user = response;
     req.session.userLoggedIn = false;
     if (userExist) {
       res.render("users/user-signup", {
         adminAccount: false,
-        userExist,
+        userExist, invalidReferalCode,
         navbar: false,
       });
     } else {

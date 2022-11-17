@@ -24,9 +24,8 @@ exports.getCartItems =async (req, res) => {
   if (products.length == 0) {
     totalValue = false;
   } else {
-    totalValue = await cartHelper.getTotalAmount(req.session.user._id);
+    totalValue = await cartHelper.getTotalAmount(req.session.user._id, req.session.couponOffer);
   }
-  // let discount = await cartHelper.getDiscountAmount(req.session.user._id);
   let totalAmountProduct = await cartHelper.getTotalAmountProduct(req.session.user._id);
     res.render("users/view-cart", {
       adminAccount: false,
@@ -42,7 +41,7 @@ exports.getCartItems =async (req, res) => {
 
 exports.postChangeProductQuantity = (req, res, next) => {
   cartHelper.changeProductQuantity(req.body).then(async(response) => {
-    response.total = await cartHelper.getTotalAmount(req.body.user)
+    response.total = await cartHelper.getTotalAmount(req.body.user, req.session.couponOffer)
     response.totalAmountProduct = await cartHelper.getTotalAmountProduct(req.body.user);
     res.json(response)
   });
@@ -72,7 +71,7 @@ exports.postRemoveProductFromCart = async(req, res, next) => {
 //===============================================
 
 exports.getCheckOut =async (req, res) => {
-  let total = await cartHelper.getTotalAmount(req.session.user._id)
+  let total = await cartHelper.getTotalAmount(req.session.user._id, req.session.couponOffer)
   userHelper.getAddress(req.session.user._id).then((address) => {
     res.render("users/checkout-address", {
       adminAccount: false,

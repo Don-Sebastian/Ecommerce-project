@@ -14,7 +14,7 @@ exports.getPaymentMethod = async (req, res) => {
   let cartItems = await cartHelpers.getCartProductsList(req.body.user)
   let totalPrice = 0;
   if (products.length > 0) {
-        totalPrice = await cartHelpers.getTotalAmount(req.body.user);
+    totalPrice = await cartHelpers.getTotalAmount(req.body.user, req.session.couponOffer);
   }
     orderHelper
       .placeOrder(req.body, cartItems, totalPrice)
@@ -39,6 +39,17 @@ exports.getPaymentMethod = async (req, res) => {
           }).catch((err) => {
             console.log(err);
           })
+        } else if (req.body.paymentMethod == "Wallet") {
+          let userWalletAmount = await userHelpers.walletAmount(req.session.user._id)
+          if (userWalletAmount > totalPrice) {
+            await userHelpers.payUsingWallet(req.session.user._id, totalPrice).then(() => {
+              orderHelper.changePaymentStatus(orderId).then(() => {
+                res.json({ WalletStatus: true });
+              })
+            });
+          } else {
+            res.json({ WalletStatus: false });
+          }
         }
       })
       .catch((err) => {
@@ -54,7 +65,8 @@ exports.getOrderSuccess = (req, res) => {
     });
 };
 
-exports.getOrderDetails = async(req, res) => {
+exports.getOrderDetails = async (req, res) => {
+  req.session.couponOffer = false;
     let orders = await orderHelper.getUserOrders(req.session.user._id)
     res.render("users/orders", {
       adminAccount: false,
@@ -82,7 +94,6 @@ exports.getViewOrderProducts = async (req, res) => {
 };
 
 exports.postVerifyPayment = (req, res) => {
-    console.log(req.body);
     orderHelper.verifyPayment(req.body).then(() => {
       orderHelper
         .changePaymentStatus(req.body["order[receipt]"])
@@ -143,7 +154,7 @@ exports.getCancelPaypal = (req, res) => {
 exports.postUpdateProductOrderStatus = (req, res) => {
   orderHelper.updateProductOrderStatus(req.body).then((response) => {
     res.json(response);
-  })
+  });
 };
 
 

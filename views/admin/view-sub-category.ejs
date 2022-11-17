@@ -22,7 +22,7 @@
                         Category has been added
                     </div>
                     <% } %> 
-                      <form action="/admin/add-sub-category" method="POST" role="form" enctype="multipart/form-data">
+                      <form action="/admin/add-sub-category" method="POST" role="form" >
                         <div class="mb-3">
                           <label class="form-label" for="basic-default-fullname">Category Name</label>
                           <select class="form-select" name="CategoryName" aria-label="Default select example" id="category-value">
@@ -48,15 +48,10 @@
                         <div class="mb-3">
                           <label class="form-label" for="basic-default-message">Sub Category Description</label>
                           <input
-                            id="basic-default-message"  name="CategoryDescription"
+                            id="basic-default-message"  name="subCategoryDescription"
                             class="form-control"
                             placeholder="" required
                           ></input>
-                        </div>
-
-                        <div class="mb-3">
-                          <label for="formFileMultiple" class="form-label">Upload image</label>
-                          <input class="form-control" name="CategoryImage" type="file" id="formFileMultiple" multiple />
                         </div>
 
                         <button type="submit" class="btn btn-primary ">Add Category</button>
@@ -78,7 +73,6 @@
                         <th>Name</th>
                         <th>SubCategory</th>
                         <th>Description</th>
-                        <th>Image</th>
                         <th>Options</th>
                       </tr>
                     </thead>
@@ -88,7 +82,7 @@
                           
                           <tr>
                             <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong><%= index %></strong></td>
-                            <td><%=  categories[i].CategoryName%></td>
+                            <td ><%=  categories[i].CategoryName%></td>
                             <td>
                               <table class="innerTable">                                 
                               <% if (categories[i].subCategory) { %>
@@ -105,34 +99,21 @@
                               <% if (categories[i].subCategory) { %>
                                 <% for( let j = 0; j < (categories[i].subCategory).length; j++ ) { %>
                                     <tbody >
-                                      <td><%= categories[i].subCategory[j].CategoryDescription %></td>
+                                      <td><%= categories[i].subCategory[j].subCategoryDescription %></td>
                                     </tbody>
                                 <% } %>
                               <% } %>
                               </table>
                             </td>
-                            <td>
-                              <table class="innerTable">                                 
-                              <% if (categories[i].subCategory) { %>
-                                <% for( let j = 0; j < (categories[i].subCategory).length; j++ ) { %>
-                                  <% console.log("--------------", categories[i].subCategory[j].CategoryImage) %> 
-                                  <% if ((categories[i].subCategory[j].CategoryImage).length != 0) { %>
-                                   <tbody >
-                                      <td><img style="width: 2.5em; height: 2.5em" src="/uploads/category/<%= categories[i].subCategory[j].CategoryImage%>  " alt="<%= categories[i].subCategory[j].CategoryImage %>"></td>
-                                    </tbody>
-                                  <% } %>
-                                <% } %>
-                              <% } %>
-                              </table>
-                            </td>
+                            
                             <td>
                               <table class="innerTable">                                 
                               <% if (categories[i].subCategory) { %>
                                 <% for( let j = 0; j < (categories[i].subCategory).length; j++ ) { %>
                                     <tbody >
                                       <td>
-                                        <!-- <a href="/admin/edit-sub-category/<%=  categories[i].subCategory[j]._id%>" class="btn btn-outline-primary">Edit</a>
-                                        <a href="/admin/delete-sub-category/<%=  categories[i].subCategory[j]._id%>" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to delete <%=  categories[i].subCategory[j].CategoryName%> ?')">Delete</a></td> -->
+                                        <a href="/admin/edit-sub-category/<%=  categories[i].subCategory[j]._id%>" class="text-primary">Edit</a>
+                                        <a href="/admin/delete-sub-category/<%=  categories[i].subCategory[j]._id%>" class=" text-danger"  onclick="return confirm('Are you sure you want to delete <%=  categories[i].subCategory[j].CategoryName%> ?')">Delete</a></td>
                                     </tbody>
                                 <% } %>
                               <% } %>

@@ -1,3 +1,4 @@
+const { ObjectID } = require("bson");
 const fs = require("fs");
 
 const categoryHelper = require("../../helpers/category-helpers");
@@ -45,26 +46,11 @@ exports.getSubCategory = (req, res) => {
 };
 
 exports.postAddSubCategory = (req, res) => {
-  const files = req.files;
-  const file = files.map((file) => {
-    return file;
-  });
-  const fileName = file.map((file) => {
-    return file.filename;
-  });
-  const category = req.body;
-  category.CategoryImage = fileName;
-
-  if (!req.files) {
-    const error = new Error("Please choose files");
-    error.httpStatusCode = 400;
-    return next(error);
-  }
-
   categoryHelper.addSubCategory(req.body);
   req.session.subCategoryAdded = true;
   res.redirect("/admin/admin-sub-categories");
 };
+
 
 exports.postAddCategory = (req, res) => {
   const files = req.files;
@@ -97,6 +83,7 @@ exports.getEditSubCategoryID = (req, res) => {
 
 exports.getEditSubCategory = async (req, res) => {
   let subcategory = await categoryHelper.getSubCategoryDetails(id);
+  console.log(".....................", subcategory);
   res.render("admin/edit-sub-category", {
     adminAccount: true,
     scrollbar: true,
@@ -151,6 +138,18 @@ exports.getDeleteCategory = (req, res) => {
     //   }
     // });
     res.redirect("/admin/admin-categories");
+  });
+};
+
+exports.getDeleteSubCategory = (req, res) => {
+  categoryHelper.deleteSubCategory(req.params.id).then(() => {
+    res.redirect("/admin/admin-sub-categories");
+  })
+};
+
+exports.postEditSubCategory = (req, res) => {
+  categoryHelper.updateSubCategoryreq(req.params.id, req.body).then(() => {
+    res.redirect("/admin/admin-sub-categories");
   });
 };
 

@@ -103,10 +103,7 @@ module.exports = {
           {
             $addFields: {
               totalQuantityPrice: {
-                $multiply: [
-                  "$quantity",
-                  { $toInt: "$productDetails.Price" },
-                ],
+                $multiply: ["$quantity", { $toInt: "$productDetails.Price" }],
               },
             },
           },
@@ -126,7 +123,7 @@ module.exports = {
               item: 1,
               quantity: 1,
               productDetails: 1,
-              totalQuantityPrice:1,
+              totalQuantityPrice: 1,
               category: 1,
               discountOffer: {
                 $cond: {
@@ -263,7 +260,202 @@ module.exports = {
         });
     });
   },
-  getTotalAmount: (userId) => {
+  // getTotalAmount: (userId, couponDiscount) => {
+  //   return new Promise(async (resolve, reject) => {
+  //     let total = await db
+  //       .get()
+  //       .collection(collection.CART_COLLECTION)
+  //       .aggregate([
+  //         {
+  //           $match: { user: ObjectId(userId) },
+  //         },
+  //         {
+  //           $unwind: "$products",
+  //         },
+  //         {
+  //           $project: {
+  //             item: "$products.item",
+  //             quantity: "$products.quantity",
+  //             couponDetails: 1,
+  //           },
+  //         },
+  //         {
+  //           $lookup: {
+  //             from: collection.PRODUCT_COLLECTION,
+  //             localField: "item",
+  //             foreignField: "_id",
+  //             as: "productDetails",
+  //           },
+  //         },
+  //         {
+  //           $project: {
+  //             item: 1,
+  //             quantity: 1,
+  //             productDetails: { $arrayElemAt: ["$productDetails", 0] },
+  //             couponDetails: 1,
+  //           },
+  //         },
+  //         {
+  //           $addFields: {
+  //             totalQuantityPrice: {
+  //               $multiply: ["$quantity", { $toInt: "$productDetails.Price" }],
+  //             },
+  //           },
+  //         },
+  //         {
+  //           $lookup: {
+  //             from: collection.CATEGORY_COLLECTION,
+  //             localField: "productDetails.Category",
+  //             foreignField: "CategoryName",
+  //             as: "category",
+  //           },
+  //         },
+  //         {
+  //           $unwind: "$category",
+  //         },
+  //         {
+  //           $project: {
+  //             item: 1,
+  //             quantity: 1,
+  //             productDetails: 1,
+  //             totalQuantityPrice: 1,
+  //             category: 1,
+  //             couponDetails: 1,
+  //             discountOffer: {
+  //               $cond: {
+  //                 if: {
+  //                   $gt: [
+  //                     { $toInt: "$productDetails.productOffer" },
+  //                     { $toInt: "$category.categoryOffer" },
+  //                   ],
+  //                 },
+  //                 then: "$product.productOffer",
+  //                 else: "$category.CategoryOffer",
+  //               },
+  //             },
+  //             // productOffer:"$product.productOffer",
+  //             // productOffer:'$category.categoryOffer',
+  //           },
+  //         },
+  //         {
+  //           $addFields: {
+  //             discountedAmount: {
+  //               $round: {
+  //                 $divide: [
+  //                   {
+  //                     $multiply: [
+  //                       { $toInt: "$productDetails.Price" },
+  //                       { $toInt: "$discountOffer" },
+  //                     ],
+  //                   },
+  //                   100,
+  //                 ],
+  //               },
+  //             },
+  //           },
+  //         },
+  //         {
+  //           $addFields: {
+  //             priceAfterDiscount: {
+  //               $round: {
+  //                 $subtract: [
+  //                   { $toInt: "$productDetails.Price" },
+  //                   { $toInt: "$discountedAmount" },
+  //                 ],
+  //               },
+  //             },
+  //           },
+  //         },
+  //         {
+  //           $addFields: {
+  //             totalAfterDiscount: {
+  //               $multiply: ["$quantity", { $toInt: "$priceAfterDiscount" }],
+  //             },
+  //           },
+  //         },
+  //         {
+  //           $addFields: {
+  //             totalAmount: {
+  //               $cond: {
+  //                 if: "$totalAfterDiscount",
+  //                 then: "$totalAfterDiscount",
+  //                 else: "$totalQuantityPrice",
+  //               },
+  //             },
+  //           },
+  //         },
+  //         {
+  //           $group: {
+  //             _id: null,
+  //             couponOffer: "$couponDetails.CouponOffer",
+  //             total: {
+  //               $sum: "$totalAmount",
+  //             },
+  //           },
+  //         },
+  //         // {
+  //         //   $addFields: {
+  //         //     totalAfterCoupon: {
+  //         //       $cond: {
+  //         //         if: "$couponDetails.CouponOffer",
+  //         //         then: "$couponDetails.CouponOffer",
+  //         //         else: "$totalAmount",
+  //         //       },
+  //         //     },
+  //         //   },
+  //         // },
+  //         // {
+  //         //   $addFields: {
+  //         //     totalAfterCoupon: {
+  //         //       $cond: {
+  //         //         if: "$couponDetails.CouponOffer",
+  //         //         then: {
+  //         //           $group: {
+  //         //             _id: null,
+  //         //             total: {
+  //         //               $sum: "$totalAmount",
+  //         //             },
+  //         //           },
+  //         //           $round: {
+  //         //             $subtract: [
+  //         //               { $toInt: "$total" },
+  //         //               {
+  //         //                 $multiply: [
+  //         //                   { $toInt: "$total" },
+  //         //                   {
+  //         //                     $divide: [
+  //         //                       { $toInt: "$couponDetails.CouponOffer" },100
+  //         //                     ],
+  //         //                   },
+  //         //                 ],
+  //         //               },
+  //         //             ],
+  //         //           },
+  //         //         },
+  //         //         else: {
+  //         //           $group: {
+  //         //             _id: null,
+  //         //             total: {
+  //         //               $sum: "$totalAmount",
+  //         //             },
+  //         //           }
+  //         //         }
+  //         //       },
+  //         //     },
+  //         //   },
+  //         // },
+  //       ])
+  //       .toArray();
+  //     console.log("-------------------tota;", total);
+  //     // if (couponDiscount) {
+  //     //   total = total[0].total - total[0].total * (couponDiscount / 100);
+  //     //   resolve(total);
+  //     // } else {
+  //       resolve(total[0].total);
+  //     // }
+  //   });
+  // },
+  getTotalAmount: (userId, couponDiscount) => {
     return new Promise(async (resolve, reject) => {
       let total = await db
         .get()
@@ -333,8 +525,6 @@ module.exports = {
                   else: "$category.CategoryOffer",
                 },
               },
-              // productOffer:"$product.productOffer",
-              // productOffer:'$category.categoryOffer',
             },
           },
           {
@@ -388,13 +578,18 @@ module.exports = {
             $group: {
               _id: null,
               total: {
-                $sum: "$totalAmount"
+                $sum: "$totalAmount",
               },
             },
           },
         ])
         .toArray();
-      resolve(total[0].total);
+      if (couponDiscount) {
+        total = total[0].total - total[0].total * (couponDiscount / 100);
+        resolve(total);
+      } else {
+        resolve(total[0].total);
+      }
     });
   },
   getTotalAmountProduct: (userId) => {
@@ -441,7 +636,7 @@ module.exports = {
           },
         ])
         .toArray();
-      console.log("===============",totalAmountProduct);
+      console.log("===============", totalAmountProduct);
       resolve(totalAmountProduct);
     });
   },
@@ -561,7 +756,22 @@ module.exports = {
           console.log("--------------------", discount);
           resolve(discount);
         });
-    })
+    });
+  },
+  addCouponDetails: (couponDetails, userId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collection.CART_COLLECTION)
+        .updateOne(
+          { user: ObjectId(userId) },
+          {
+            $set: { couponDetails: couponDetails },
+          }
+        )
+        .then((response) => {
+          resolve(response);
+        });
+    });
   },
 };
 

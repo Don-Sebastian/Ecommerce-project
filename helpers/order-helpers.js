@@ -27,8 +27,8 @@ paypal.configure({
 module.exports = {
   placeOrder: (order, products, total) => {
     return new Promise(async (resolve, reject) => {
-      let status = order.paymentMethod === "COD" ? "placed" : "pending";
-      let Orderstatus = order.paymentMethod === "COD" ? "success" : "failed";
+      let status = ((order.paymentMethod === "COD"))? "placed" : "pending";
+      let Orderstatus = ((order.paymentMethod === "COD")) ? "success" : "failed";
       let address = await db
         .get()
         .collection(collection.USER_COLLECTION)
@@ -81,8 +81,88 @@ module.exports = {
           {
             $addFields: {
               productStatus: "ordered",
-              totalOfProduct: {
+              totalQuantityPrice: {
                 $multiply: ["$quantity", { $toInt: "$productDetails.Price" }],
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: collection.CATEGORY_COLLECTION,
+              localField: "productDetails.Category",
+              foreignField: "CategoryName",
+              as: "category",
+            },
+          },
+          {
+            $unwind: "$category",
+          },
+          {
+            $project: {
+              item: 1,
+              quantity: 1,
+              productDetails: 1,
+              productStatus:1,
+              totalQuantityPrice: 1,
+              category: 1,
+              discountOffer: {
+                $cond: {
+                  if: {
+                    $gt: [
+                      { $toInt: "$productDetails.productOffer" },
+                      { $toInt: "$category.categoryOffer" },
+                    ],
+                  },
+                  then: "$product.productOffer",
+                  else: "$category.CategoryOffer",
+                },
+              },
+            },
+          },
+          {
+            $addFields: {
+              discountedAmount: {
+                $round: {
+                  $divide: [
+                    {
+                      $multiply: [
+                        { $toInt: "$productDetails.Price" },
+                        { $toInt: "$discountOffer" },
+                      ],
+                    },
+                    100,
+                  ],
+                },
+              },
+            },
+          },
+          {
+            $addFields: {
+              priceAfterDiscount: {
+                $round: {
+                  $subtract: [
+                    { $toInt: "$productDetails.Price" },
+                    { $toInt: "$discountedAmount" },
+                  ],
+                },
+              },
+            },
+          },
+          {
+            $addFields: {
+              totalAfterDiscount: {
+                $multiply: ["$quantity", { $toInt: "$priceAfterDiscount" }],
+              },
+            },
+          },
+          {
+            $addFields: {
+              totalAmount: {
+                $cond: {
+                  if: "$totalAfterDiscount",
+                  then: "$totalAfterDiscount",
+                  else: "$totalQuantityPrice",
+                },
               },
             },
           },
@@ -105,7 +185,7 @@ module.exports = {
         .insertOne(orderObj)
         .then((response) => {
           let orderId = response.insertedId;
-          if (order.paymentMethod === "COD") {
+          if (((order.paymentMethod === "COD"))) {
             db.get()
               .collection(collection.CART_COLLECTION)
               .deleteOne({ user: ObjectId(order.user) });
@@ -139,6 +219,7 @@ module.exports = {
           },
         ])
         .toArray();
+      
       resolve(orderItems);
     });
   },
@@ -150,6 +231,7 @@ module.exports = {
         .find()
         .sort({ _id: -1 })
         .toArray();
+      
       resolve(orders);
     });
   },
@@ -254,8 +336,8 @@ module.exports = {
     });
   },
   changePaymentStatus: (orderId) => {
-    return new Promise((resolve, reject) => {
-      db.get()
+    return new Promise(async(resolve, reject) => {
+      await db.get()
         .collection(collection.ORDER_COLLECTION)
         .updateOne(
           { _id: ObjectId(orderId) },
@@ -281,25 +363,63 @@ module.exports = {
     });
   },
   updateProductOrderStatus: (details) => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collection.ORDER_COLLECTION)
-        .updateOne(
-          {
-            _id: ObjectId(details.orderId),
-            "products.item": ObjectId(details.productId),
-          },
-          {
-            $set: {
-              "products.$.productStatus": details.value,
+    return new Promise(async(resolve, reject) => {
+      if (details.value == "refunded") {
+        let amount = await db
+          .get()
+          .collection(collection.ORDER_COLLECTION)
+          .aggregate([
+            {
+              $match: {
+                _id: ObjectId(details.orderId),
+                "products.item": ObjectId(details.productId),
+              },
             },
-          }
-        )
-        .then((response) => {
-          response.productStatus = details.value;
-          response.status = true;
-          resolve(response);
-        });
+            {
+              $unwind: "$products",
+            },
+            {
+              $project: {
+                userId: 1,
+                products: 1,
+              },
+            },
+            {
+              $match: {
+                "products.item": ObjectId(details.productId),
+              },
+            },
+          ])
+          .toArray();
+        let refund = amount[0].products.totalAmount;
+        let userId = amount[0].userId;
+        await db.get()
+          .collection(collection.USER_COLLECTION)
+          .updateOne(
+            { _id: ObjectId(userId) },
+            {
+              $inc: { "Wallet": refund },
+            }
+          );
+      }
+        db.get()
+          .collection(collection.ORDER_COLLECTION)
+          .updateOne(
+            {
+              _id: ObjectId(details.orderId),
+              "products.item": ObjectId(details.productId),
+            },
+            {
+              $set: {
+                "products.$.productStatus": details.value,
+              },
+            }
+          )
+          .then((response) => {
+            response.productStatus = details.value;
+            response.status = true;
+            resolve(response);
+          });
     });
   },
   totalSales: () => {

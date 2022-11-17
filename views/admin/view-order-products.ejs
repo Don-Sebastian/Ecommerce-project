@@ -33,7 +33,13 @@
                         <td><%= products[i].products.productDetails.Name %></td>
                         <td><%= products[i].products.productDetails.Name %></td>
                         <td><%= products[i].products.quantity%></td>
-                        <td> Rs.<%= products[i].products.quantity * products[i].products.productDetails.Price%></td>
+                        <td>
+                          <% if (products[i].products.totalAfterDiscount === null) { %>
+                            Rs.<%= products[i].products.totalQuantityPrice%>
+                          <% } else { %>
+                            Rs.<%= products[i].products.totalAfterDiscount%>
+                          <% } %>
+                        </td>
                         <td >
                             <% if (products[i].products.productStatus == "ordered") { %>
                             <span class="text-warning" id="<%= products[i].products.productDetails._id%>-orderProductStatus">Ordered</span>
@@ -45,9 +51,9 @@
                             <span class="text-danger " id="<%= products[i].products.productDetails._id%>-orderProductStatus">Canceled</span>
                             <% } else if(products[i].products.productStatus == "completed") { %>
                             <span class="text-success " id="<%= products[i].products.productDetails._id%>-orderProductStatus">Completed</span>
-                            <% } else if(products[i].products.productStatus == "returned") { %>
+                            <% } else if(products[i].products.productStatus == 'returned') { %>
                             <span class="text-info " id="<%= products[i].products.productDetails._id%>-orderProductStatus">Returned</span>
-                            <% } else if(products[i].products.productStatus == "refunded") { %>
+                            <% } else if(products[i].products.productStatus == 'refunded') { %>
                             <span class="text-info " id="<%= products[i].products.productDetails._id%>-orderProductStatus">Refunded</span>
                             <% } %> 
                             </td>
@@ -65,7 +71,7 @@
                                 <option value="delivered">Delivered</option>
                             <% } else if (products[i].products.productStatus == "delivered"){%>
                                 <option value="refunded">Refunded</option>
-                                <option value="returned">Returned</option>
+                                <option value='returned'>Returned</option>
                             <% }  %>
                             
                             

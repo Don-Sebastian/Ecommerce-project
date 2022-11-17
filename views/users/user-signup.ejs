@@ -19,6 +19,11 @@
                 User already exists!
             </div>
              <% } %>
+            <% if (invalidReferalCode) { %>
+                <div class="alert alert-danger mt-3" role="alert">
+                Please use a valid referal code!
+            </div>
+             <% } %>
 
           <div class="divider d-flex align-items-center my-2">
             <!-- {{!-- <p class="text-center fw-bold mx-3 mb-0">Or</p> --}} -->
@@ -29,7 +34,6 @@
             <label class="form-label" for="form3Example2">Username</label>
             <input type="text" id="form3Example2" class="form-control form-control-lg" name="Name"
               placeholder="Enter username" required />
-            
           </div>
             
 
@@ -53,13 +57,21 @@
           <!-- Phone Number input -->
           <div class="form-outline mb-4">
             <label class="form-label" for="form3Example3">Phone Number</label>
-            <input type="text" id="form3Example3" class="form-control form-control-lg" name="phonenumber"
+            <input type="number" id="form3Example3" class="form-control form-control-lg" name="phonenumber"
               placeholder="" required/>
+          </div>
+
+          <div class="form-outline mb-4">
+            <label class="form-label" for="form3Example2">Referal Code</label>
+            <% if (referalCode) { %>
+             <input type="text" id="form3Example2" class="form-control form-control-lg" value="<%= referalCode %>" name="ReferalCode" />
+            <% } else { %>
+             <input type="text" id="form3Example2" class="form-control form-control-lg" name="ReferalCode"/>
+            <% } %>
             
           </div>
 
           <div class="d-flex justify-content-between align-items-center">
-            
           </div>
 
           <div class="text-center text-lg-start mt-1 pt-2">

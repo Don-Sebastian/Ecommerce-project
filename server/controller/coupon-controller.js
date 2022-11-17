@@ -1,3 +1,4 @@
+const cartHelpers = require("../../helpers/cart-helpers");
 var couponHelper = require("../../helpers/coupon-helpers");
 
 var id;
@@ -51,29 +52,64 @@ exports.getDeleteCoupon = (req, res) => {
 
 // USER APPLY COUPON
 exports.postApplyCoupon = (req, res) => {
-    console.log("--------------", req.body);
-    couponHelper.findCoupon(req.body, req.session.user.id).then((couponDetails) => {
+  let response = {}
+  if (req.body.Coupon == '') {
+    response.couponStatus = false;
+    response.couponResponse  = "Coupon field empty"
+    res.json(response)
+  } else {
+    couponHelper
+      .findCoupon(req.body)
+      .then((couponDetails) => {
         const [currentDate, currentMonth, currentYear] = new Date()
           .toLocaleDateString()
           .split("/");
         const dateNow = currentYear + "-" + currentMonth + "-" + currentDate;
         if (dateNow > couponDetails.CouponExpiryDate) {
           if (couponDetails.CouponExpiryStatus == "expired") {
-            req.session.couponResponse = "Coupon has expiried"
-            let response = {};
-            response.couponResponse = req.session.couponResponse;
-            res.json(response)
+            response.couponResponse = "Coupon has expiried";
+            response.couponStatus = false;
+            res.json(response);
           } else {
             couponHelper
               .changeExpiryStatus(couponDetails._id)
               .then((response) => {
-                console.log(("response", response));
+                res.json(response)
               });
           }
         } else {
-          if ((couponDetails.CouponUsers).length == 0) {
-            
+          if (!couponDetails.CouponUsers) {
+            couponHelper.applyCoupon(couponDetails._id, req.session.user._id).then(() => {
+              cartHelpers.addCouponDetails(couponDetails, req.session.user._id).then(async(response) => {
+                req.session.couponOffer = couponDetails.CouponOffer;
+                let grandTotal =await cartHelpers.getTotalAmount(req.session.user._id, req.session.couponOffer);
+                response.grandTotal = grandTotal
+                response.couponStatus = true;
+                res.json(response);
+              });
+            });
+          } else {
+            couponHelper.checkCouponUser(couponDetails._id, req.session.user._id).then((response) => {
+              if (response.status) {
+                response.couponResponse = "Coupon already used by user";
+                response.couponStatus = false;
+                res.json(response);
+              } else {
+                couponHelper
+                  .applyCoupon(couponDetails._id, req.session.user._id)
+                  .then(() => {
+                    cartHelpers.addCouponDetails(couponDetails, req.session.user._id).then(async(response) => {
+                      req.session.couponOffer = couponDetails.CouponOffer;
+                      let grandTotal =await cartHelpers.getTotalAmount(req.session.user._id, req.session.couponOffer);
+                      response.grandTotal = grandTotal
+                      response.couponStatus = true;
+                      res.json(response);
+                    })
+                  });
+              }
+            })
           }
         }
-    })
+      });
+  }
 };

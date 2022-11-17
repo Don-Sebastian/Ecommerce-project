@@ -40,7 +40,7 @@ module.exports = {
         .collection(collection.CATEGORY_COLLECTION)
         .aggregate([
           {
-            $match: { "subCategory._id": ObjectId(categoryId) },
+            $match: { "subCategory._id": ObjectId(subCategoryId) },
           },
           {
             $unwind: "$subCategory",
@@ -49,11 +49,10 @@ module.exports = {
             $project: { _id: 0, subCategory: 1 },
           },
           {
-            $match: { "subCategory._id": ObjectId(categoryId) },
+            $match: { "subCategory._id": ObjectId(subCategoryId) },
           },
         ])
         .toArray();
-      console.log(subCategoryDetails);
       resolve(subCategoryDetails);
     });
   },
@@ -94,6 +93,44 @@ module.exports = {
       // }
     });
   },
+  updateSubCategoryreq: (subCategoryId, subcategoryDetails) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collection.CATEGORY_COLLECTION)
+        .updateOne(
+          {
+            CategoryName: subcategoryDetails.CategoryName,
+            "subCategory._id": ObjectId(subCategoryId),
+          },
+          {
+            $set: {
+              "subCategory.$.CategoryName": subcategoryDetails.CategoryName,
+              "subCategory.$.subCategoryName": subcategoryDetails.subCategoryName,
+              "subCategory.$.subCategoryDescription": subcategoryDetails.subCategoryDescription,
+            },
+          }
+        )
+        // .aggregate([
+        //   {
+        //     $match: { "subCategory._id": ObjectId(subCategoryId) },
+        //   },
+        //   {
+        //     $unwind: "$subCategory",
+        //   },
+        //   {
+        //     $match: { "subCategory._id": ObjectId(subCategoryId) },
+        //   },
+        //   {
+        //     $set: { 'subCategory': subcategoryDetails },
+        //   },
+        // ])
+        // .toArray()
+        .then((response) => {
+          resolve(response);
+        });
+      
+    })
+  },
   updateCategoryreq: (categoryId, categoryDetails) => {
     return new Promise((resolve, reject) => {
       db.get()
@@ -124,6 +161,24 @@ module.exports = {
 
       resolve(delCategory);
     });
+  },
+  deleteSubCategory: (subCategoryId) => {
+    return new Promise((resolve, reject) => {
+      let delSubCategory = db
+        .get()
+        .collection(collection.CATEGORY_COLLECTION)
+        .updateOne(
+          { "subCategory._id": ObjectId(subCategoryId) },
+          {
+            $pull: {
+              'subCategory': {
+                '_id': ObjectId(subCategoryId),
+              },
+            },
+          }
+      );
+      resolve(delSubCategory)
+    })
   },
   getCategoryProducts: (categoryID) => {
     let result = {};
@@ -163,7 +218,7 @@ module.exports = {
   },
   categorySubcategory: (details) => {
     let response = {};
-    return new Promise(async(resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       let subCategoryDetails = await db
         .get()
         .collection(collection.CATEGORY_COLLECTION)
@@ -188,7 +243,7 @@ module.exports = {
         .toArray();
       response.subCategoryDetails = subCategoryDetails;
       response.status = true;
-      resolve(response)
-    })
+      resolve(response);
+    });
   },
 };

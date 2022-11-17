@@ -3,7 +3,7 @@ var collection = require("../config/collections");
 const bcrypt = require("bcrypt");
 const { ObjectId } = require("mongodb");
 const { ObjectID } = require("bson");
-const { response } = require("express");
+const { v4: uuidv4 } = require("uuid");
 
 
 module.exports = {
@@ -15,11 +15,34 @@ module.exports = {
         .collection(collection.USER_COLLECTION)
         .findOne({ Email: userData.Email });
       if (userDetailID) {
-        console.log("User exist");
         resolve({ userExist: true });
       } else {
+        if (userData.ReferalCode) {
+          let referedUser = await db
+            .get()
+            .collection(collection.USER_COLLECTION)
+            .findOne({ ReferalCode: userData.ReferalCode });
+          let referalAmount = parseInt(200);
+          if (referedUser) {
+            db.get()
+              .collection(collection.USER_COLLECTION)
+              .updateOne(
+                { ReferalCode: userData.ReferalCode },
+                {
+                  $inc: { Wallet: referalAmount },
+                }
+              );
+            userData.Wallet = parseInt(150);
+          } else {
+            resolve({ invalidReferalCode: true });
+          }
+        } else {
+          userData.Wallet = parseInt(100);
+        }
         userData.Blocked = false;
         userData.Password = await bcrypt.hash(userData.Password, 10);
+        userData.ReferalCode = uuidv4();
+
         db.get()
           .collection(collection.USER_COLLECTION)
           .insertOne(userData)
@@ -278,11 +301,44 @@ module.exports = {
   },
   deleteAddress: (addressId, userId) => {
     return new Promise((resolve, reject) => {
-      db.get().collection(collection.USER_COLLECTION).updateOne({ _id: ObjectId(userId) }, {
-        $pull: { Address: { _id: ObjectId(addressId)}}
-      }).then((response) => {
-        resolve(response);
-      })
+      db.get()
+        .collection(collection.USER_COLLECTION)
+        .updateOne(
+          { _id: ObjectId(userId) },
+          {
+            $pull: { Address: { _id: ObjectId(addressId) } },
+          }
+        )
+        .then((response) => {
+          resolve(response);
+        });
+    });
+  },
+  walletAmount: (userId) => {
+    return new Promise(async(resolve, reject) => {
+      let user =await db
+        .get()
+        .collection(collection.USER_COLLECTION)
+        .findOne({ _id: ObjectId(userId) });
+      let amount = parseInt(user.Wallet)
+      if (user.Wallet) {
+        resolve(amount);
+      } 
+    });
+  },
+  payUsingWallet: (userId, totalAmount) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collection.USER_COLLECTION)
+        .updateOne(
+          { _id: ObjectId(userId) },
+          {
+            $inc: { "Wallet": -totalAmount },
+          }
+      ).then(() => {
+        resolve();
+      });
+      
     })
   },
 };

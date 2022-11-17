@@ -162,13 +162,12 @@ router.get(
 router.post(
   "/add-sub-category",
   verifyAdminLogin,
-  upload2.array("CategoryImage"),
   categoryController.postAddSubCategory
 );
 
 // EDIT SUBCATEGORY
 router.get(
-  "/admin/edit-sub-category/:id",
+  "/edit-sub-category/:id",
   verifyAdminLogin,
   categoryController.getEditSubCategoryID
 );
@@ -177,6 +176,19 @@ router.get(
   "/edit_sub_category",
   verifyAdminLogin,
   categoryController.getEditSubCategory
+);
+
+router.post(
+  "/edit-sub-category/:id",
+  verifyAdminLogin,
+  categoryController.postEditSubCategory
+); 
+
+// DELETE SUBCATEGORY
+router.get(
+  "/delete-sub-category/:id",
+  verifyAdminLogin,
+  categoryController.getDeleteSubCategory
 );
 
 

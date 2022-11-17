@@ -32,10 +32,25 @@
                   </div>
                 </td>
                 <td class="column-2"><%= products[i].products.productDetails.Name %></td>
-                <td class="column-3"><%= products[i].products.productDetails.Price%></td>
+                <td class="column-3">
+                    <% if (products[i].products.totalAfterDiscount === null) { %>
+                   <span id="<%= products[i].products.productDetails._id %>-Price"><%= products[i].products.productDetails.Price%></span>
+                  <% } else { %>
+                    Rs.<sapn id="<%= products[i].products.productDetails._id %>-Price" style="font-weight: bold;">
+										<%= products[i].products.priceAfterDiscount%>
+									</sapn>
+									<sapn class=" m-l-10" style="opacity: 0.6; font-size: small;"><del>
+										Rs.<%= products[i].products.productDetails.Price%></del>
+									</sapn>
+                  <% } %>
+                </td>
                 <td class="column-4"><%= products[i].products.quantity%> item</td>
                 <td class="column-5">
-                  Rs.<%= products[i].products.quantity * products[i].products.productDetails.Price%>
+                  <% if (products[i].products.totalAfterDiscount === null) { %>
+                   Rs.<span id="<%= products[i].products.productDetails._id%>-productAmount"><%= products[i].products.totalQuantityPrice%> </span>
+                  <% } else { %>
+                   Rs.<span id="<%= products[i].products.productDetails._id%>-productAmount"><%= products[i].products.totalAfterDiscount%> </span> 
+                  <% } %>
                 </td>
                 
                 <td class="column-6">

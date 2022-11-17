@@ -3,6 +3,7 @@ var collection = require("../config/collections");
 const { response } = require("express");
 const { ObjectId } = require("mongodb");
 const { ObjectID } = require("bson");
+const { use } = require("../routes/user");
 
 
 module.exports = {
@@ -68,13 +69,12 @@ module.exports = {
         });
     });
   },
-  findCoupon: (couponName, userId) => {
+  findCoupon: (couponName) => {
     return new Promise((resolve, reject) => {
       db.get()
         .collection(collection.COUPON_COLLECTION)
         .findOne({ CouponName: couponName.Coupon })
         .then((response) => {
-          console.log("===================", response);
           resolve(response);
         });
       //   .aggregate([
@@ -109,9 +109,37 @@ module.exports = {
           { $set: { CouponExpiryStatus: "expired" } }
         )
         .then((response) => {
-          response.CouponStatus = "Coupon has Expired";
-          response.status = true;
+          response.couponResponse = "Coupon has Expired";
+          response.couponStatus = false;
           resolve(response);
+        });
+    });
+  },
+  applyCoupon: (CouponId, userId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collection.COUPON_COLLECTION)
+        .updateOne(
+          { _id: ObjectId(CouponId) },
+          {
+            $push: { CouponUsers: userId },
+          }
+        )
+        .then(() => {
+          resolve();
+        });
+    });
+  },
+  checkCouponUser: (CouponId, userId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collection.COUPON_COLLECTION)
+        .findOne(
+          { _id: ObjectId(CouponId) },
+          { CouponUsers: { $in: { userId } } }
+        )
+        .then((response) => {
+          resolve({ status: true });
         });
     });
   },

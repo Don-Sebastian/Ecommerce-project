@@ -172,6 +172,11 @@ function proceedToCheckout(userId) {
         razorpayPayment(response);
       } else if (response.paypalStatus) {
         location.href = response.response
+      } else if (response.WalletStatus) {
+        location.href = "/order-success";
+      } else if (!(response.WalletStatus)) {
+        $("#noBalanceWallet").removeAttr("hidden");
+        document.getElementById("noBalanceWallet").innerHTML = "Insufficent balance in Wallet"
       }
     },
   });
@@ -334,14 +339,7 @@ function deleteAddressSWT(addressId, e) {
 }
 
 function changeProductOrder(productId, orderId, value) {
-  swal({
-    title: "Are you sure?",
-    text: "Once "+ value+ ", you will not be able to change the desicion!",
-    icon: "warning",
-    buttons: true,
-    dangerMode: true,
-  }).then((willDelete) => {
-    if (willDelete) {
+ 
       $.ajax({
         url: "/update-OrderStatus",
         data: {
@@ -353,22 +351,14 @@ function changeProductOrder(productId, orderId, value) {
         success: (response) => {
           if (response.status) {
             location.reload();
-            swal("Poof! Your has been " + response.productStatus + "!", {
-              icon: "success",
-            });
             
-          } else {
-            swal("Poof! Your has not been " + response.productStatus + "!");
-          }
+            
+          } 
         },
-      });
-      
-    } else {
-      swal("Your product will not be "+value+"!");
-    }
-  });
+      })
+  }
   
-}
+
 
 $("#submitCoupon").click(function (event) {
   event.preventDefault()
@@ -380,8 +370,15 @@ $("#submitCoupon").click(function (event) {
     method: "post",
     data: form.serialize(),
     success: (response) => {
-      if (response.couponResponse) {
-        
+      if (response.couponStatus == false) {
+        $("#successMessageCoupon").attr("hidden", true);
+        $("#errorMessageCoupon").removeAttr("hidden");
+        document.getElementById('errorMessageCoupon').innerHTML =
+          response.couponResponse;
+      } else {
+        $("#successMessageCoupon").removeAttr("hidden");
+        document.getElementById("finalGrandTotal").innerHTML =
+          response.grandTotal;
       }
     }
   })

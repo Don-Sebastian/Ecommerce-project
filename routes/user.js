@@ -8,6 +8,7 @@ const cartController = require("../server/controller/cart-controller");
 const orderController = require("../server/controller/order-controller");
 const profileController = require("../server/controller/profile-controller");
 const couponController = require("../server/controller/coupon-controller");
+const wishlistController = require("../server/controller/wishlist-controller");
 
 var cartHelper = require("../helpers/cart-helpers");
 
@@ -103,6 +104,15 @@ router.post(
 );
 
 router.post("/delete-from-cart", cartController.postRemoveProductFromCart);
+
+
+//=======================================================================================
+//                             ------Wishlist------
+//=======================================================================================
+
+// ADD TO WISHLIST
+router.get("/add-to-wishlist/:id", wishlistController.getAddToWishlistID);
+
 
 // ----------------------------------Checkout Details--------------------------------------------
 

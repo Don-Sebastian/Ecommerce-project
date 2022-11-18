@@ -2,6 +2,8 @@ const { ObjectID } = require("bson");
 const fs = require("fs");
 
 const categoryHelper = require("../../helpers/category-helpers");
+const cartHelper = require("../../helpers/cart-helpers");
+const productHelpers = require("../../helpers/product-helpers");
 
 var id;
 
@@ -173,19 +175,29 @@ exports.getUserCategoryDetailID = async(req, res) => {
 
 exports.getUserCategoryDetail = async(req, res) => {
   let user = req.session.user;
+  let products = null;
   cartCount = null;
   if (req.session.user) {
-    cartCount =await cartHelper.getCartCount(req.session.user._id);
+    cartCount = await cartHelper.getCartCount(req.session.user._id);
   }
-  categoryHelper.getCategoryProducts(id).then((products) => {
-    res.render("users/view-categoryProducts", {
-      adminAccount: false,
-      navbar: true,
-      products,
-      user,
-      cartCount,
-    });
-  });
+    let categoryDetails = await categoryHelper.getCategoryDetails(id);
+  console.log("..........", categoryDetails);
+  if (categoryDetails === null) {
+    let subcategoryDetails = await categoryHelper.getSubCategoryDetails(id)
+    subcategoryDetails = subcategoryDetails[0].subCategory;
+    categoryDetails = await categoryHelper.getCategoryDetailsbyName(subcategoryDetails.CategoryName);
+    products = await productHelpers.getSubCategoryProducts(subcategoryDetails)
+  } else {
+    products = await categoryHelper.getCategoryProducts(id);
+  }
+      res.render("users/view-categoryProducts", {
+        adminAccount: false,
+        navbar: true,
+        categoryDetails,
+        products,
+        user,
+        cartCount,
+      });
 };
 
 

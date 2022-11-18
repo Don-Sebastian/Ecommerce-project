@@ -383,3 +383,40 @@ $("#submitCoupon").click(function (event) {
     }
   })
 });
+
+$(document).ready(function () {
+  $("#orderListUser").DataTable({});
+});
+
+// WISHLIST
+function addToWishlist(productId) {
+  $.ajax({
+    url: "/add-to-wishlist/" + productId,
+    method: "get",
+    success: (response) => {
+      if (response.status) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener("mouseenter", Swal.stopTimer);
+            toast.addEventListener("mouseleave", Swal.resumeTimer);
+          },
+        });
+
+        Toast.fire({
+          icon: "success",
+          title: "Item added to wishlist successfully",
+        });
+        // let count = $("#cart-count").html();
+        // count = parseInt(count) + 1;
+        // $("#cart-count").html(count);
+      } else {
+        location.href = "/login";
+      }
+    },
+  });
+}

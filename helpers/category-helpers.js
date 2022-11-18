@@ -56,6 +56,16 @@ module.exports = {
       resolve(subCategoryDetails);
     });
   },
+  getCategoryDetailsbyName: (categoryName) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collection.CATEGORY_COLLECTION)
+        .findOne({ CategoryName: categoryName })
+        .then((category) => {
+          resolve(category);
+        });
+    });
+  },
   getCategoryDetails: (categoryId) => {
     return new Promise(async (resolve, reject) => {
       // let subCategory = await db.get().collection(collection.CATEGORY_COLLECTION).find({ "subCategory._id": ObjectId(categoryId) }).toArray()
@@ -105,8 +115,10 @@ module.exports = {
           {
             $set: {
               "subCategory.$.CategoryName": subcategoryDetails.CategoryName,
-              "subCategory.$.subCategoryName": subcategoryDetails.subCategoryName,
-              "subCategory.$.subCategoryDescription": subcategoryDetails.subCategoryDescription,
+              "subCategory.$.subCategoryName":
+                subcategoryDetails.subCategoryName,
+              "subCategory.$.subCategoryDescription":
+                subcategoryDetails.subCategoryDescription,
             },
           }
         )
@@ -128,8 +140,7 @@ module.exports = {
         .then((response) => {
           resolve(response);
         });
-      
-    })
+    });
   },
   updateCategoryreq: (categoryId, categoryDetails) => {
     return new Promise((resolve, reject) => {
@@ -171,14 +182,14 @@ module.exports = {
           { "subCategory._id": ObjectId(subCategoryId) },
           {
             $pull: {
-              'subCategory': {
-                '_id': ObjectId(subCategoryId),
+              subCategory: {
+                _id: ObjectId(subCategoryId),
               },
             },
           }
-      );
-      resolve(delSubCategory)
-    })
+        );
+      resolve(delSubCategory);
+    });
   },
   getCategoryProducts: (categoryID) => {
     let result = {};

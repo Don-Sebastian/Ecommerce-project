@@ -131,10 +131,26 @@ $("#category-selection").on("change", function () {
         subCategory = response.subCategoryDetails;
         for (let i = 0; i < subCategory.length; i++) {
           $("#subcategory-selection").append(
-            '<option value="' + subCategory[i].subCategory.SubCategoryName + '">' + subCategory[i].subCategory.SubCategoryName + "</option>"  
+            '<option value="' + subCategory[i].subCategory.subCategoryName + '">' + subCategory[i].subCategory.subCategoryName + "</option>"  
           );
         }
       }
     },
+  });
+});
+
+$(document).ready(function () {
+  $("#orderListAdmin").DataTable({
+    
+  });
+}); 
+
+$(document).ready(function () {
+  $("#allProductsAdmin").DataTable({
+  });
+}); 
+
+$(document).ready(function () {
+  $("#viewUsersAdmin").DataTable({
   });
 });

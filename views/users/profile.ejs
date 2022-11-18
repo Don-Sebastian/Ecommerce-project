@@ -59,10 +59,10 @@
                                             </div>
                                             <div class="card-body">
                                                 <div class="table-responsive">
-                                                    <table class="table">
+                                                    <table id="orderListUser" class="table">
                                                         <thead>
                                                             <tr>
-                                                                <th>Zip Code</th>
+                                                                <th>Date</th>
                                                                 <th>Status</th>
                                                                 <th>Payment</th>
                                                                 <th>Total Amount</th>
@@ -71,9 +71,13 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
+                                                          <%console.log(allUserOrders);%> 
                                                           <% allUserOrders.forEach(element => { %>
                                                            <tr>
-                                                                <td><%= element.deliveryDetails.zip%></td>
+                                                            <% let orderDate = element.Date%> 
+                                                            <% const [Date, Month, Year] = orderDate.toLocaleDateString().split('/') %> 
+                                                            <% const dateNow =  Date + '-' + Month + '-'+ Year %>
+                                                                <td><%= dateNow%></td>
                                                                 <td><%= element.orderStatus %> </td>
                                                                 <td><%= element.paymentMethod %></td>
                                                                 <td>Rs.<%= element.totalAmount %></td>

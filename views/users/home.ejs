@@ -98,6 +98,12 @@
 								<span class="block1-info stext-102 trans-04">
 									<%=  element.CategoryDescription%>
 								</span>
+								<% if (element.CategoryOffer) { %>
+									<pre class="block1-info stext-102 trans-04 m-t-5">You have <%=  element.CategoryOffer%>% offer
+in this category!
+									</pre>
+								<% } %>
+								
 							</div>
 
 							<div class="block1-txt-child2 p-b-4 trans-05">
@@ -448,8 +454,8 @@
 									<button onclick="addToCart('<%= element._id %>')"><span class="lnr lnr-cart m-r-20 m-b-5" style="font-size: 20px; opacity: 50%;"></span></button>
 								
 								<button onclick="addToWishlist('<%= element._id %>')">
-									<img class="" src="images/icons/icon-heart-01.png" alt="ICON">
-									<!-- <img class="" src="images/icons/icon-heart-02.png" alt="ICON"> -->
+									<img id="removedWishlist<%= element._id%>" src="images/icons/icon-heart-01.png" alt="ICON">
+									<img id="addedWishlist<%= element._id%>" hidden src="images/icons/icon-heart-02.png" alt="ICON">
 								</button>
 							</div>
 						</div>

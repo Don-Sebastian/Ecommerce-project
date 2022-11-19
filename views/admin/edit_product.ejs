@@ -14,24 +14,25 @@
                       <small class="text-muted float-end"></small>
                     </div>
                     <div class="card-body">
-                      <form action="/admin/edit-product/<%= product._id %>" method="POST" role="form" enctype="multipart/form-data">
+                      <form action="/admin/edit-product/<%= product[0]._id %>" method="POST" role="form" enctype="multipart/form-data">
                         <div class="mb-3">
                           <label class="form-label" for="basic-default-fullname">Name</label>
-                          <input type="text" name="Name" class="form-control" id="basic-default-fullname" value="<%= product.Name %>" required />
+                          <input type="text" name="Name" class="form-control" id="basic-default-fullname" value="<%= product[0].Name %>" required />
                         </div>
                         <div class="mb-3">
                           <label class="form-label" for="basic-default-company">Price</label>
-                          <input type="number" name="Price" class="form-control" id="basic-default-company" value="<%= product.Price %>" required />
+                          <input type="number" name="Price" class="form-control" id="basic-default-company" value="<%= product[0].Price %>" required />
                         </div>
                         <div class="mb-3">
                           <label class="form-label" for="basic-default-fullname">Category</label>
                           <select class="form-select" name="Category" aria-label="Default select example" id="category-selection">
-                              <option value="<%= product.Category %>" selected><%= product.Category %></option>
+                              <option value="<%= product[0].Category %>" selected><%= product[0].Category %></option>
                               <% categories.forEach(element => { %>
                                <option value="<%= element.CategoryName %>"><%= element.CategoryName %></option>
                               <% }) %>
                           </select>
                         </div>
+                        
 
                           <div class="mb-3">
                           <label class="form-label" for="basic-default-fullname">Sub Category</label>
@@ -45,7 +46,7 @@
                           <input
                             id="basic-default-message"  name="Description"
                             class="form-control"
-                            value="<%= product.Description %>" required
+                            value="<%= product[0].Description %>" required
                           ></input>
                         </div>
 
@@ -54,14 +55,14 @@
                             <label class="form-label" for="basic-default-message">Offer</label>
                           <input type="number"
                             id="basic-default-message"  name="productOffer"
-                            class="form-control" value="<%=  product.productOffer%>"
+                            class="form-control" value="<%=  product[0].productOffer%>"
                             placeholder="Enter offer in %" 
                           ></input>
                           </div>
                           <div class="col">
                             <label class="form-label" for="basic-default-message">Stock</label>
                           <input type="number"
-                            id="basic-default-message"  name="Stock" value="<%=  product.Stock%>"
+                            id="basic-default-message"  name="Stock" value="<%=  product[0].Stock%>"
                             class="form-control"
                           ></input>
                           </div>
@@ -70,8 +71,8 @@
 
                         <div class="mb-3">
                           <label for="formFileMultiple" class="form-label">Upload image</label>
-                          <% for( let index = 0; index < product.Image.length; index++ ) { %>
-                            <img style="width: 5em; height: 6em" src="/uploads/<%= product.Image[index] %> " alt="<%= product.Image %>" id="imgView">
+                          <% for( let index = 0; index < (product[0].Image).length; index++ ) { %>
+                            <img style="width: 5em; height: 6em" src="/uploads/<%= product[0].Image[index] %> " alt="<%= product[0].Image %>" id="imgView">
                           <% } %>
                           
                           <input class="form-control mt-3" name="Image" type="file" id="formFileMultiple" onchange="viewImage(event)" multiple />

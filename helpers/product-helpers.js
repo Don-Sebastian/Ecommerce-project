@@ -72,6 +72,7 @@ module.exports = {
               _id: 1,
               Name: 1,
               Price: 1,
+              Description: 1,
               Stock: 1,
               productOffer: 1,
               salePrice: 1,
@@ -131,7 +132,8 @@ module.exports = {
   },
   updateProductreq: (productId, productDetails) => {
     return new Promise((resolve, reject) => {
-      if (productDetails.Offer) {
+      if ((productDetails.Image).length == 0) {
+        console.log(productDetails);
         db.get()
           .collection(collection.PRODUCT_COLLECTION)
           .updateOne(
@@ -141,10 +143,10 @@ module.exports = {
                 Name: productDetails.Name,
                 Price: productDetails.Price,
                 Category: productDetails.Category,
+                subCategory: productDetails.subCategory,
                 Description: productDetails.Description,
-                Offer: productDetails.Offer,
-                ExpiryDate: productDetails.ExpiryDate,
-                Image: productDetails.Image,
+                productOffer: productDetails.productOffer,
+                Stock: productDetails.Stock,
               },
             }
           )
@@ -161,7 +163,10 @@ module.exports = {
                 Name: productDetails.Name,
                 Price: productDetails.Price,
                 Category: productDetails.Category,
+                subCategory: productDetails.subCategory,
                 Description: productDetails.Description,
+                productOffer: productDetails.productOffer,
+                Stock: productDetails.Stock,
                 Image: productDetails.Image,
               },
             }
@@ -325,15 +330,15 @@ module.exports = {
                   if: {
                     $gt: [
                       { $toInt: "$product.productOffer" },
-                      { $toInt: "$category.categoryOffer" },
+                      { $toInt: "$category.CategoryOffer" },
                     ],
                   },
                   then: "$product.productOffer",
-                  else: "$category.categoryOffer",
+                  else: "$category.CategoryOffer",
                 },
               },
               // productOffer:"$product.productOffer",
-              // productOffer:'$category.categoryOffer',
+              // productOffer:'$category.CategoryOffer',
             },
           },
           {

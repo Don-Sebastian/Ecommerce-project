@@ -6,6 +6,7 @@ const { response } = require("express");
 const { ObjectId } = require("mongodb");
 const { ObjectID } = require("bson");
 const categoryHelpers = require("../../helpers/category-helpers");
+const wishlistHelpers = require("../../helpers/wishlist-helpers");
 
 var id;
 var cartCount
@@ -83,6 +84,7 @@ exports.getEditProductID = (req, res) => {
 exports.getEditProduct = async(req, res) => {
   let product = await productHelper.getProductDetails(id);
   let categories = await categoryHelpers.getAllCategories();
+  console.log("-----------", product);
   res.render("admin/edit_product", {
     adminAccount: true,
     scrollbar: true,
@@ -107,9 +109,11 @@ exports.postEditProduct = (req, res) => {
       const error = new Error("Please choose files");
       error.httpStatusCode = 400;
       return next(error);
-    }
+  }
+  
+  console.log(req.body.Image,"..........................");
 
-    productHelper.updateProductreq(id, productedit).then(() => {
+    productHelper.updateProductreq(id, req.body).then(() => {
       res.redirect("/admin/view-products");
     });
   
@@ -147,8 +151,10 @@ exports.getDeleteProduct = (req, res) => {
 exports.getAllProductsAndCategory =async function (req, res, next) {
   let user = req.session.user;
   cartCount = null;
+  wishlistCount = null;
   if (req.session.user) {
-    cartCount =await cartHelper.getCartCount(req.session.user._id);
+    cartCount = await cartHelper.getCartCount(req.session.user._id);
+    wishlistCount = await wishlistHelpers.getWishlistCount(req.session.user._id)
   }
   productHelper.getAllProductsAndCategory().then((response) => {
     products = response.products;
@@ -161,6 +167,7 @@ exports.getAllProductsAndCategory =async function (req, res, next) {
       products,
       category,
       cartCount,
+      wishlistCount,
     });
   });
 };

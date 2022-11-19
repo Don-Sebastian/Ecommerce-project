@@ -110,7 +110,7 @@ module.exports = {
                   if: {
                     $gt: [
                       { $toInt: "$productDetails.productOffer" },
-                      { $toInt: "$category.categoryOffer" },
+                      { $toInt: "$category.CategoryOffer" },
                     ],
                   },
                   then: "$product.productOffer",

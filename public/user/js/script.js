@@ -5,25 +5,40 @@ function addToCart(productId) {
     method: "get",
     success: (response) => {
       if (response.status) {
-        const Toast = Swal.mixin({
-          toast: true,
-          position: "top-end",
-          showConfirmButton: false,
-          timer: 3000,
-          timerProgressBar: true,
-          didOpen: (toast) => {
-            toast.addEventListener("mouseenter", Swal.stopTimer);
-            toast.addEventListener("mouseleave", Swal.resumeTimer);
-          },
-        });
+        if (!response.statusInCart) {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener("mouseenter", Swal.stopTimer);
+              toast.addEventListener("mouseleave", Swal.resumeTimer);
+            },
+          });
 
-        Toast.fire({
-          icon: "success",
-          title: "Item added to cart successfully",
-        });
-        let count = $("#cart-count").html();
-        count = parseInt(count) + 1;
-        $("#cart-count").html(count);
+          Toast.fire({
+            icon: "success",
+            title: "Item added to cart successfully",
+          });
+          let count = $("#cart-count").html();
+          count = parseInt(count) + 1;
+          $("#cart-count").html(count);
+          if (response.wishlistProductDeleted) {
+            $("#addedWishlist" + productId).attr("hidden", true);
+            $("#removedWishlist" + productId).removeAttr("hidden");
+            let count = $("#wishlist-count").html();
+            count = parseInt(count) - 1;
+            $("#wishlist-count").html(count);
+            $("#wishlistPage" + productId).remove();
+            if (count == 0) {
+              setTimeout(function () {
+                location.reload();
+              }, 1000);
+            }
+          }
+        }
       } else {
         location.href = "/login";
       }
@@ -406,14 +421,33 @@ function addToWishlist(productId) {
             toast.addEventListener("mouseleave", Swal.resumeTimer);
           },
         });
-
-        Toast.fire({
-          icon: "success",
-          title: "Item added to wishlist successfully",
-        });
-        // let count = $("#cart-count").html();
-        // count = parseInt(count) + 1;
-        // $("#cart-count").html(count);
+        if (response.added) {
+          Toast.fire({
+            icon: "success",
+            title: "Item added to your wishlist successfully",
+          });
+          $("#removedWishlist" + productId).attr("hidden", true);
+          $("#addedWishlist" + productId).removeAttr("hidden");
+          let count = $("#wishlist-count").html();
+          count = parseInt(count) + 1;
+          $("#wishlist-count").html(count);
+        } else {
+          Toast.fire({
+            icon: "success",
+            title: "Item deleted from your wishlist successfully",
+          });
+          $("#addedWishlist" + productId).attr("hidden", true);
+          $("#removedWishlist" + productId).removeAttr("hidden");
+          let count = $("#wishlist-count").html();
+          count = parseInt(count) - 1;
+          $("#wishlist-count").html(count);
+          $("#wishlistPage" + productId).remove();
+          if (response.count == 0) {
+            // setTimeout(function () {
+            //   location.reload();
+            // }, 1000);
+          }
+        }
       } else {
         location.href = "/login";
       }

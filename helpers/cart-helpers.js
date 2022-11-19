@@ -65,6 +65,24 @@ module.exports = {
       }
     });
   },
+  checkProductInCart: (productId, userId) => {
+    return new Promise(async(resolve, reject) => {
+      let product = await db
+        .get()
+        .collection(collection.CART_COLLECTION)
+        .aggregate([
+          {
+            $match: { user: ObjectId(userId) },
+          },
+          {
+            $match: { "products.item": ObjectId(productId) },
+          },
+        ])
+        .toArray();
+      console.log((product));
+      resolve(product)
+    })
+  },
   getCartProducts: (userId) => {
     return new Promise(async (resolve, reject) => {
       let cartItems = await db
@@ -128,7 +146,7 @@ module.exports = {
                   if: {
                     $gt: [
                       { $toInt: "$productDetails.productOffer" },
-                      { $toInt: "$category.categoryOffer" },
+                      { $toInt: "$category.CategoryOffer" },
                     ],
                   },
                   then: "$product.productOffer",
@@ -136,7 +154,7 @@ module.exports = {
                 },
               },
               // productOffer:"$product.productOffer",
-              // productOffer:'$category.categoryOffer',
+              // productOffer:'$category.CategoryOffer',
             },
           },
           {
@@ -194,6 +212,7 @@ module.exports = {
           // },
         ])
         .toArray();
+      console.log(cartItems);
       resolve(cartItems);
     });
   },
@@ -324,7 +343,7 @@ module.exports = {
   //                 if: {
   //                   $gt: [
   //                     { $toInt: "$productDetails.productOffer" },
-  //                     { $toInt: "$category.categoryOffer" },
+  //                     { $toInt: "$category.CategoryOffer" },
   //                   ],
   //                 },
   //                 then: "$product.productOffer",
@@ -332,7 +351,7 @@ module.exports = {
   //               },
   //             },
   //             // productOffer:"$product.productOffer",
-  //             // productOffer:'$category.categoryOffer',
+  //             // productOffer:'$category.CategoryOffer',
   //           },
   //         },
   //         {
@@ -516,7 +535,7 @@ module.exports = {
                   if: {
                     $gt: [
                       { $toInt: "$productDetails.productOffer" },
-                      { $toInt: "$category.categoryOffer" },
+                      { $toInt: "$category.CategoryOffer" },
                     ],
                   },
                   then: "$product.productOffer",
@@ -701,7 +720,7 @@ module.exports = {
                   if: {
                     $gt: [
                       { $toInt: "$productDetails.productOffer" },
-                      { $toInt: "$category.categoryOffer" },
+                      { $toInt: "$category.CategoryOffer" },
                     ],
                   },
                   then: "$product.productOffer",
@@ -709,7 +728,7 @@ module.exports = {
                 },
               },
               // productOffer:"$product.productOffer",
-              // productOffer:'$category.categoryOffer',
+              // productOffer:'$category.CategoryOffer',
             },
           },
           {

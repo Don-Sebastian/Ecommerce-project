@@ -11,12 +11,15 @@ const couponController = require("../server/controller/coupon-controller");
 const wishlistController = require("../server/controller/wishlist-controller");
 
 var cartHelper = require("../helpers/cart-helpers");
+var wishlistHelper = require("../helpers/wishlist-helpers");
 
 const verifyLogin = async (req, res, next) => {
   
   if (req.session.userLoggedIn) {
     req.session.cartCount = await cartHelper.getCartCount(req.session.user._id);
+    req.session.wishlistCount = await wishlistHelper.getWishlistCount(req.session.user._id)
     cartCount = req.session.cartCount;
+    wishlistCount = req.session.wishlistCount;
     req.session.historyUrl = req.originalUrl;
     next();
   } else {
@@ -110,8 +113,11 @@ router.post("/delete-from-cart", cartController.postRemoveProductFromCart);
 //                             ------Wishlist------
 //=======================================================================================
 
-// ADD TO WISHLIST
+// ADD REMOVE TO WISHLIST
 router.get("/add-to-wishlist/:id", wishlistController.getAddToWishlistID);
+
+// VIEW WISHLIST
+router.get("/wishlist", verifyLogin, wishlistController.getWishlist)
 
 
 // ----------------------------------Checkout Details--------------------------------------------

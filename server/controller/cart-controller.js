@@ -1,5 +1,7 @@
 var userHelper = require("../../helpers/user-helpers");
 var cartHelper = require("../../helpers/cart-helpers");
+const wishlistHelpers = require("../../helpers/wishlist-helpers");
+const { response } = require("express");
 
 var id, userID;
 
@@ -10,9 +12,27 @@ exports.getAddToCartID = async(req, res) => {
     cartCount = await cartHelper.getCartCount(req.session.user._id);
     id = req.params.id;
     userID = req.session.user._id;
-    cartHelper.addToCart(id, userID).then(() => {
-      res.json({ status: true });
-    });
+    let productInCart = await cartHelper.checkProductInCart(id, userID)
+    if (productInCart.length != 0) {
+      response.status = true
+      response.statusInCart = true
+      console.log(response);
+      res.json(response)
+    } else {
+      cartHelper.addToCart(id, userID).then(async () => {
+        let wishlistProduct = await wishlistHelpers.checkProductWishlist(id, userID);
+        if (wishlistProduct) {
+          await wishlistHelpers
+            .deleteProductWishlist(id, userID)
+            .then((response) => {
+              response.status = true;
+              res.json(response);
+            });
+        } else {
+          res.json({ status: true });
+        }
+      });
+    }
   } else {
     res.json({status:false})
   }
@@ -20,6 +40,7 @@ exports.getAddToCartID = async(req, res) => {
 
 exports.getCartItems =async (req, res) => { 
   let products = await cartHelper.getCartProducts(req.session.user._id)
+  console.log("==========", products);
   if (products.length == 0) {
     totalValue = false;
   } else {

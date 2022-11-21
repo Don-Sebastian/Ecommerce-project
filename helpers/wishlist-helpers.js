@@ -1,20 +1,21 @@
-var db = require("../config/connection");
-var collection = require("../config/collections");
-const { ObjectId } = require("mongodb");
-const { ObjectID } = require("bson");
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-async-promise-executor */
+/* eslint-disable arrow-body-style */
+const { ObjectId } = require('mongodb');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const { ObjectID } = require('bson');
+const db = require('../config/connection');
+const collection = require('../config/collections');
 
 module.exports = {
   addAndRemoveFromWishlist: (productId, userId) => {
-    let productObj = {
-      items: ObjectId(productId),
-    };
     return new Promise(async (resolve, reject) => {
-      let userWishlist = await db
+      const userWishlist = await db
         .get()
         .collection(collection.WISHLIST_COLLECTION)
         .findOne({ userId: ObjectId(userId) });
       if (userWishlist) {
-        let wishlistProduct = await db
+        const wishlistProduct = await db
           .get()
           .collection(collection.WISHLIST_COLLECTION)
           .aggregate([
@@ -26,7 +27,7 @@ module.exports = {
             },
           ])
           .toArray();
-        if (wishlistProduct.length != 0) {
+        if (wishlistProduct.length !== 0) {
           await db
             .get()
             .collection(collection.WISHLIST_COLLECTION)
@@ -34,7 +35,7 @@ module.exports = {
               { userId: ObjectId(userId) },
               {
                 $pull: { products: ObjectId(productId) },
-              }
+              },
             )
             .then((response) => {
               response.added = false;
@@ -48,7 +49,7 @@ module.exports = {
               { userId: ObjectId(userId) },
               {
                 $push: { products: ObjectId(productId) },
-              }
+              },
             )
             .then((response) => {
               response.added = true;
@@ -56,7 +57,7 @@ module.exports = {
             });
         }
       } else {
-        let wishlistObj = {
+        const wishlistObj = {
           userId: ObjectID(userId),
           products: [ObjectId(productId)],
         };
@@ -71,143 +72,132 @@ module.exports = {
       }
     });
   },
-  getWishlistCount: (userId) => {
-    return new Promise(async (resolve, reject) => {
-      let count = 0;
-      let wishlistUser = await db
-        .get()
-        .collection(collection.WISHLIST_COLLECTION)
-        .findOne({ userId: ObjectId(userId) });
-      if (wishlistUser) {
-        count = wishlistUser.products.length;
-      }
-      resolve(count);
-    });
-  },
-  wishlistProducts: (userId) => {
-    return new Promise(async (resolve, reject) => {
-      let products = await db
-        .get()
-        .collection(collection.WISHLIST_COLLECTION)
-        .aggregate([
-          {
-            $match: { userId: ObjectId(userId) },
+  getWishlistCount: (userId) => new Promise(async (resolve, reject) => {
+    let count = 0;
+    const wishlistUser = await db
+      .get()
+      .collection(collection.WISHLIST_COLLECTION)
+      .findOne({ userId: ObjectId(userId) });
+    if (wishlistUser) {
+      count = wishlistUser.products.length;
+    }
+    resolve(count);
+  }),
+  wishlistProducts: (userId) => new Promise(async (resolve, reject) => {
+    const products = await db
+      .get()
+      .collection(collection.WISHLIST_COLLECTION)
+      .aggregate([
+        {
+          $match: { userId: ObjectId(userId) },
+        },
+        {
+          $unwind: '$products',
+        },
+        {
+          $lookup: {
+            from: collection.PRODUCT_COLLECTION,
+            localField: 'products',
+            foreignField: '_id',
+            as: 'productDetails',
           },
-          {
-            $unwind: "$products",
+        },
+        {
+          $project: {
+            _id: 0,
+            productDetails: { $arrayElemAt: ['$productDetails', 0] },
           },
-          {
-            $lookup: {
-              from: collection.PRODUCT_COLLECTION,
-              localField: "products",
-              foreignField: "_id",
-              as: "productDetails",
+        },
+        {
+          $lookup: {
+            from: collection.CATEGORY_COLLECTION,
+            localField: 'productDetails.Category',
+            foreignField: 'CategoryName',
+            as: 'category',
+          },
+        },
+        {
+          $unwind: '$category',
+        },
+        {
+          $project: {
+            productDetails: 1,
+            totalQuantityPrice: 1,
+            discountOffer: {
+              $cond: {
+                if: {
+                  $gt: [
+                    { $toInt: '$productDetails.productOffer' },
+                    { $toInt: '$category.CategoryOffer' },
+                  ],
+                },
+                then: '$product.productOffer',
+                else: '$category.CategoryOffer',
+              },
             },
           },
-          {
-            $project: {
-              _id: 0,
-              productDetails: { $arrayElemAt: ["$productDetails", 0] },
-            },
-          },
-          {
-            $lookup: {
-              from: collection.CATEGORY_COLLECTION,
-              localField: "productDetails.Category",
-              foreignField: "CategoryName",
-              as: "category",
-            },
-          },
-          {
-            $unwind: "$category",
-          },
-          {
-            $project: {
-              productDetails: 1,
-              totalQuantityPrice: 1,
-              discountOffer: {
-                $cond: {
-                  if: {
-                    $gt: [
-                      { $toInt: "$productDetails.productOffer" },
-                      { $toInt: "$category.CategoryOffer" },
+        },
+        {
+          $addFields: {
+            discountedAmount: {
+              $round: {
+                $divide: [
+                  {
+                    $multiply: [
+                      { $toInt: '$productDetails.Price' },
+                      { $toInt: '$discountOffer' },
                     ],
                   },
-                  then: "$product.productOffer",
-                  else: "$category.CategoryOffer",
-                },
-              },
-              // productOffer:"$product.productOffer",
-              // productOffer:'$category.CategoryOffer',
-            },
-          },
-          {
-            $addFields: {
-              discountedAmount: {
-                $round: {
-                  $divide: [
-                    {
-                      $multiply: [
-                        { $toInt: "$productDetails.Price" },
-                        { $toInt: "$discountOffer" },
-                      ],
-                    },
-                    100,
-                  ],
-                },
+                  100,
+                ],
               },
             },
           },
-          {
-            $addFields: {
-              finalPrice: {
-                $round: {
-                  $subtract: [
-                    { $toInt: "$productDetails.Price" },
-                    { $toInt: "$discountedAmount" },
-                  ],
-                },
+        },
+        {
+          $addFields: {
+            finalPrice: {
+              $round: {
+                $subtract: [
+                  { $toInt: '$productDetails.Price' },
+                  { $toInt: '$discountedAmount' },
+                ],
               },
             },
           },
-        ])
-        .toArray();
-      console.log("============", products);
-      resolve(products);
-    });
-  },
-  checkProductWishlist: (productId, userId) => {
-    return new Promise(async (resolve, reject) => {
-      let product = await db
-        .get()
-        .collection(collection.WISHLIST_COLLECTION)
-        .aggregate([
-          {
-            $match: { userId: ObjectId(userId) },
-          },
-          {
-            $match: { products: ObjectId(productId) },
-          },
-        ])
-        .toArray();
-      resolve(product);
-    });
-  },
-    deleteProductWishlist: (productId, userId) => {
-        return new Promise(async(resolve, reject) => {
-          await db
-            .get()
-            .collection(collection.WISHLIST_COLLECTION)
-            .updateOne(
-              { userId: ObjectId(userId) },
-              {
-                $pull: { products: ObjectId(productId) },
-              }
-            )
-            .then((response) => {
-              response.wishlistProductDeleted = true;
-              resolve(response);
-            });
-      })
-  },
+        },
+      ])
+      .toArray();
+    resolve(products);
+  }),
+  checkProductWishlist: (productId, userId) => new Promise(async (resolve, reject) => {
+    const product = await db
+      .get()
+      .collection(collection.WISHLIST_COLLECTION)
+      .aggregate([
+        {
+          $match: { userId: ObjectId(userId) },
+        },
+        {
+          $match: { products: ObjectId(productId) },
+        },
+      ])
+      .toArray();
+    resolve(product);
+  }),
+  deleteProductWishlist: (productId, userId) => new Promise(async (resolve, reject) => {
+    await db
+      .get()
+      .collection(collection.WISHLIST_COLLECTION)
+      .updateOne(
+        { userId: ObjectId(userId) },
+        {
+          $pull: { products: ObjectId(productId) },
+        },
+      )
+      .then((response) => {
+        response.wishlistProductDeleted = true;
+        resolve(response);
+      });
+  }),
 };

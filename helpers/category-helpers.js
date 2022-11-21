@@ -1,13 +1,20 @@
-var db = require("../config/connection");
-var collection = require("../config/collections");
-const { response } = require("express");
-const { ObjectId } = require("mongodb");
-const { ObjectID } = require("bson");
+/* eslint-disable no-shadow */
+/* eslint-disable max-len */
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-async-promise-executor */
+/* eslint-disable arrow-body-style */
+const { ObjectId } = require('mongodb');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const { ObjectID } = require('bson');
+const collection = require('../config/collections');
+const db = require('../config/connection');
 
 module.exports = {
   getAllCategories: () => {
     return new Promise(async (resolve, reject) => {
-      let categories = await db
+      const categories = await db
         .get()
         .collection(collection.CATEGORY_COLLECTION)
         .find()
@@ -28,28 +35,28 @@ module.exports = {
       .updateOne(
         { CategoryName: subCategory.CategoryName },
         {
-          $push: { subCategory: subCategory },
-        }
+          $push: { subCategory },
+        },
       )
       .then(() => {});
   },
   getSubCategoryDetails: (subCategoryId) => {
     return new Promise(async (resolve, reject) => {
-      let subCategoryDetails = await db
+      const subCategoryDetails = await db
         .get()
         .collection(collection.CATEGORY_COLLECTION)
         .aggregate([
           {
-            $match: { "subCategory._id": ObjectId(subCategoryId) },
+            $match: { 'subCategory._id': ObjectId(subCategoryId) },
           },
           {
-            $unwind: "$subCategory",
+            $unwind: '$subCategory',
           },
           {
             $project: { _id: 0, subCategory: 1 },
           },
           {
-            $match: { "subCategory._id": ObjectId(subCategoryId) },
+            $match: { 'subCategory._id': ObjectId(subCategoryId) },
           },
         ])
         .toArray();
@@ -68,39 +75,12 @@ module.exports = {
   },
   getCategoryDetails: (categoryId) => {
     return new Promise(async (resolve, reject) => {
-      // let subCategory = await db.get().collection(collection.CATEGORY_COLLECTION).find({ "subCategory._id": ObjectId(categoryId) }).toArray()
-      // console.log("+++++++++++++++++++++");
-      // console.log(subCategory);
-      // if (subCategory == null) {
       db.get()
         .collection(collection.CATEGORY_COLLECTION)
         .findOne({ _id: ObjectID(categoryId) })
         .then((category) => {
           resolve(category);
         });
-      // }
-      // else {
-
-      //   let subCategoryDetails = await db
-      //     .get()
-      //     .collection(collection.CATEGORY_COLLECTION)
-      //     .aggregate([
-      //       {
-      //         $match: { "subCategory._id": ObjectId(categoryId) },
-      //       },
-      //       {
-      //         $unwind: "$subCategory",
-      //       },
-      //       {
-      //         $project: { _id: 0, subCategory: 1 },
-      //       },
-      //       {
-      //         $match: { "subCategory._id": ObjectId(categoryId) },
-      //       },
-      //     ])
-      //     .toArray();
-      //   resolve(subCategoryDetails);
-      // }
     });
   },
   updateSubCategoryreq: (subCategoryId, subcategoryDetails) => {
@@ -110,33 +90,18 @@ module.exports = {
         .updateOne(
           {
             CategoryName: subcategoryDetails.CategoryName,
-            "subCategory._id": ObjectId(subCategoryId),
+            'subCategory._id': ObjectId(subCategoryId),
           },
           {
             $set: {
-              "subCategory.$.CategoryName": subcategoryDetails.CategoryName,
-              "subCategory.$.subCategoryName":
+              'subCategory.$.CategoryName': subcategoryDetails.CategoryName,
+              'subCategory.$.subCategoryName':
                 subcategoryDetails.subCategoryName,
-              "subCategory.$.subCategoryDescription":
+              'subCategory.$.subCategoryDescription':
                 subcategoryDetails.subCategoryDescription,
             },
-          }
+          },
         )
-        // .aggregate([
-        //   {
-        //     $match: { "subCategory._id": ObjectId(subCategoryId) },
-        //   },
-        //   {
-        //     $unwind: "$subCategory",
-        //   },
-        //   {
-        //     $match: { "subCategory._id": ObjectId(subCategoryId) },
-        //   },
-        //   {
-        //     $set: { 'subCategory': subcategoryDetails },
-        //   },
-        // ])
-        // .toArray()
         .then((response) => {
           resolve(response);
         });
@@ -156,7 +121,7 @@ module.exports = {
               CategoryaExpiryDate: categoryDetails.CategoryaExpiryDate,
               CategoryImage: categoryDetails.CategoryImage,
             },
-          }
+          },
         )
         .then((response) => {
           resolve();
@@ -165,7 +130,7 @@ module.exports = {
   },
   deleteCategory: (categoryId) => {
     return new Promise(async (resolve, reject) => {
-      let delCategory = await db
+      const delCategory = await db
         .get()
         .collection(collection.CATEGORY_COLLECTION)
         .deleteOne({ _id: ObjectId(categoryId) });
@@ -175,26 +140,26 @@ module.exports = {
   },
   deleteSubCategory: (subCategoryId) => {
     return new Promise((resolve, reject) => {
-      let delSubCategory = db
+      const delSubCategory = db
         .get()
         .collection(collection.CATEGORY_COLLECTION)
         .updateOne(
-          { "subCategory._id": ObjectId(subCategoryId) },
+          { 'subCategory._id': ObjectId(subCategoryId) },
           {
             $pull: {
               subCategory: {
                 _id: ObjectId(subCategoryId),
               },
             },
-          }
+          },
         );
       resolve(delSubCategory);
     });
   },
   getCategoryProducts: (categoryID) => {
-    let result = {};
+    const result = {};
     return new Promise(async (resolve, reject) => {
-      let category = await db
+      const category = await db
         .get()
         .collection(collection.CATEGORY_COLLECTION)
         .findOne({ _id: ObjectId(categoryID) });
@@ -203,7 +168,7 @@ module.exports = {
       resolve(result);
     }).then((result) => {
       return new Promise(async (resolve, reject) => {
-        let products = await db
+        const products = await db
           .get()
           .collection(collection.PRODUCT_COLLECTION)
           .find({ Category: result.CategoryName })
@@ -215,7 +180,7 @@ module.exports = {
   },
   getCategoryNames: () => {
     return new Promise(async (resolve, reject) => {
-      let categoryNames = await db
+      const categoryNames = await db
         .get()
         .collection(collection.CATEGORY_COLLECTION)
         .aggregate([
@@ -228,26 +193,26 @@ module.exports = {
     });
   },
   categorySubcategory: (details) => {
-    let response = {};
+    const response = {};
     return new Promise(async (resolve, reject) => {
-      let subCategoryDetails = await db
+      const subCategoryDetails = await db
         .get()
         .collection(collection.CATEGORY_COLLECTION)
         .aggregate([
           {
             $match: {
-              "subCategory.CategoryName": details.categoryName,
+              'subCategory.CategoryName': details.categoryName,
             },
           },
           {
-            $unwind: "$subCategory",
+            $unwind: '$subCategory',
           },
           {
             $project: { _id: 0, subCategory: 1 },
           },
           {
             $match: {
-              "subCategory.CategoryName": details.categoryName,
+              'subCategory.CategoryName': details.categoryName,
             },
           },
         ])

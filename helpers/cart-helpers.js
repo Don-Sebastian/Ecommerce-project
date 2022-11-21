@@ -1,32 +1,39 @@
-var db = require("../config/connection");
-var collection = require("../config/collections");
-const { ObjectId } = require("mongodb");
-const { ObjectID } = require("bson");
+/* eslint-disable no-plusplus */
+/* eslint-disable max-len */
+/* eslint-disable no-param-reassign */
+/* eslint-disable arrow-body-style */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-async-promise-executor */
+/* eslint-disable import/order */
+const db = require('../config/connection');
+const collection = require('../config/collections');
+const { ObjectId } = require('mongodb');
 
 module.exports = {
   addToCart: (productId, userId) => {
-    let productObj = {
+    const productObj = {
       item: ObjectId(productId),
       quantity: 1,
     };
 
-    return new Promise(async (resolve, reject) => {
-      let userCart = await db
+    // eslint-disable-next-line no-async-promise-executor, no-unused-vars
+    return new Promise(async (resolve) => {
+      const userCart = await db
         .get()
         .collection(collection.CART_COLLECTION)
         .findOne({ user: ObjectId(userId) });
       if (userCart) {
-        let productExists = userCart.products.findIndex(
-          (product) => product.item == productId
+        const productExists = userCart.products.findIndex(
+          (product) => product.item === productId,
         );
-        if (productExists != -1) {
+        if (productExists !== -1) {
           db.get()
             .collection(collection.CART_COLLECTION)
             .updateOne(
-              { user: ObjectId(userId), "products.item": ObjectId(productId) },
+              { user: ObjectId(userId), 'products.item': ObjectId(productId) },
               {
-                $inc: { "products.$.quantity": 1 },
-              }
+                $inc: { 'products.$.quantity': 1 },
+              },
             )
             .then(() => {
               resolve();
@@ -38,21 +45,14 @@ module.exports = {
               { user: ObjectId(userId) },
               {
                 $push: { products: productObj },
-              }
+              },
             )
             .then((response) => {
               resolve(response);
             });
         }
-        // db.get().collection(collection.CART_COLLECTION).updateOne({ user: ObjectId(userId) }, {
-
-        //     $push:{products: productObj}
-
-        // }).then((response) => {
-        //   resolve(response)
-        // })
       } else {
-        let cartObj = {
+        const cartObj = {
           user: ObjectId(userId),
           products: [productObj],
         };
@@ -65,9 +65,10 @@ module.exports = {
       }
     });
   },
+  // eslint-disable-next-line arrow-body-style
   checkProductInCart: (productId, userId) => {
-    return new Promise(async(resolve, reject) => {
-      let product = await db
+    return new Promise(async (resolve, reject) => {
+      const product = await db
         .get()
         .collection(collection.CART_COLLECTION)
         .aggregate([
@@ -75,17 +76,16 @@ module.exports = {
             $match: { user: ObjectId(userId) },
           },
           {
-            $match: { "products.item": ObjectId(productId) },
+            $match: { 'products.item': ObjectId(productId) },
           },
         ])
         .toArray();
-      console.log((product));
-      resolve(product)
-    })
+      resolve(product);
+    });
   },
   getCartProducts: (userId) => {
     return new Promise(async (resolve, reject) => {
-      let cartItems = await db
+      const cartItems = await db
         .get()
         .collection(collection.CART_COLLECTION)
         .aggregate([
@@ -93,46 +93,46 @@ module.exports = {
             $match: { user: ObjectId(userId) },
           },
           {
-            $unwind: "$products",
+            $unwind: '$products',
           },
           {
             $project: {
-              item: "$products.item",
-              quantity: "$products.quantity",
+              item: '$products.item',
+              quantity: '$products.quantity',
             },
           },
           {
             $lookup: {
               from: collection.PRODUCT_COLLECTION,
-              localField: "item",
-              foreignField: "_id",
-              as: "productDetails",
+              localField: 'item',
+              foreignField: '_id',
+              as: 'productDetails',
             },
           },
           {
             $project: {
               item: 1,
               quantity: 1,
-              productDetails: { $arrayElemAt: ["$productDetails", 0] },
+              productDetails: { $arrayElemAt: ['$productDetails', 0] },
             },
           },
           {
             $addFields: {
               totalQuantityPrice: {
-                $multiply: ["$quantity", { $toInt: "$productDetails.Price" }],
+                $multiply: ['$quantity', { $toInt: '$productDetails.Price' }],
               },
             },
           },
           {
             $lookup: {
               from: collection.CATEGORY_COLLECTION,
-              localField: "productDetails.Category",
-              foreignField: "CategoryName",
-              as: "category",
+              localField: 'productDetails.Category',
+              foreignField: 'CategoryName',
+              as: 'category',
             },
           },
           {
-            $unwind: "$category",
+            $unwind: '$category',
           },
           {
             $project: {
@@ -145,16 +145,14 @@ module.exports = {
                 $cond: {
                   if: {
                     $gt: [
-                      { $toInt: "$productDetails.productOffer" },
-                      { $toInt: "$category.CategoryOffer" },
+                      { $toInt: '$productDetails.productOffer' },
+                      { $toInt: '$category.CategoryOffer' },
                     ],
                   },
-                  then: "$product.productOffer",
-                  else: "$category.CategoryOffer",
+                  then: '$product.productOffer',
+                  else: '$category.CategoryOffer',
                 },
               },
-              // productOffer:"$product.productOffer",
-              // productOffer:'$category.CategoryOffer',
             },
           },
           {
@@ -164,8 +162,8 @@ module.exports = {
                   $divide: [
                     {
                       $multiply: [
-                        { $toInt: "$productDetails.Price" },
-                        { $toInt: "$discountOffer" },
+                        { $toInt: '$productDetails.Price' },
+                        { $toInt: '$discountOffer' },
                       ],
                     },
                     100,
@@ -179,8 +177,8 @@ module.exports = {
               priceAfterDiscount: {
                 $round: {
                   $subtract: [
-                    { $toInt: "$productDetails.Price" },
-                    { $toInt: "$discountedAmount" },
+                    { $toInt: '$productDetails.Price' },
+                    { $toInt: '$discountedAmount' },
                   ],
                 },
               },
@@ -189,37 +187,19 @@ module.exports = {
           {
             $addFields: {
               totalAfterDiscount: {
-                $multiply: ["$quantity", { $toInt: "$priceAfterDiscount" }],
+                $multiply: ['$quantity', { $toInt: '$priceAfterDiscount' }],
               },
             },
           },
-
-          // {
-          //   $lookup: {
-          //     from: collection.PRODUCT_COLLECTION,
-          //     let: { productList: "$products" },
-          //     pipeline: [
-          //       {
-          //         $match: {
-          //           $expr: {
-          //             $in: ["$_id", "$$productList"],
-          //           },
-          //         },
-          //       },
-          //     ],
-          //     as:'cartItems'
-          //   },
-          // },
         ])
         .toArray();
-      console.log(cartItems);
       resolve(cartItems);
     });
   },
   getCartCount: (userId) => {
     return new Promise(async (resolve, reject) => {
       let count = 0;
-      let cart = await db
+      const cart = await db
         .get()
         .collection(collection.CART_COLLECTION)
         .findOne({ user: ObjectId(userId) });
@@ -230,27 +210,20 @@ module.exports = {
     });
   },
   changeProductQuantity: (details) => {
-    details.count = parseInt(details.count);
-    details.quantity = parseInt(details.quantity);
+    details.count = parseInt(details.count, 10);
+    details.quantity = parseInt(details.quantity, 10);
 
     return new Promise(async (resolve, reject) => {
-      // if (details.count == -1 && details.quantity == 1) {
-      //   db.get().collection(collection.CART_COLLECTION).updateOne({ _id: ObjectId(details.cart)}, {
-      //     $pull: {products: {item: ObjectId(details.product)}}
-      //   }).then((response) => {
-      //     resolve({removeProduct: true})
-      //   })
-      // } else {
       db.get()
         .collection(collection.CART_COLLECTION)
         .updateOne(
           {
             _id: ObjectId(details.cart),
-            "products.item": ObjectId(details.product),
+            'products.item': ObjectId(details.product),
           },
           {
-            $inc: { "products.$.quantity": details.count },
-          }
+            $inc: { 'products.$.quantity': details.count },
+          },
         )
         .then((response) => {
           resolve({ status: true });
@@ -266,7 +239,7 @@ module.exports = {
           { _id: ObjectId(details.cart) },
           {
             $pull: { products: { item: ObjectId(details.product) } },
-          }
+          },
         )
         .then((response) => {
           count--;
@@ -277,201 +250,6 @@ module.exports = {
         });
     });
   },
-  // getTotalAmount: (userId, couponDiscount) => {
-  //   return new Promise(async (resolve, reject) => {
-  //     let total = await db
-  //       .get()
-  //       .collection(collection.CART_COLLECTION)
-  //       .aggregate([
-  //         {
-  //           $match: { user: ObjectId(userId) },
-  //         },
-  //         {
-  //           $unwind: "$products",
-  //         },
-  //         {
-  //           $project: {
-  //             item: "$products.item",
-  //             quantity: "$products.quantity",
-  //             couponDetails: 1,
-  //           },
-  //         },
-  //         {
-  //           $lookup: {
-  //             from: collection.PRODUCT_COLLECTION,
-  //             localField: "item",
-  //             foreignField: "_id",
-  //             as: "productDetails",
-  //           },
-  //         },
-  //         {
-  //           $project: {
-  //             item: 1,
-  //             quantity: 1,
-  //             productDetails: { $arrayElemAt: ["$productDetails", 0] },
-  //             couponDetails: 1,
-  //           },
-  //         },
-  //         {
-  //           $addFields: {
-  //             totalQuantityPrice: {
-  //               $multiply: ["$quantity", { $toInt: "$productDetails.Price" }],
-  //             },
-  //           },
-  //         },
-  //         {
-  //           $lookup: {
-  //             from: collection.CATEGORY_COLLECTION,
-  //             localField: "productDetails.Category",
-  //             foreignField: "CategoryName",
-  //             as: "category",
-  //           },
-  //         },
-  //         {
-  //           $unwind: "$category",
-  //         },
-  //         {
-  //           $project: {
-  //             item: 1,
-  //             quantity: 1,
-  //             productDetails: 1,
-  //             totalQuantityPrice: 1,
-  //             category: 1,
-  //             couponDetails: 1,
-  //             discountOffer: {
-  //               $cond: {
-  //                 if: {
-  //                   $gt: [
-  //                     { $toInt: "$productDetails.productOffer" },
-  //                     { $toInt: "$category.CategoryOffer" },
-  //                   ],
-  //                 },
-  //                 then: "$product.productOffer",
-  //                 else: "$category.CategoryOffer",
-  //               },
-  //             },
-  //             // productOffer:"$product.productOffer",
-  //             // productOffer:'$category.CategoryOffer',
-  //           },
-  //         },
-  //         {
-  //           $addFields: {
-  //             discountedAmount: {
-  //               $round: {
-  //                 $divide: [
-  //                   {
-  //                     $multiply: [
-  //                       { $toInt: "$productDetails.Price" },
-  //                       { $toInt: "$discountOffer" },
-  //                     ],
-  //                   },
-  //                   100,
-  //                 ],
-  //               },
-  //             },
-  //           },
-  //         },
-  //         {
-  //           $addFields: {
-  //             priceAfterDiscount: {
-  //               $round: {
-  //                 $subtract: [
-  //                   { $toInt: "$productDetails.Price" },
-  //                   { $toInt: "$discountedAmount" },
-  //                 ],
-  //               },
-  //             },
-  //           },
-  //         },
-  //         {
-  //           $addFields: {
-  //             totalAfterDiscount: {
-  //               $multiply: ["$quantity", { $toInt: "$priceAfterDiscount" }],
-  //             },
-  //           },
-  //         },
-  //         {
-  //           $addFields: {
-  //             totalAmount: {
-  //               $cond: {
-  //                 if: "$totalAfterDiscount",
-  //                 then: "$totalAfterDiscount",
-  //                 else: "$totalQuantityPrice",
-  //               },
-  //             },
-  //           },
-  //         },
-  //         {
-  //           $group: {
-  //             _id: null,
-  //             couponOffer: "$couponDetails.CouponOffer",
-  //             total: {
-  //               $sum: "$totalAmount",
-  //             },
-  //           },
-  //         },
-  //         // {
-  //         //   $addFields: {
-  //         //     totalAfterCoupon: {
-  //         //       $cond: {
-  //         //         if: "$couponDetails.CouponOffer",
-  //         //         then: "$couponDetails.CouponOffer",
-  //         //         else: "$totalAmount",
-  //         //       },
-  //         //     },
-  //         //   },
-  //         // },
-  //         // {
-  //         //   $addFields: {
-  //         //     totalAfterCoupon: {
-  //         //       $cond: {
-  //         //         if: "$couponDetails.CouponOffer",
-  //         //         then: {
-  //         //           $group: {
-  //         //             _id: null,
-  //         //             total: {
-  //         //               $sum: "$totalAmount",
-  //         //             },
-  //         //           },
-  //         //           $round: {
-  //         //             $subtract: [
-  //         //               { $toInt: "$total" },
-  //         //               {
-  //         //                 $multiply: [
-  //         //                   { $toInt: "$total" },
-  //         //                   {
-  //         //                     $divide: [
-  //         //                       { $toInt: "$couponDetails.CouponOffer" },100
-  //         //                     ],
-  //         //                   },
-  //         //                 ],
-  //         //               },
-  //         //             ],
-  //         //           },
-  //         //         },
-  //         //         else: {
-  //         //           $group: {
-  //         //             _id: null,
-  //         //             total: {
-  //         //               $sum: "$totalAmount",
-  //         //             },
-  //         //           }
-  //         //         }
-  //         //       },
-  //         //     },
-  //         //   },
-  //         // },
-  //       ])
-  //       .toArray();
-  //     console.log("-------------------tota;", total);
-  //     // if (couponDiscount) {
-  //     //   total = total[0].total - total[0].total * (couponDiscount / 100);
-  //     //   resolve(total);
-  //     // } else {
-  //       resolve(total[0].total);
-  //     // }
-  //   });
-  // },
   getTotalAmount: (userId, couponDiscount) => {
     return new Promise(async (resolve, reject) => {
       let total = await db
@@ -482,46 +260,46 @@ module.exports = {
             $match: { user: ObjectId(userId) },
           },
           {
-            $unwind: "$products",
+            $unwind: '$products',
           },
           {
             $project: {
-              item: "$products.item",
-              quantity: "$products.quantity",
+              item: '$products.item',
+              quantity: '$products.quantity',
             },
           },
           {
             $lookup: {
               from: collection.PRODUCT_COLLECTION,
-              localField: "item",
-              foreignField: "_id",
-              as: "productDetails",
+              localField: 'item',
+              foreignField: '_id',
+              as: 'productDetails',
             },
           },
           {
             $project: {
               item: 1,
               quantity: 1,
-              productDetails: { $arrayElemAt: ["$productDetails", 0] },
+              productDetails: { $arrayElemAt: ['$productDetails', 0] },
             },
           },
           {
             $addFields: {
               totalQuantityPrice: {
-                $multiply: ["$quantity", { $toInt: "$productDetails.Price" }],
+                $multiply: ['$quantity', { $toInt: '$productDetails.Price' }],
               },
             },
           },
           {
             $lookup: {
               from: collection.CATEGORY_COLLECTION,
-              localField: "productDetails.Category",
-              foreignField: "CategoryName",
-              as: "category",
+              localField: 'productDetails.Category',
+              foreignField: 'CategoryName',
+              as: 'category',
             },
           },
           {
-            $unwind: "$category",
+            $unwind: '$category',
           },
           {
             $project: {
@@ -534,12 +312,12 @@ module.exports = {
                 $cond: {
                   if: {
                     $gt: [
-                      { $toInt: "$productDetails.productOffer" },
-                      { $toInt: "$category.CategoryOffer" },
+                      { $toInt: '$productDetails.productOffer' },
+                      { $toInt: '$category.CategoryOffer' },
                     ],
                   },
-                  then: "$product.productOffer",
-                  else: "$category.CategoryOffer",
+                  then: '$product.productOffer',
+                  else: '$category.CategoryOffer',
                 },
               },
             },
@@ -551,8 +329,8 @@ module.exports = {
                   $divide: [
                     {
                       $multiply: [
-                        { $toInt: "$productDetails.Price" },
-                        { $toInt: "$discountOffer" },
+                        { $toInt: '$productDetails.Price' },
+                        { $toInt: '$discountOffer' },
                       ],
                     },
                     100,
@@ -566,8 +344,8 @@ module.exports = {
               priceAfterDiscount: {
                 $round: {
                   $subtract: [
-                    { $toInt: "$productDetails.Price" },
-                    { $toInt: "$discountedAmount" },
+                    { $toInt: '$productDetails.Price' },
+                    { $toInt: '$discountedAmount' },
                   ],
                 },
               },
@@ -576,7 +354,7 @@ module.exports = {
           {
             $addFields: {
               totalAfterDiscount: {
-                $multiply: ["$quantity", { $toInt: "$priceAfterDiscount" }],
+                $multiply: ['$quantity', { $toInt: '$priceAfterDiscount' }],
               },
             },
           },
@@ -584,9 +362,9 @@ module.exports = {
             $addFields: {
               totalAmount: {
                 $cond: {
-                  if: "$totalAfterDiscount",
-                  then: "$totalAfterDiscount",
-                  else: "$totalQuantityPrice",
+                  if: '$totalAfterDiscount',
+                  then: '$totalAfterDiscount',
+                  else: '$totalQuantityPrice',
                 },
               },
             },
@@ -595,7 +373,7 @@ module.exports = {
             $group: {
               _id: null,
               total: {
-                $sum: "$totalAmount",
+                $sum: '$totalAmount',
               },
             },
           },
@@ -611,7 +389,7 @@ module.exports = {
   },
   getTotalAmountProduct: (userId) => {
     return new Promise(async (resolve, reject) => {
-      let totalAmountProduct = await db
+      const totalAmountProduct = await db
         .get()
         .collection(collection.CART_COLLECTION)
         .aggregate([
@@ -619,47 +397,46 @@ module.exports = {
             $match: { user: ObjectId(userId) },
           },
           {
-            $unwind: "$products",
+            $unwind: '$products',
           },
           {
             $project: {
-              item: "$products.item",
-              quantity: "$products.quantity",
+              item: '$products.item',
+              quantity: '$products.quantity',
             },
           },
           {
             $lookup: {
               from: collection.PRODUCT_COLLECTION,
-              localField: "item",
-              foreignField: "_id",
-              as: "productDetails",
+              localField: 'item',
+              foreignField: '_id',
+              as: 'productDetails',
             },
           },
           {
             $project: {
               item: 1,
               quantity: 1,
-              productDetails: { $arrayElemAt: ["$productDetails", 0] },
+              productDetails: { $arrayElemAt: ['$productDetails', 0] },
             },
           },
           {
             $project: {
               total: {
                 $sum: {
-                  $multiply: ["$quantity", { $toInt: "$productDetails.Price" }],
+                  $multiply: ['$quantity', { $toInt: '$productDetails.Price' }],
                 },
               },
             },
           },
         ])
         .toArray();
-      console.log("===============", totalAmountProduct);
       resolve(totalAmountProduct);
     });
   },
   getCartProductsList: (userId) => {
     return new Promise(async (resolve, reject) => {
-      let cart = await db
+      const cart = await db
         .get()
         .collection(collection.CART_COLLECTION)
         .findOne({ user: ObjectId(userId) });
@@ -675,39 +452,39 @@ module.exports = {
             $match: { user: ObjectId(userId) },
           },
           {
-            $unwind: "$products",
+            $unwind: '$products',
           },
           {
             $project: {
-              item: "$products.item",
-              quantity: "$products.quantity",
+              item: '$products.item',
+              quantity: '$products.quantity',
             },
           },
           {
             $lookup: {
               from: collection.PRODUCT_COLLECTION,
-              localField: "item",
-              foreignField: "_id",
-              as: "productDetails",
+              localField: 'item',
+              foreignField: '_id',
+              as: 'productDetails',
             },
           },
           {
             $project: {
               item: 1,
               quantity: 1,
-              productDetails: { $arrayElemAt: ["$productDetails", 0] },
+              productDetails: { $arrayElemAt: ['$productDetails', 0] },
             },
           },
           {
             $lookup: {
               from: collection.CATEGORY_COLLECTION,
-              localField: "productDetails.Category",
-              foreignField: "CategoryName",
-              as: "category",
+              localField: 'productDetails.Category',
+              foreignField: 'CategoryName',
+              as: 'category',
             },
           },
           {
-            $unwind: "$category",
+            $unwind: '$category',
           },
           {
             $project: {
@@ -719,16 +496,14 @@ module.exports = {
                 $cond: {
                   if: {
                     $gt: [
-                      { $toInt: "$productDetails.productOffer" },
-                      { $toInt: "$category.CategoryOffer" },
+                      { $toInt: '$productDetails.productOffer' },
+                      { $toInt: '$category.CategoryOffer' },
                     ],
                   },
-                  then: "$product.productOffer",
-                  else: "$category.CategoryOffer",
+                  then: '$product.productOffer',
+                  else: '$category.CategoryOffer',
                 },
               },
-              // productOffer:"$product.productOffer",
-              // productOffer:'$category.CategoryOffer',
             },
           },
           {
@@ -738,8 +513,8 @@ module.exports = {
                   $divide: [
                     {
                       $multiply: [
-                        { $toInt: "$productDetails.Price" },
-                        { $toInt: "$discountOffer" },
+                        { $toInt: '$productDetails.Price' },
+                        { $toInt: '$discountOffer' },
                       ],
                     },
                     100,
@@ -753,8 +528,8 @@ module.exports = {
               priceAfterDiscount: {
                 $round: {
                   $subtract: [
-                    { $toInt: "$productDetails.Price" },
-                    { $toInt: "$discountedAmount" },
+                    { $toInt: '$productDetails.Price' },
+                    { $toInt: '$discountedAmount' },
                   ],
                 },
               },
@@ -763,14 +538,13 @@ module.exports = {
           {
             $addFields: {
               totalAfterDiscount: {
-                $multiply: ["$quantity", { $toInt: "$priceAfterDiscount" }],
+                $multiply: ['$quantity', { $toInt: '$priceAfterDiscount' }],
               },
             },
           },
         ])
         .toArray()
         .then((discount) => {
-          console.log("--------------------", discount);
           resolve(discount);
         });
     });
@@ -782,8 +556,8 @@ module.exports = {
         .updateOne(
           { user: ObjectId(userId) },
           {
-            $set: { couponDetails: couponDetails },
-          }
+            $set: { couponDetails },
+          },
         )
         .then((response) => {
           resolve(response);
@@ -791,4 +565,3 @@ module.exports = {
     });
   },
 };
-

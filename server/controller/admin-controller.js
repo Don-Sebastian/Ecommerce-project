@@ -1,17 +1,19 @@
-var adminHelper = require("../../helpers/admin-helpers");
-var orderhelpers = require("../../helpers/order-helpers")
+const adminHelper = require('../../helpers/admin-helpers');
+const orderhelpers = require('../../helpers/order-helpers');
 
-exports.getDashboardAdmin = async(req, res, next) => {
-  let admin = req.session.admin;
-  let totalSales = await orderhelpers.totalSales()
-  let totalPaymentMethod = await orderhelpers.totalPaymentMethod()
-  let noOfSales = await orderhelpers.noOfSales()
-  let monthlySales = await orderhelpers.monthlySales()
-  let salesEachMonthSales = await orderhelpers.salesEachMonthSales();
-  let lastDateSales = await orderhelpers.lastDateSales()
-  let weeklySales = await orderhelpers.weeklySales()
-  let yearlySales = await orderhelpers.yearlySales();
-  res.render("admin/dashboard", {
+exports.getDashboardAdmin = async (req, res) => {
+  // eslint-disable-next-line prefer-destructuring
+  const admin = req.session.admin;
+  const totalSales = await orderhelpers.totalSales();
+  const totalPaymentMethod = await orderhelpers.totalPaymentMethod();
+  const noOfSales = await orderhelpers.noOfSales();
+  const monthlySales = await orderhelpers.monthlySales();
+  // eslint-disable-next-line no-unused-vars
+  const salesEachMonthSales = await orderhelpers.salesEachMonthSales();
+  const lastDateSales = await orderhelpers.lastDateSales();
+  const weeklySales = await orderhelpers.weeklySales();
+  const yearlySales = await orderhelpers.yearlySales();
+  res.render('admin/dashboard', {
     adminAccount: true,
     scrollbar: true,
     admin,
@@ -25,10 +27,8 @@ exports.getDashboardAdmin = async(req, res, next) => {
   });
 };
 
-// ................Admin Login....................
-
 exports.getAdminLogin = (req, res) => {
-  res.render("admin/admin-login", {
+  res.render('admin/admin-login', {
     adminAccount: true,
     adminloginErr: req.session.adminloginErr,
     scrollbar: false,
@@ -39,13 +39,14 @@ exports.getAdminLogin = (req, res) => {
 exports.postAdminLogin = (req, res) => {
   adminHelper.doAdminLogin(req.body).then((response) => {
     if (response.adminstatus) {
-        req.session.admin = response.admin;
-        admin = req.session.admin;
+      req.session.admin = response.admin;
+      // eslint-disable-next-line no-undef
+      admin = req.session.admin;
       req.session.adminLoggedIn = true;
-      res.redirect("/admin/dashboard");
+      res.redirect('/admin/dashboard');
     } else {
       req.session.adminloginErr = response.adminloginErr;
-      res.redirect("/admin/admin-login");
+      res.redirect('/admin/admin-login');
     }
   });
 };
@@ -53,5 +54,5 @@ exports.postAdminLogin = (req, res) => {
 exports.getAdminLogout = (req, res) => {
   req.session.admin = null;
   req.session.adminLogin = false;
-  res.redirect("/admin/admin-login");
-}; 
+  res.redirect('/admin/admin-login');
+};

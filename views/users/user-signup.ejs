@@ -32,33 +32,36 @@
           <!-- Username input -->
           <div class="form-outline mb-4">
             <label class="form-label" for="form3Example2">Username</label>
-            <input type="text" id="form3Example2" class="form-control form-control-lg" name="Name"
-              placeholder="Enter username" required />
+            <input type="text" id="Name" class="form-control form-control-lg" name="Name"
+              placeholder="Enter username" onkeyup="validateName()"  required />
+            <span id="nameerror" class="text-danger"></span>
           </div>
             
 
           <!-- Email input -->
           <div class="form-outline mb-4">
             <label class="form-label" for="form3Example3">Email address</label>
-            <input type="email" id="form3Example3" class="form-control form-control-lg" name="Email"
-              placeholder="Enter a valid email address" required/>
-            
+            <input type="email" id="email" class="form-control form-control-lg" name="Email"
+              placeholder="Enter a valid email address" onkeyup="validEmail()" required/>
+            <span id="emailerror" class="text-danger"></span>
           </div>
+          
 
           <!-- Password input -->
           <div class="form-outline mb-2">
             <label class="form-label" for="form3Example4">Password</label>
-            <input type="password" id="form3Example4" class="form-control form-control-lg" name="Password"
-              placeholder="&#xb7;&#xb7;&#xb7;" required/>
-            
+            <input type="password" id="password" class="form-control form-control-lg" name="Password"
+              placeholder="&#xb7;&#xb7;&#xb7;" onkeyup="validPassowrd()" required/>
+            <span id="passworderror" class="text-danger"></span>
           </div>
 
 
           <!-- Phone Number input -->
           <div class="form-outline mb-4">
             <label class="form-label" for="form3Example3">Phone Number</label>
-            <input type="number" id="form3Example3" class="form-control form-control-lg" name="phonenumber"
-              placeholder="" required/>
+            <input type="number" id="phonenumber" class="form-control form-control-lg" name="phonenumber"
+              placeholder="" onkeyup="validPhoneumber()" required/>
+            <span id="phonenumbererror" class="text-danger"></span>
           </div>
 
           <div class="form-outline mb-4">

@@ -1,33 +1,32 @@
-var userHelper = require("../../helpers/user-helpers");
-var productHelper = require("../../helpers/product-helpers");
-const otpConfig = require("../../config/otpConfig");
+/* eslint-disable no-undef */
+/* eslint-disable import/order */
+const userHelper = require('../../helpers/user-helpers');
+const otpConfig = require('../../config/otpConfig');
 
+const client = require('twilio')(otpConfig.accountSID, otpConfig.authToken);
 
-const client = require("twilio")(otpConfig.accountSID, otpConfig.authToken);
-
-const {} = require("../middleware/multer");
-
-const { response } = require("express");
-const { ObjectId } = require("mongodb");
-const { ObjectID } = require("bson");
-
-var id;
-
-
-
-
-// ..........................User SignUp......................
+// eslint-disable-next-line no-empty-pattern
+const { } = require('../middleware/multer');
 
 exports.getUserSignUp = (req, res) => {
   if (req.query.ReferalCode) {
-    console.log(req.query);
-    res.render("users/user-signup", { adminAccount: false, navbar: false, userExist: false, invalidReferalCode:false, referalCode: req.query.ReferalCode});
+    res.render('users/user-signup', {
+      adminAccount: false,
+      navbar: false,
+      userExist: false,
+      invalidReferalCode: false,
+      referalCode: req.query.ReferalCode,
+    });
+  } else if (req.session.userLoggedIn) {
+    res.redirect('/');
   } else {
-    if (req.session.userLoggedIn) {
-      res.redirect("/");
-    } else {
-      res.render("users/user-signup", { adminAccount: false, navbar: false, userExist: false ,invalidReferalCode:false,});
-    }
+    res.render('users/user-signup', {
+      adminAccount: false,
+      navbar: false,
+      userExist: false,
+      invalidReferalCode: false,
+      referalCode: false,
+    });
   }
 };
 
@@ -38,26 +37,23 @@ exports.postUserSignUp = (req, res) => {
     req.session.user = response;
     req.session.userLoggedIn = false;
     if (userExist) {
-      res.render("users/user-signup", {
+      res.render('users/user-signup', {
         adminAccount: false,
-        userExist, invalidReferalCode,
+        userExist,
+        invalidReferalCode,
         navbar: false,
       });
     } else {
-      res.redirect("/login");
+      res.redirect('/login');
     }
   });
 };
 
-
-
-// ..........................User Login.......................
-
 exports.getUserLogin = (req, res) => {
   if (req.session.user && req.session.userLoggedIn) {
-    res.redirect("/");
+    res.redirect('/');
   } else {
-    res.render("users/user-login", {
+    res.render('users/user-login', {
       adminAccount: false,
       loginErr: req.session.userloginErr,
       navbar: false,
@@ -73,41 +69,33 @@ exports.postUserLogin = (req, res) => {
       user = req.session.user;
       req.session.userLoggedIn = true;
       if (req.session.historyUrl) {
-        res.redirect(req.session.historyUrl)
+        res.redirect(req.session.historyUrl);
       } else {
-         res.redirect("/");
+        res.redirect('/');
       }
     } else {
       req.session.userloginErr = response.loginErr;
-      res.redirect("/login");
+      res.redirect('/login');
     }
-  })
+  });
 };
-
-// ..........................User Logout.......................
 
 exports.getUserLogout = (req, res) => {
   req.session.user = null;
   req.session.userLoggedIn = false;
-  res.redirect("/");
+  res.redirect('/');
 };
-
-
-
-// _______________________________________________OTP VERIFICATION________________________________________
-
-// .........................OTP Login.........................
 
 exports.getOTPLogin = (req, res) => {
   if (req.session.user && req.session.userLoggedIn) {
-    res.redirect("/");
+    res.redirect('/');
   } else {
-    res.render("users/otp-request", {adminAccount: false,
+    res.render('users/otp-request', {
+      adminAccount: false,
       loginErr: req.session.userloginErr,
       navbar: false,
     });
     req.session.userloginErr = false;
-    // req.session.verifyOTP = false;
   }
 };
 
@@ -120,36 +108,32 @@ exports.postOTPLogin = (req, res) => {
         .services(otpConfig.serviceID)
         .verifications.create({
           to: `+91${Mob}`,
-          channel: "sms",
+          channel: 'sms',
         })
         .then(() => {
-          // req.session.user = response.user;
-          // user = req.session.user;
-          res.redirect("/verifyOTP");
+          res.redirect('/verifyOTP');
         })
         .catch((err) => {
+          // eslint-disable-next-line no-console
           console.log(err);
         });
     } else {
       req.session.userloginErr = response.loginErr;
-      res.redirect("/loginOTP");
+      res.redirect('/loginOTP');
     }
   });
 };
 
-
-// .........................OTP Verify.........................
-
 exports.getOTPVerify = (req, res) => {
   if (req.session.user && req.session.userLoggedIn) {
-    res.redirect("/");
+    res.redirect('/');
   } else {
-    res.render("users/otp-verify", {adminAccount:false,
+    res.render('users/otp-verify', {
+      adminAccount: false,
       loginErr: req.session.userloginErr,
       navbar: false,
     });
     req.session.userloginErr = false;
-    // req.session.verifyOTP = false;
   }
 };
 
@@ -161,67 +145,55 @@ exports.postOTPVerify = (req, res) => {
     if (response.status) {
       client.verify
         .services(otpConfig.serviceID)
+        // eslint-disable-next-line object-shorthand
         .verificationChecks.create({ to: `+91${Mob}`, code: code })
         .then((result) => {
           if (result.valid) {
             req.session.user = response.user;
             user = req.session.user;
             req.session.userLoggedIn = true;
-            res.redirect("/");
+            res.redirect('/');
           } else {
-            req.session.userloginErr = "Invalid OTP";
-            res.redirect("/verifyOTP");
+            req.session.userloginErr = 'Invalid OTP';
+            res.redirect('/verifyOTP');
           }
         });
     } else {
       req.session.userloginErr = response.loginErr;
-      res.redirect("/loginOTP");
+      res.redirect('/loginOTP');
     }
-   });
+  });
 };
 
-
-// _______________________________________________View & Block User By Admin________________________________________
-
-
-exports.getAdminViewUsers =  (req, res, next) => {
+exports.getAdminViewUsers = (req, res) => {
   userHelper.getAllUsers().then((userDetails) => {
     adminAccount = true;
     scrollbar = true;
-      res.render("admin/view-users", {
-        adminAccount,
-        scrollbar,
-        userDetails,
-        // products,
-        admin,
-      });
+    res.render('admin/view-users', {
+      adminAccount,
+      scrollbar,
+      userDetails,
+      admin,
     });
+  });
 };
 
 exports.getblockUser = (req, res) => {
-  let userId = req.params.id;
+  const userId = req.params.id;
   userHelper.blockUser(userId).then(() => {
-    res.redirect("/admin/view-users");
+    res.redirect('/admin/view-users');
   });
 };
 
 exports.getUnblockUser = (req, res) => {
-  let userId = req.params.id;
+  const userId = req.params.id;
   userHelper.unblockUser(userId).then(() => {
-    res.redirect("/admin/view-users");
+    res.redirect('/admin/view-users');
   });
 };
 
-
-
-
-// _______________________________________________Add Address to the User_______________________________________
-
 exports.postAddAddress = (req, res) => {
   userHelper.addAddress(req.body).then(() => {
-    res.redirect("/checkout")
-  })
+    res.redirect('/checkout');
+  });
 };
-  
-
-

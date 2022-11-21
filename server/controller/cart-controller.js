@@ -1,29 +1,37 @@
-var userHelper = require("../../helpers/user-helpers");
-var cartHelper = require("../../helpers/cart-helpers");
-const wishlistHelpers = require("../../helpers/wishlist-helpers");
-const { response } = require("express");
+/* eslint-disable no-undef */
+/* eslint-disable no-underscore-dangle */
+const { response } = require('express');
+const userHelper = require('../../helpers/user-helpers');
+const cartHelper = require('../../helpers/cart-helpers');
+const wishlistHelpers = require('../../helpers/wishlist-helpers');
 
-var id, userID;
+let id;
+let userID;
 
-exports.getAddToCartID = async(req, res) => {
-  let user = req.session.user;
-  cartCount = null;
+exports.getAddToCartID = async (req, res) => {
+  // eslint-disable-next-line prefer-destructuring
+  const user = req.session.user;
+  // eslint-disable-next-line no-undef
+  let cartCount = null;
   if (user) {
-    cartCount = await cartHelper.getCartCount(req.session.user._id);
     id = req.params.id;
+    // eslint-disable-next-line no-underscore-dangle
     userID = req.session.user._id;
-    let productInCart = await cartHelper.checkProductInCart(id, userID)
-    if (productInCart.length != 0) {
-      response.status = true
-      response.statusInCart = true
-      console.log(response);
-      res.json(response)
+    // eslint-disable-next-line no-unused-vars
+    cartCount = await cartHelper.getCartCount(userID);
+
+    const productInCart = await cartHelper.checkProductInCart(id, userID);
+    if (productInCart.length !== 0) {
+      response.status = true;
+      response.statusInCart = true;
+      res.json(response);
     } else {
       cartHelper.addToCart(id, userID).then(async () => {
-        let wishlistProduct = await wishlistHelpers.checkProductWishlist(id, userID);
+        const wishlistProduct = await wishlistHelpers.checkProductWishlist(id, userID);
         if (wishlistProduct) {
           await wishlistHelpers
             .deleteProductWishlist(id, userID)
+            // eslint-disable-next-line no-shadow
             .then((response) => {
               response.status = true;
               res.json(response);
@@ -34,73 +42,71 @@ exports.getAddToCartID = async(req, res) => {
       });
     }
   } else {
-    res.json({status:false})
+    res.json({ status: false });
   }
 };
 
-exports.getCartItems =async (req, res) => { 
-  let products = await cartHelper.getCartProducts(req.session.user._id)
-  console.log("==========", products);
-  if (products.length == 0) {
+exports.getCartItems = async (req, res) => {
+  // eslint-disable-next-line no-underscore-dangle, no-shadow
+  const userID = req.session.user._id;
+  const products = await cartHelper.getCartProducts(userID);
+  if (products.length === 0) {
+    // eslint-disable-next-line no-undef
     totalValue = false;
   } else {
-    totalValue = await cartHelper.getTotalAmount(req.session.user._id, req.session.couponOffer);
+    // eslint-disable-next-line no-undef
+    totalValue = await cartHelper.getTotalAmount(userID, req.session.couponOffer);
   }
-  let totalAmountProduct = await cartHelper.getTotalAmountProduct(req.session.user._id);
-    res.render("users/view-cart", {
-      adminAccount: false,
-      navbar: true,
-      products,
-      cartCount,
-      totalValue,
-      totalAmountProduct,
-    });
-};
-
-
-
-exports.postChangeProductQuantity = (req, res, next) => {
-  cartHelper.changeProductQuantity(req.body).then(async(response) => {
-    response.total = await cartHelper.getTotalAmount(req.body.user, req.session.couponOffer)
-    response.totalAmountProduct = await cartHelper.getTotalAmountProduct(req.body.user);
-    res.json(response)
+  const totalAmountProduct = await cartHelper.getTotalAmountProduct(userID);
+  res.render('users/view-cart', {
+    adminAccount: false,
+    navbar: true,
+    products,
+    // eslint-disable-next-line no-undef
+    cartCount,
+    // eslint-disable-next-line no-undef
+    totalValue,
+    totalAmountProduct,
   });
 };
 
+exports.postChangeProductQuantity = (req, res) => {
+  // eslint-disable-next-line no-shadow
+  cartHelper.changeProductQuantity(req.body).then(async (response) => {
+    response.total = await cartHelper.getTotalAmount(req.body.user, req.session.couponOffer);
+    response.totalAmountProduct = await cartHelper.getTotalAmountProduct(req.body.user);
+    res.json(response);
+  });
+};
 
-exports.getChangeProductQuantity = (req, res, next) => {
+// eslint-disable-next-line no-unused-vars
+exports.getChangeProductQuantity = (req, res) => {
   id = req.params._id;
   userID = req.session.user._id;
   cartHelper.getProductQuantity(id, userID).then(() => {
+  });
+};
 
-  })
-}
-
-exports.postRemoveProductFromCart = async(req, res, next) => {
-  let totalAmountProduct = await cartHelper.getTotalAmountProduct(req.session.user._id)
-  let count = totalAmountProduct.length;
+exports.postRemoveProductFromCart = async (req, res) => {
+  const totalAmountProduct = await cartHelper.getTotalAmountProduct(req.session.user._id);
+  const count = totalAmountProduct.length;
+  // eslint-disable-next-line no-shadow
   await cartHelper.removeProductFromCart(req.body, count).then((response) => {
     res.json(response);
   });
 };
 
-
-
-//===============================================
-//              Total Amount
-//===============================================
-
-exports.getCheckOut =async (req, res) => {
-  let total = await cartHelper.getTotalAmount(req.session.user._id, req.session.couponOffer)
+exports.getCheckOut = async (req, res) => {
+  const total = await cartHelper.getTotalAmount(req.session.user._id, req.session.couponOffer);
   userHelper.getAddress(req.session.user._id).then((address) => {
-    res.render("users/checkout-address", {
+    res.render('users/checkout-address', {
       adminAccount: false,
       navbar: true,
+      // eslint-disable-next-line no-undef
       products,
       cartCount,
       total,
       address,
     });
   });
-    
 };

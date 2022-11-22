@@ -63,6 +63,7 @@ exports.getOrderSuccess = (req, res) => {
   res.render('users/order-success', {
     adminAccount: false,
     navbar: true,
+    footer: true,
     cartCount,
   });
 };
@@ -73,6 +74,7 @@ exports.getOrderDetails = async (req, res) => {
   res.render('users/orders', {
     adminAccount: false,
     navbar: true,
+    footer: true,
     cartCount,
     orders,
   });
@@ -89,6 +91,7 @@ exports.getViewOrderProducts = async (req, res) => {
   res.render('users/view-Order-Products', {
     adminAccount: false,
     navbar: true,
+    footer: true,
     cartCount,
     products,
     order,

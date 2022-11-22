@@ -28,7 +28,7 @@ exports.getAddToCartID = async (req, res) => {
     } else {
       cartHelper.addToCart(id, userID).then(async () => {
         const wishlistProduct = await wishlistHelpers.checkProductWishlist(id, userID);
-        if (wishlistProduct) {
+        if (wishlistProduct.length !== 0) {
           await wishlistHelpers
             .deleteProductWishlist(id, userID)
             // eslint-disable-next-line no-shadow
@@ -61,6 +61,7 @@ exports.getCartItems = async (req, res) => {
   res.render('users/view-cart', {
     adminAccount: false,
     navbar: true,
+    footer: true,
     products,
     // eslint-disable-next-line no-undef
     cartCount,
@@ -102,6 +103,7 @@ exports.getCheckOut = async (req, res) => {
     res.render('users/checkout-address', {
       adminAccount: false,
       navbar: true,
+      footer: true,
       // eslint-disable-next-line no-undef
       products,
       cartCount,

@@ -19,10 +19,10 @@ const verifyLogin = async (req, res, next) => {
     const userId = req.session.user._id;
     req.session.cartCount = await cartHelper.getCartCount(userId);
     req.session.wishlistCount = await wishlistHelper.getWishlistCount(userId);
-    // eslint-disable-next-line prefer-destructuring, no-unused-vars
-    const cartCount = req.session.cartCount;
-    // eslint-disable-next-line prefer-destructuring, no-unused-vars
-    const wishlistCount = req.session.wishlistCount;
+    // eslint-disable-next-line prefer-destructuring, no-unused-vars, no-undef
+    cartCount = req.session.cartCount;
+    // eslint-disable-next-line prefer-destructuring, no-unused-vars, no-undef
+    wishlistCount = req.session.wishlistCount;
     req.session.historyUrl = req.originalUrl;
     next();
   } else {

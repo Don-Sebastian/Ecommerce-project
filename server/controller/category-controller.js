@@ -6,6 +6,7 @@ const fs = require('fs');
 const categoryHelper = require('../../helpers/category-helpers');
 const cartHelper = require('../../helpers/cart-helpers');
 const productHelpers = require('../../helpers/product-helpers');
+const wishlistHelpers = require('../../helpers/wishlist-helpers');
 
 let id;
 
@@ -162,8 +163,10 @@ exports.getUserCategoryDetail = async (req, res) => {
   const { user } = req.session;
   let products = null;
   cartCount = null;
+  wishlistCount = null;
   if (req.session.user) {
     cartCount = await cartHelper.getCartCount(req.session.user._id);
+    wishlistCount = await wishlistHelpers.getWishlistCount(req.session.user._id);
   }
   let categoryDetails = await categoryHelper.getCategoryDetails(id);
   if (categoryDetails === null) {
@@ -178,10 +181,12 @@ exports.getUserCategoryDetail = async (req, res) => {
   res.render('users/view-categoryProducts', {
     adminAccount: false,
     navbar: true,
+    footer: true,
     categoryDetails,
     products,
     user,
     cartCount,
+    wishlistCount,
   });
 };
 

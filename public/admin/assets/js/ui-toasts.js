@@ -1,3 +1,9 @@
+/* eslint-disable no-undef */
+/* eslint-disable func-names */
+/* eslint-disable wrap-iife */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable one-var-declaration-per-line */
+/* eslint-disable strict */
 /**
  * UI Toasts
  */
@@ -7,9 +13,9 @@
 (function () {
   // Bootstrap toasts example
   // --------------------------------------------------------------------
-  const toastPlacementExample = document.querySelector('.toast-placement-ex'),
-    toastPlacementBtn = document.querySelector('#showToastPlacement');
-  let selectedType, selectedPlacement, toastPlacement;
+  const toastPlacementExample = document.querySelector('.toast-placement-ex');
+  const toastPlacementBtn = document.querySelector('#showToastPlacement');
+  let selectedType; let selectedPlacement; let toastPlacement;
 
   // Dispose toast when open another
   function toastDispose(toast) {

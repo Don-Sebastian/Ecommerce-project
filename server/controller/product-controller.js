@@ -131,6 +131,7 @@ exports.getAllProductsAndCategory = async (req, res) => {
       adminAccount: false,
       title: 'Fadonsta',
       navbar: true,
+      footer: true,
       user,
       products,
       category,
@@ -148,17 +149,21 @@ exports.getProductDetailID = (req, res) => {
 exports.getProductDetails = async (req, res) => {
   const { user } = req.session;
   cartCount = null;
+  wishlistCount = null;
   if (req.session.user) {
     cartCount = await cartHelper.getCartCount(req.session.user._id);
+    wishlistCount = await wishlistHelpers.getWishlistCount(req.session.user._id);
   }
   productHelper.getProductDetails(id).then((product) => {
     res.render('users/product-details', {
       title: 'Fadonsta',
       adminAccount: false,
       navbar: true,
+      footer: true,
       user,
       product,
       cartCount,
+      wishlistCount,
       id,
     });
   });

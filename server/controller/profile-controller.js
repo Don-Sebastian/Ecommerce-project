@@ -10,6 +10,7 @@ exports.getProfileDetails = (async (req, res) => {
   res.render('users/profile', {
     adminAccount: false,
     navbar: true,
+    footer: true,
     cartCount,
     allUserOrders,
     userDetails,
@@ -36,6 +37,7 @@ exports.getEditAddress = (req, res) => {
     res.render('users/edit-address', {
       adminAccount: false,
       navbar: true,
+      footer: true,
       address,
       cartCount,
     });

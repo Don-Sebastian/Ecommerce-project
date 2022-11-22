@@ -15,7 +15,7 @@
                 <th class="column-3">Price</th>
                 <th class="column-4">Quantity</th>
                 <th class="column-5">Total</th>
-                <th class="column-8 ">Remove</th>
+                <th class="column-8">Remove</th>
               </tr>
               <% (products).forEach(element => { %>
               <tr class="table_row" id="<%= element.productDetails._id %>-tr">
@@ -28,21 +28,24 @@
                   </div>
                 </td>
                 <td class="column-2"><%= element.productDetails.Name %></td>
-                <td class="column-3" >
+                <td class="column-3">
                   <% if (element.totalAfterDiscount === null) { %>
-                   <span id="<%= element.productDetails._id %>-Price"><%= element.productDetails.Price%></span>
-                  <% } else { %>
-                    Rs.<sapn id="<%= element.productDetails._id %>-Price" style="font-weight: bold;">
-										<%= element.priceAfterDiscount%>
-									</sapn>
-									<sapn class=" m-l-10" style="opacity: 0.6; font-size: small;"><del>
-										Rs.<%= element.productDetails.Price%></del>
-									</sapn>
+                  <span id="<%= element.productDetails._id %>-Price"
+                    ><%= element.productDetails.Price%></span
+                  >
+                  <% } else { %> Rs.<sapn
+                    id="<%= element.productDetails._id %>-Price"
+                    style="font-weight: bold"
+                  >
+                    <%= element.priceAfterDiscount%>
+                  </sapn>
+                  <sapn class="m-l-10" style="opacity: 0.6; font-size: small"
+                    ><del> Rs.<%= element.productDetails.Price%></del>
+                  </sapn>
                   <% } %>
-                  </td>
+                </td>
                 <td class="column-4">
                   <div class="wrap-num-product flex-w m-l-auto m-r-0">
-
                     <% if (element.quantity == 1) { %>
                     <div
                       class="btn btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m disabled"
@@ -59,13 +62,14 @@
                     >
                       <i class="fs-16 zmdi zmdi-minus"></i>
                     </div>
-                    <% } %> 
+                    <% } %>
 
                     <!-- <input class="mtext-104 cl3 txt-center num-product" id="<% element.productDetails._id %>" type="number" name="num-product1" value= <%= element.quantity %> > -->
                     <span
                       class="mtext-104 cl3 txt-center num-product"
                       id="<%= element.productDetails._id %>"
-                      ><%= element.quantity %></span>
+                      ><%= element.quantity %></span
+                    >
 
                     <div
                       class="btn btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m"
@@ -76,21 +80,30 @@
                   </div>
                 </td>
                 <td class="column-5">
-                  <% if (element.totalAfterDiscount === null) { %>
-                   Rs.<span id="<%= element.productDetails._id%>-productAmount"><%= element.totalQuantityPrice%> </span>
-                  <% } else { %>
-                   Rs.<span id="<%= element.productDetails._id%>-productAmount"><%= element.totalAfterDiscount%> </span> 
+                  <% if (element.totalAfterDiscount === null) { %> Rs.<span
+                    id="<%= element.productDetails._id%>-productAmount"
+                    ><%= element.totalQuantityPrice%>
+                  </span>
+                  <% } else { %> Rs.<span
+                    id="<%= element.productDetails._id%>-productAmount"
+                    ><%= element.totalAfterDiscount%>
+                  </span>
                   <% } %>
-                  </td>
-                <td class="column-8"><a class="fa fa-trash" onclick="deleteFromCart('<%= element._id%>', '<%= element.productDetails._id%>')"></a></td>
+                </td>
+                <td class="column-8">
+                  <a
+                    class="fa fa-trash"
+                    onclick="deleteFromCart('<%= element._id%>', '<%= element.productDetails._id%>')"
+                  ></a>
+                </td>
               </tr>
               <% }) %>
             </table>
           </div>
 
-          <div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
-            
-          </div>
+          <div
+            class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm"
+          ></div>
         </div>
       </div>
 
@@ -169,12 +182,17 @@
 
             <div class="size-209 p-t-1">
               <% if (totalValue) { %>
-                <span class="mtext-110 cl2"> Rs. <span id="total"><%= totalValue %> </span> </span>
+              <span class="mtext-110 cl2">
+                Rs. <span id="total"><%= totalValue %> </span>
+              </span>
               <% } %>
-              
             </div>
           </div>
-          <a href="/checkout" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">Proceed to Checkout</a>
+          <a
+            href="/checkout"
+            class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
+            >Proceed to Checkout</a
+          >
           <!-- <button
             class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
           >
@@ -186,149 +204,6 @@
     <% } %>
   </div>
 </form>
-
-<!-- Footer -->
-<footer class="bg3 p-t-75 p-b-32">
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-6 col-lg-3 p-b-50">
-        <h4 class="stext-301 cl0 p-b-30">Categories</h4>
-
-        <ul>
-          <li class="p-b-10">
-            <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Women </a>
-          </li>
-
-          <li class="p-b-10">
-            <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Men </a>
-          </li>
-
-          <li class="p-b-10">
-            <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Shoes </a>
-          </li>
-
-          <li class="p-b-10">
-            <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Watches </a>
-          </li>
-        </ul>
-      </div>
-
-      <div class="col-sm-6 col-lg-3 p-b-50">
-        <h4 class="stext-301 cl0 p-b-30">Help</h4>
-
-        <ul>
-          <li class="p-b-10">
-            <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Track Order </a>
-          </li>
-
-          <li class="p-b-10">
-            <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Returns </a>
-          </li>
-
-          <li class="p-b-10">
-            <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Shipping </a>
-          </li>
-
-          <li class="p-b-10">
-            <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> FAQs </a>
-          </li>
-        </ul>
-      </div>
-
-      <div class="col-sm-6 col-lg-3 p-b-50">
-        <h4 class="stext-301 cl0 p-b-30">GET IN TOUCH</h4>
-
-        <p class="stext-107 cl7 size-201">
-          Any questions? Let us know in store at 8th floor, 379 Hudson St, New
-          York, NY 10018 or call us on (+1) 96 716 6879
-        </p>
-
-        <div class="p-t-27">
-          <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-            <i class="fa fa-facebook"></i>
-          </a>
-
-          <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-            <i class="fa fa-instagram"></i>
-          </a>
-
-          <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-            <i class="fa fa-pinterest-p"></i>
-          </a>
-        </div>
-      </div>
-
-      <div class="col-sm-6 col-lg-3 p-b-50">
-        <h4 class="stext-301 cl0 p-b-30">Newsletter</h4>
-
-        <form>
-          <div class="wrap-input1 w-full p-b-4">
-            <input
-              class="input1 bg-none plh1 stext-107 cl7"
-              type="text"
-              name="email"
-              placeholder="email@example.com"
-            />
-            <div class="focus-input1 trans-04"></div>
-          </div>
-
-          <div class="p-t-18">
-            <button
-              class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04"
-            >
-              Subscribe
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <div class="p-t-40">
-      <div class="flex-c-m flex-w p-b-18">
-        <a href="#" class="m-all-1">
-          <img src="images/icons/icon-pay-01.png" alt="ICON-PAY" />
-        </a>
-
-        <a href="#" class="m-all-1">
-          <img src="images/icons/icon-pay-02.png" alt="ICON-PAY" />
-        </a>
-
-        <a href="#" class="m-all-1">
-          <img src="images/icons/icon-pay-03.png" alt="ICON-PAY" />
-        </a>
-
-        <a href="#" class="m-all-1">
-          <img src="images/icons/icon-pay-04.png" alt="ICON-PAY" />
-        </a>
-
-        <a href="#" class="m-all-1">
-          <img src="images/icons/icon-pay-05.png" alt="ICON-PAY" />
-        </a>
-      </div>
-
-      <p class="stext-107 cl6 txt-center">
-        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-        Copyright &copy;
-        <script>
-          document.write(new Date().getFullYear());
-        </script>
-        All rights reserved | Made with
-        <i class="fa fa-heart-o" aria-hidden="true"></i> by
-        <a href="https://colorlib.com" target="_blank">Colorlib</a> &amp;
-        distributed by
-        <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
-        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-      </p>
-    </div>
-  </div>
-</footer>
-
-<!-- Back to top -->
-<div class="btn-back-to-top" id="myBtn">
-  <span class="symbol-btn-back-to-top">
-    <i class="zmdi zmdi-chevron-up"></i>
-  </span>
-</div>
 
 <style>
   .table-shopping-cart .btn.disabled {

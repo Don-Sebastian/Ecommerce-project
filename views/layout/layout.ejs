@@ -51,6 +51,8 @@
     <!-- Helpers -->
     <script src="../assets/vendor/js/helpers.js"></script>
 
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.css">
+
 	<!-- datatable -->
 	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.css">
 
@@ -90,6 +92,9 @@
 
 	<!-- datatable -->
 	<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.js"></script>
+
+	<!-- cropper -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.js"></script>
 
 	<script src="../assets/js/validation.js"></script>
 	<script src="../assets/js/script.js"></script>
@@ -152,7 +157,7 @@
 
 	<%- include('../partials/user-header.ejs') %>
 		<main><%- body %></main>
-
+	<%- include('../partials/user-footer.ejs') %>
     
     
 

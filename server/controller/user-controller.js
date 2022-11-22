@@ -13,6 +13,7 @@ exports.getUserSignUp = (req, res) => {
     res.render('users/user-signup', {
       adminAccount: false,
       navbar: false,
+      footer: false,
       userExist: false,
       invalidReferalCode: false,
       referalCode: req.query.ReferalCode,
@@ -23,6 +24,7 @@ exports.getUserSignUp = (req, res) => {
     res.render('users/user-signup', {
       adminAccount: false,
       navbar: false,
+      footer: false,
       userExist: false,
       invalidReferalCode: false,
       referalCode: false,
@@ -42,6 +44,7 @@ exports.postUserSignUp = (req, res) => {
         userExist,
         invalidReferalCode,
         navbar: false,
+        footer: false,
       });
     } else {
       res.redirect('/login');
@@ -57,6 +60,7 @@ exports.getUserLogin = (req, res) => {
       adminAccount: false,
       loginErr: req.session.userloginErr,
       navbar: false,
+      footer: false,
     });
     req.session.userloginErr = false;
   }
@@ -94,6 +98,7 @@ exports.getOTPLogin = (req, res) => {
       adminAccount: false,
       loginErr: req.session.userloginErr,
       navbar: false,
+      footer: false,
     });
     req.session.userloginErr = false;
   }
@@ -132,6 +137,7 @@ exports.getOTPVerify = (req, res) => {
       adminAccount: false,
       loginErr: req.session.userloginErr,
       navbar: false,
+      footer: false,
     });
     req.session.userloginErr = false;
   }

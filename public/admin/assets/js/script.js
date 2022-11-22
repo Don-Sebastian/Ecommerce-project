@@ -1,22 +1,25 @@
+/* eslint-disable no-restricted-globals */
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 function removeProductAdmin(productId) {
   Swal.fire({
-    title: "Are you sure?",
+    title: 'Are you sure?',
     text: "You won't be able to revert this!",
-    icon: "warning",
+    icon: 'warning',
     showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!',
   }).then((result) => {
     if (result.isConfirmed) {
       $.ajax({
-        url: "/admin/delete-product/" + productId,
-        method: "get",
+        url: `/admin/delete-product/${productId}`,
+        method: 'get',
         success: (response) => {
           if (response.status) {
-            Swal.fire("Deleted!", "Your file has been deleted.", "success");
+            Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
             setTimeout(() => {
-              location.href = "/admin/view-products";
+              location.href = '/admin/view-products';
             }, 2000);
           }
         },
@@ -27,23 +30,23 @@ function removeProductAdmin(productId) {
 
 function removeCouponAdmin(couponId) {
   Swal.fire({
-    title: "Are you sure?",
+    title: 'Are you sure?',
     text: "You won't be able to revert this!",
-    icon: "warning",
+    icon: 'warning',
     showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!',
   }).then((result) => {
     if (result.isConfirmed) {
       $.ajax({
-        url: "/admin/delete-coupon/" + couponId,
-        method: "get",
+        url: `/admin/delete-coupon/${couponId}`,
+        method: 'get',
         success: (response) => {
           if (response.status) {
-            Swal.fire("Deleted!", "Your file has been deleted.", "success");
+            Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
             setTimeout(() => {
-              location.href = "/admin/admin-coupons";
+              location.href = '/admin/admin-coupons';
             }, 2000);
           }
         },
@@ -53,31 +56,30 @@ function removeCouponAdmin(couponId) {
 }
 
 function changeOrderStatus(orderId) {
-  let orderStatus = document.getElementById( orderId+"-select").value;
+  const orderStatus = document.getElementById(`${orderId}-select`).value;
   $.ajax({
-    url: "/admin/update-orderStatus",
-    method: "POST",
+    url: '/admin/update-orderStatus',
+    method: 'POST',
     data: {
-      orderId: orderId,
-      orderStatus: orderStatus,
+      orderId,
+      orderStatus,
     },
     success: (response) => {
-        if (response.status) {
-          location.reload();
+      if (response.status) {
+        location.reload();
       }
     },
   });
 }
 
-
 function changeProductOrderStatus(productId, orderId) {
-  let productOrderStatus = document.getElementById(orderId + "-" + productId + "-select").value;
+  const productOrderStatus = document.getElementById(`${orderId}-${productId}-select`).value;
   $.ajax({
-    url: "/admin/update-product-order-status",
-    method: "POST",
+    url: '/admin/update-product-order-status',
+    method: 'POST',
     data: {
-      orderId: orderId,
-      productId: productId,
+      orderId,
+      productId,
       value: productOrderStatus,
     },
     success: (response) => {
@@ -90,12 +92,12 @@ function changeProductOrderStatus(productId, orderId) {
 
 function changeProductOrderStatusButton(productId, orderId, value) {
   $.ajax({
-    url: "/admin/update-product-order-status",
-    method: "POST",
+    url: '/admin/update-product-order-status',
+    method: 'POST',
     data: {
-      orderId: orderId,
-      productId: productId,
-      value: value,
+      orderId,
+      productId,
+      value,
     },
     success: (response) => {
       if (response.status) {
@@ -107,31 +109,31 @@ function changeProductOrderStatusButton(productId, orderId, value) {
 
 function removeImageInEdit(imageName, categoryId) {
   $.ajax({
-    url: "//remove-image-category",
-    method: "post",
+    url: '//remove-image-category',
+    method: 'post',
     data: {
-      imageName: imageName,
-      categoryId: categoryId,
+      imageName,
+      categoryId,
     },
     success: (response) => {},
   });
 }
 
-$("#category-selection").on("change", function () {
-  
-  var optionSelected = this.value;
+$('#category-selection').on('change', () => {
+  const optionSelected = this.value;
   $.ajax({
-    url: "/admin/category-subcategory",
-    method: "post",
+    url: '/admin/category-subcategory',
+    method: 'post',
     data: {
       categoryName: optionSelected,
     },
     success: (response) => {
       if (response.status) {
         subCategory = response.subCategoryDetails;
+        // eslint-disable-next-line no-plusplus
         for (let i = 0; i < subCategory.length; i++) {
-          $("#subcategory-selection").append(
-            '<option value="' + subCategory[i].subCategory.subCategoryName + '">' + subCategory[i].subCategory.subCategoryName + "</option>"  
+          $('#subcategory-selection').append(
+            `<option value="${subCategory[i].subCategory.subCategoryName}">${subCategory[i].subCategory.subCategoryName}</option>`,
           );
         }
       }
@@ -139,18 +141,18 @@ $("#category-selection").on("change", function () {
   });
 });
 
-$(document).ready(function () {
-  $("#orderListAdmin").DataTable({
-    
-  });
-}); 
+$(document).ready(() => {
+  $('#orderListAdmin').DataTable({
 
-$(document).ready(function () {
-  $("#allProductsAdmin").DataTable({
   });
-}); 
+});
 
-$(document).ready(function () {
-  $("#viewUsersAdmin").DataTable({
+$(document).ready(() => {
+  $('#allProductsAdmin').DataTable({
+  });
+});
+
+$(document).ready(() => {
+  $('#viewUsersAdmin').DataTable({
   });
 });

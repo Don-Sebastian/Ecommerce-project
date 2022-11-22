@@ -21,6 +21,7 @@ exports.getWishlist = async (req, res) => {
     adminAccount: false,
     title: 'Fadonsta',
     navbar: true,
+    footer: true,
     user,
     products,
     cartCount,

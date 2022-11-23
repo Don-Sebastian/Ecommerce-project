@@ -56,3 +56,51 @@ exports.getAdminLogout = (req, res) => {
   req.session.adminLogin = false;
   res.redirect('/admin/admin-login');
 };
+
+exports.getSalesReport = (req, res) => {
+  res.render('admin/sales-report', {
+    adminAccount: true,
+    scrollbar: true,
+    // eslint-disable-next-line no-undef
+    admin,
+  });
+};
+
+exports.postDailySalesReport = (req, res) => {
+  orderhelpers.dailySales(req.body).then((response) => {
+    const orders = response;
+    res.render('admin/report-details', {
+      adminAccount: true,
+      scrollbar: true,
+      // eslint-disable-next-line no-undef
+      admin,
+      orders,
+    });
+  });
+};
+
+exports.postMonthlySalesReport = (req, res) => {
+  orderhelpers.monthlySalesReport(req.body).then((response) => {
+    const orders = response;
+    res.render('admin/report-details', {
+      adminAccount: true,
+      scrollbar: true,
+      // eslint-disable-next-line no-undef
+      admin,
+      orders,
+    });
+  });
+};
+
+exports.postYearlySalesReport = (req, res) => {
+  orderhelpers.yearlySalesReport(req.body).then((response) => {
+    const orders = response;
+    res.render('admin/report-details', {
+      adminAccount: true,
+      scrollbar: true,
+      // eslint-disable-next-line no-undef
+      admin,
+      orders,
+    });
+  });
+};

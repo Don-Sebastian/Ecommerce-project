@@ -1,3 +1,4 @@
+/* eslint-disable prefer-arrow-callback */
 /* eslint-disable no-console */
 /* eslint-disable func-names */
 /* eslint-disable max-len */
@@ -58,7 +59,6 @@ function changeQuantity(cartId, productId, userId, count) {
   const quantity = parseInt(document.getElementById(productId).innerHTML, 10);
   const price = parseInt(document.getElementById(`${productId}-Price`).innerHTML, 10);
   count = parseInt(count, 10);
-
   $.ajax({
     url: '/change-product-quantity',
     data: {
@@ -428,12 +428,7 @@ function addToWishlist(productId) {
           let count = $('#wishlist-count').html();
           count = parseInt(count, 10) - 1;
           $('#wishlist-count').html(count);
-          $(`#wishlistPage${productId}`).remove();
-          if (response.count === 0) {
-            // setTimeout(function () {
-            //   location.reload();
-            // }, 1000);
-          }
+          $('#reloadwishlist').load(`${location.href} #reloadwishlist`);
         }
       } else {
         location.href = '/login';

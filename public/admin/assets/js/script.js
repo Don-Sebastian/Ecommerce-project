@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 /* eslint-disable no-restricted-globals */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
@@ -119,7 +120,7 @@ function removeImageInEdit(imageName, categoryId) {
   });
 }
 
-$('#category-selection').on('change', () => {
+$('#category-selection').on('change', function () {
   const optionSelected = this.value;
   $.ajax({
     url: '/admin/category-subcategory',
@@ -154,5 +155,13 @@ $(document).ready(() => {
 
 $(document).ready(() => {
   $('#viewUsersAdmin').DataTable({
+  });
+});
+
+// eslint-disable-next-line prefer-arrow-callback
+$(document).ready(function () {
+  $('#salesReportAdmin').DataTable({
+    dom: 'Bfrtip',
+    buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
   });
 });

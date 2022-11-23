@@ -194,6 +194,7 @@ module.exports = {
   },
   categorySubcategory: (details) => {
     const response = {};
+    console.log('---------------------', details);
     return new Promise(async (resolve, reject) => {
       const subCategoryDetails = await db
         .get()
@@ -217,6 +218,7 @@ module.exports = {
           },
         ])
         .toArray();
+      console.log('-----------------------', subCategoryDetails);
       response.subCategoryDetails = subCategoryDetails;
       response.status = true;
       resolve(response);

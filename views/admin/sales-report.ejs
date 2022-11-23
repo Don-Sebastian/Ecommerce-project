@@ -1,0 +1,129 @@
+<!-- Content wrapper -->
+          <div class="content-wrapper">
+            <!-- Content -->
+
+            <div class="container-xxl flex-grow-1 container-p-y">
+              <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Dashboard/</span>Sales Report List</h4>
+
+              <!-- Basic Layout -->
+              <div class="row">
+                <div class="col-xl-4">
+                  <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h5 class="mb-0">Daily Sales</h5>
+                      <small class="text-muted float-end"></small>
+                    </div>
+                    <div class="card-body">
+                      <form action="/admin/dashboard/sales-report/daily-sales" method="POST" role="form" >
+                        <div class="row mb-3">
+                          <!-- <input required class="form-control" type="text" name="daterange" style="padding-left:10px;"/>   -->
+                          <div class="col">
+                            <label class="form-label" for="basic-default-message">From date</label>
+                          <input type="date"
+                            id="basic-default-message"  name="fromDate"
+                            class="form-control" required
+                          ></input>
+                          </div>
+                          <div class="col">
+                            <label class="form-label" for="basic-default-message">To date</label>
+                          <input type="date"
+                            id="basic-default-message"  name="toDate"
+                            class="form-control" required
+                          ></input>
+                          </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary ">Get Sales report</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="col-xl-4">
+                  <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h5 class="mb-0">Monthly Sales</h5>
+                      <small class="text-muted float-end"></small>
+                    </div>
+                    <div class="card-body">
+                      <form action="/admin/dashboard/sales-report/monthly-sales" method="POST" role="form" >
+                        <div class="row mb-3">
+                          <div class="col">
+                            <label class="form-label" for="basic-default-message">Start month</label>
+                          <input type="month"
+                            id="basic-default-message"  name="startMonth"
+                            class="form-control" required
+                          ></input>
+                          </div>
+                          <div class="col">
+                            <label class="form-label" for="basic-default-message">End month</label>
+                          <input type="month"
+                            id="basic-default-message"  name="endMonth"
+                            class="form-control" required
+                          ></input>
+                          </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary ">Get Sales report</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-xl-4">
+                  <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h5 class="mb-0">Yearly Sales</h5>
+                      <small class="text-muted float-end"></small>
+                    </div>
+                    <div class="card-body">
+                      <form action="/admin/dashboard/sales-report/yearly-sales" method="POST" role="form" >
+                        <div class="row mb-3">
+                          <div class="col">
+                            <label class="form-label" for="basic-default-message">Start Year</label>
+                          <input type="number"
+                            id="basic-default-message"  name="startYear"
+                            class="form-control" required
+                          ></input>
+                          </div>
+                          <div class="col">
+                            <label class="form-label" for="basic-default-message">End Year</label>
+                          <input type="number"
+                            id="basic-default-message"  name="endYear"
+                            class="form-control" required
+                          ></input>
+                          </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary ">Get Sales report</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                
+
+            
+                
+                
+                  
+                </div>
+              </div>
+            </div>
+            <!-- / Content -->
+
+            <!-- <script>
+            $(function() {
+                $('input[name="daterange"]').daterangepicker({
+                opens: 'center',
+                autoApply: true,
+                drops: 'auto',
+                locale: {
+                    format: 'YYYY-MM-DD'
+                }
+                }, function(start, end, label) {
+                console.log("A new date selection was made: " + start.format('DD-MM-YYYY') + ' to ' + end.format('DD-MM-YYYY'));
+                });
+            });
+            </script>     
+            <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+            <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+            <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+            <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" /> -->

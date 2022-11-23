@@ -23,6 +23,10 @@ const verifyAdminLogin = (req, res, next) => {
 
 // DASHBOARD CONTENTS
 router.get('/dashboard', verifyAdminLogin, adminController.getDashboardAdmin);
+router.get('/dashboard/sales-report', verifyAdminLogin, adminController.getSalesReport);
+router.post('/dashboard/sales-report/daily-sales', verifyAdminLogin, adminController.postDailySalesReport);
+router.post('/dashboard/sales-report/monthly-sales', verifyAdminLogin, adminController.postMonthlySalesReport);
+router.post('/dashboard/sales-report/yearly-sales', verifyAdminLogin, adminController.postYearlySalesReport);
 
 // ADMIN LOGIN
 router.get('/admin-login', adminController.getAdminLogin);

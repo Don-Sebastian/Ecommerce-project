@@ -1,9 +1,9 @@
 /* eslint-disable no-undef */
 /* eslint-disable import/order */
 const userHelper = require('../../helpers/user-helpers');
-const otpConfig = require('../../config/otpConfig');
+// const process.env = require('../../config/process.env');
 
-const client = require('twilio')(otpConfig.accountSID, otpConfig.authToken);
+const client = require('twilio')(process.env.accountSID, process.env.authToken);
 
 // eslint-disable-next-line no-empty-pattern
 const { } = require('../middleware/multer');
@@ -110,7 +110,7 @@ exports.postOTPLogin = (req, res) => {
   userHelper.OTPLogin(req.body).then((response) => {
     if (response.status) {
       client.verify
-        .services(otpConfig.serviceID)
+        .services(process.env.serviceID)
         .verifications.create({
           to: `+91${Mob}`,
           channel: 'sms',
@@ -150,7 +150,7 @@ exports.postOTPVerify = (req, res) => {
   userHelper.OTPVerify(Mob).then((response) => {
     if (response.status) {
       client.verify
-        .services(otpConfig.serviceID)
+        .services(process.env.serviceID)
         // eslint-disable-next-line object-shorthand
         .verificationChecks.create({ to: `+91${Mob}`, code: code })
         .then((result) => {

@@ -168,3 +168,9 @@ exports.getProductDetails = async (req, res) => {
     });
   });
 };
+
+exports.postSearchProduct = async (req, res) => {
+  const payload = req.body.payload.trim();
+  const search = await productHelper.searchProduct(payload);
+  res.send({ payload: search });
+};

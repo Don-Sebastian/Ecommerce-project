@@ -27,8 +27,8 @@ paypal.configure({
 module.exports = {
   placeOrder: (order, products, total) => {
     return new Promise(async (resolve, reject) => {
-      const status = order.paymentMethod === "COD" ? "placed" : "pending";
-      const Orderstatus = order.paymentMethod === "COD" ? "success" : "failed";
+      const status = order.paymentMethod === 'COD' ? 'placed' : 'pending';
+      const Orderstatus = order.paymentMethod === 'COD' ? 'success' : 'failed';
       const address = await db
         .get()
         .collection(collection.USER_COLLECTION)
@@ -37,10 +37,10 @@ module.exports = {
             $match: { _id: ObjectId(order.user) },
           },
           {
-            $unwind: { path: "$Address" },
+            $unwind: { path: '$Address' },
           },
           {
-            $match: { "Address._id": { $in: [ObjectId(order.addressId)] } },
+            $match: { 'Address._id': { $in: [ObjectId(order.addressId)] } },
           },
           {
             $project: { Address: 1, _id: 0 },
@@ -55,47 +55,47 @@ module.exports = {
             $match: { user: ObjectId(order.user) },
           },
           {
-            $unwind: { path: "$products" },
+            $unwind: { path: '$products' },
           },
           {
             $project: {
-              item: "$products.item",
-              quantity: "$products.quantity",
+              item: '$products.item',
+              quantity: '$products.quantity',
             },
           },
           {
             $lookup: {
               from: collection.PRODUCT_COLLECTION,
-              localField: "item",
-              foreignField: "_id",
-              as: "productDetails",
+              localField: 'item',
+              foreignField: '_id',
+              as: 'productDetails',
             },
           },
           {
             $project: {
               item: 1,
               quantity: 1,
-              productDetails: { $arrayElemAt: ["$productDetails", 0] },
+              productDetails: { $arrayElemAt: ['$productDetails', 0] },
             },
           },
           {
             $addFields: {
-              productStatus: "ordered",
+              productStatus: 'ordered',
               totalQuantityPrice: {
-                $multiply: ["$quantity", { $toInt: "$productDetails.Price" }],
+                $multiply: ['$quantity', { $toInt: '$productDetails.Price' }],
               },
             },
           },
           {
             $lookup: {
               from: collection.CATEGORY_COLLECTION,
-              localField: "productDetails.Category",
-              foreignField: "CategoryName",
-              as: "category",
+              localField: 'productDetails.Category',
+              foreignField: 'CategoryName',
+              as: 'category',
             },
           },
           {
-            $unwind: "$category",
+            $unwind: '$category',
           },
           {
             $project: {
@@ -109,12 +109,12 @@ module.exports = {
                 $cond: {
                   if: {
                     $gt: [
-                      { $toInt: "$productDetails.productOffer" },
-                      { $toInt: "$category.CategoryOffer" },
+                      { $toInt: '$productDetails.productOffer' },
+                      { $toInt: '$category.CategoryOffer' },
                     ],
                   },
-                  then: "$product.productOffer",
-                  else: "$category.CategoryOffer",
+                  then: '$product.productOffer',
+                  else: '$category.CategoryOffer',
                 },
               },
             },
@@ -126,8 +126,8 @@ module.exports = {
                   $divide: [
                     {
                       $multiply: [
-                        { $toInt: "$productDetails.Price" },
-                        { $toInt: "$discountOffer" },
+                        { $toInt: '$productDetails.Price' },
+                        { $toInt: '$discountOffer' },
                       ],
                     },
                     100,
@@ -141,8 +141,8 @@ module.exports = {
               priceAfterDiscount: {
                 $round: {
                   $subtract: [
-                    { $toInt: "$productDetails.Price" },
-                    { $toInt: "$discountedAmount" },
+                    { $toInt: '$productDetails.Price' },
+                    { $toInt: '$discountedAmount' },
                   ],
                 },
               },
@@ -151,7 +151,7 @@ module.exports = {
           {
             $addFields: {
               totalAfterDiscount: {
-                $multiply: ["$quantity", { $toInt: "$priceAfterDiscount" }],
+                $multiply: ['$quantity', { $toInt: '$priceAfterDiscount' }],
               },
             },
           },
@@ -159,9 +159,9 @@ module.exports = {
             $addFields: {
               totalAmount: {
                 $cond: {
-                  if: "$totalAfterDiscount",
-                  then: "$totalAfterDiscount",
-                  else: "$totalQuantityPrice",
+                  if: '$totalAfterDiscount',
+                  then: '$totalAfterDiscount',
+                  else: '$totalQuantityPrice',
                 },
               },
             },
@@ -185,7 +185,7 @@ module.exports = {
         .insertOne(orderObj)
         .then((response) => {
           const orderId = response.insertedId;
-          if (order.paymentMethod === "COD") {
+          if (order.paymentMethod === 'COD') {
             db.get()
               .collection(collection.CART_COLLECTION)
               .deleteOne({ user: ObjectId(order.user) });
@@ -215,7 +215,7 @@ module.exports = {
             $match: { _id: ObjectId(orderId) },
           },
           {
-            $unwind: "$products",
+            $unwind: '$products',
           },
         ])
         .toArray();
@@ -241,7 +241,7 @@ module.exports = {
         .collection(collection.ORDER_COLLECTION)
         .updateOne(
           { _id: ObjectId(orderDetails.orderId) },
-          { $set: { orderStatus: orderDetails.orderStatus } }
+          { $set: { orderStatus: orderDetails.orderStatus } },
         )
         .then((response) => {
           response.orderStatus = orderDetails.orderStatus;
@@ -258,12 +258,12 @@ module.exports = {
         .deleteOne({ user: ObjectId(userId) });
       const options = {
         amount: totalPrice * 100, // amount in the smallest currency unit
-        currency: "INR",
+        currency: 'INR',
         receipt: `${orderId}`,
       };
       instance.orders.create(options, (err, order) => {
         // eslint-disable-next-line no-console
-        console.log("New Order: ", order);
+        console.log('New Order: ', order);
         resolve(order);
       });
     });
@@ -275,25 +275,25 @@ module.exports = {
         .collection(collection.CART_COLLECTION)
         .deleteOne({ user: ObjectId(userId) });
       let totalPriceUSD = await currencyConverter
-        .from("INR")
-        .to("USD")
+        .from('INR')
+        .to('USD')
         .amount(totalPrice)
         .convert();
       totalPriceUSD = parseFloat(totalPriceUSD).toFixed(2);
       // eslint-disable-next-line camelcase
       const create_payment_json = {
-        intent: "sale",
+        intent: 'sale',
         payer: {
-          payment_method: "paypal",
+          payment_method: 'paypal',
         },
         redirect_urls: {
-          return_url: "http://localhost:3000/success",
-          cancel_url: "http://localhost:3000/cancel",
+          return_url: 'http://localhost:3000/success',
+          cancel_url: 'http://localhost:3000/cancel',
         },
         transactions: [
           {
             amount: {
-              currency: "USD",
+              currency: 'USD',
               total: totalPriceUSD,
             },
             description: orderId,
@@ -307,7 +307,7 @@ module.exports = {
           throw error;
         } else {
           for (let i = 0; i < payment.links.length; i++) {
-            if (payment.links[i].rel === "approval_url") {
+            if (payment.links[i].rel === 'approval_url') {
               resolve(payment.links[i].href);
             }
           }
@@ -319,15 +319,15 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       // const { createHmac } = await import("node:crypto");
       // eslint-disable-next-line global-require
-      const crypto = require("crypto");
-      let hmac = crypto.createHmac("sha256", process.env.KEY_SECRET);
+      const crypto = require('crypto');
+      let hmac = crypto.createHmac('sha256', process.env.KEY_SECRET);
       hmac.update(
-        `${details["payment[razorpay_order_id]"]}|${details["payment[razorpay_payment_id]"]}`
+        `${details['payment[razorpay_order_id]']}|${details['payment[razorpay_payment_id]']}`,
       );
 
-      hmac = hmac.digest("hex");
+      hmac = hmac.digest('hex');
 
-      if (hmac === details["payment[razorpay_signature]"]) {
+      if (hmac === details['payment[razorpay_signature]']) {
         resolve();
       } else {
         reject();
@@ -346,10 +346,10 @@ module.exports = {
           { _id: ObjectId(orderId) },
           {
             $set: {
-              status: "placed",
-              orderStatus: "success",
+              status: 'placed',
+              orderStatus: 'success',
             },
-          }
+          },
         )
         .then(() => {
           resolve();
@@ -367,7 +367,7 @@ module.exports = {
   },
   updateProductOrderStatus: (details) => {
     return new Promise(async (resolve, reject) => {
-      if (details.value === "refunded") {
+      if (details.value === 'refunded') {
         const amount = await db
           .get()
           .collection(collection.ORDER_COLLECTION)
@@ -375,11 +375,11 @@ module.exports = {
             {
               $match: {
                 _id: ObjectId(details.orderId),
-                "products.item": ObjectId(details.productId),
+                'products.item': ObjectId(details.productId),
               },
             },
             {
-              $unwind: "$products",
+              $unwind: '$products',
             },
             {
               $project: {
@@ -389,7 +389,7 @@ module.exports = {
             },
             {
               $match: {
-                "products.item": ObjectId(details.productId),
+                'products.item': ObjectId(details.productId),
               },
             },
           ])
@@ -403,7 +403,7 @@ module.exports = {
             { _id: ObjectId(userId) },
             {
               $inc: { Wallet: refund },
-            }
+            },
           );
       }
       db.get()
@@ -411,13 +411,13 @@ module.exports = {
         .updateOne(
           {
             _id: ObjectId(details.orderId),
-            "products.item": ObjectId(details.productId),
+            'products.item': ObjectId(details.productId),
           },
           {
             $set: {
-              "products.$.productStatus": details.value,
+              'products.$.productStatus': details.value,
             },
-          }
+          },
         )
         .then((response) => {
           response.productStatus = details.value;
@@ -436,7 +436,7 @@ module.exports = {
             $group: {
               _id: null,
               sales: {
-                $sum: "$totalAmount",
+                $sum: '$totalAmount',
               },
             },
           },
@@ -453,9 +453,9 @@ module.exports = {
         .aggregate([
           {
             $group: {
-              _id: "$paymentMethod",
+              _id: '$paymentMethod',
               sales: {
-                $sum: "$totalAmount",
+                $sum: '$totalAmount',
               },
             },
           },
@@ -486,11 +486,11 @@ module.exports = {
           {
             $group: {
               _id: {
-                week: { $week: "$Date" },
-                year: { $year: "$Date" },
+                week: { $week: '$Date' },
+                year: { $year: '$Date' },
               },
               total: {
-                $sum: "$totalAmount",
+                $sum: '$totalAmount',
               },
             },
           },
@@ -511,11 +511,11 @@ module.exports = {
           {
             $group: {
               _id: {
-                month: { $month: "$Date" },
-                year: { $year: "$Date" },
+                month: { $month: '$Date' },
+                year: { $year: '$Date' },
               },
               total: {
-                $sum: "$totalAmount",
+                $sum: '$totalAmount',
               },
             },
           },
@@ -536,10 +536,10 @@ module.exports = {
           {
             $group: {
               _id: {
-                year: { $year: "$Date" },
+                year: { $year: '$Date' },
               },
               total: {
-                $sum: "$totalAmount",
+                $sum: '$totalAmount',
               },
             },
           },
@@ -559,8 +559,8 @@ module.exports = {
         .aggregate([
           {
             $group: {
-              _id: { $dateToString: { format: "%Y-%m-%d", date: "$Date" } },
-              totalSales: { $sum: "$totalAmount" },
+              _id: { $dateToString: { format: '%Y-%m-%d', date: '$Date' } },
+              totalSales: { $sum: '$totalAmount' },
             },
           },
         ])
@@ -578,8 +578,8 @@ module.exports = {
           {
             $group: {
               _id: null,
-              lastSalesDate: { $last: "$Date" },
-              lastDateAmount: { $last: { $sum: "$totalAmount" } },
+              lastSalesDate: { $last: '$Date' },
+              lastDateAmount: { $last: { $sum: '$totalAmount' } },
             },
           },
         ])
@@ -598,7 +598,7 @@ module.exports = {
           {
             $match: {
               Date: { $gte: new Date(startDate), $lte: new Date(endDate) },
-              orderStatus: "success",
+              orderStatus: 'success',
             },
           },
           {
@@ -632,7 +632,7 @@ module.exports = {
           {
             $match: {
               Date: { $gte: new Date(startDate), $lte: new Date(endDate) },
-              orderStatus: "success",
+              orderStatus: 'success',
             },
           },
         ])

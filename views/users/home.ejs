@@ -13,12 +13,12 @@
               data-appear="fadeInDown"
               data-delay="0"
             >
-              <span class="ltext-101 cl2 respon2"> Women Collection 2018 </span>
+              <span class="ltext-101 cl2 respon2"> Women Collection 2022 </span>
             </div>
 
             <div
               class="layer-slick1 animated visible-false"
-              data-appear="fadeInUp"
+              data-appear="fadeInDown"
               data-delay="800"
             >
               <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">NEW SEASON</h2>
@@ -26,7 +26,7 @@
 
             <div
               class="layer-slick1 animated visible-false"
-              data-appear="zoomIn"
+              data-appear="fadeInDown"
               data-delay="1600"
             >
               <a
@@ -48,7 +48,7 @@
           <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
             <div
               class="layer-slick1 animated visible-false"
-              data-appear="rollIn"
+              data-appear="fadeInDown"
               data-delay="0"
             >
               <span class="ltext-101 cl2 respon2"> Men New-Season </span>
@@ -56,7 +56,7 @@
 
             <div
               class="layer-slick1 animated visible-false"
-              data-appear="lightSpeedIn"
+              data-appear="fadeInDown"
               data-delay="800"
             >
               <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
@@ -66,7 +66,7 @@
 
             <div
               class="layer-slick1 animated visible-false"
-              data-appear="slideInUp"
+              data-appear="fadeInDown"
               data-delay="1600"
             >
               <a
@@ -88,15 +88,15 @@
           <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
             <div
               class="layer-slick1 animated visible-false"
-              data-appear="rotateInDownLeft"
+              data-appear="fadeInDown"
               data-delay="0"
             >
-              <span class="ltext-101 cl2 respon2"> Men Collection 2018 </span>
+              <span class="ltext-101 cl2 respon2"> Men Collection 2022 </span>
             </div>
 
             <div
               class="layer-slick1 animated visible-false"
-              data-appear="rotateInUpRight"
+              data-appear="fadeInDown"
               data-delay="800"
             >
               <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">New arrivals</h2>
@@ -104,7 +104,7 @@
 
             <div
               class="layer-slick1 animated visible-false"
-              data-appear="rotateIn"
+              data-appear="fadeInDown"
               data-delay="1600"
             >
               <a
@@ -241,7 +241,7 @@ in this category!
         <% }) %>
       </div>
 
-      <div class="flex-w flex-c-m m-tb-10">
+      <!-- <div class="flex-w flex-c-m m-tb-10">
         <div
           class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter"
         >
@@ -252,7 +252,7 @@ in this category!
             class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"
           ></i>
           Filter
-        </div>
+        </div> -->
 
         <div
           class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-tb-4 js-show-search"
@@ -274,15 +274,18 @@ in this category!
 
           <input
             class="mtext-107 cl2 size-114 plh2 p-r-15"
-            type="text"
+            type="text" id="searchProductbyName"
             name="search-product"
-            placeholder="Search"
+            placeholder="Search" onkeyup="searchProduct(this)"
           />
         </div>
+        <section id="searchResults">
+
+        </section>
       </div>
 
       <!-- Filter -->
-      <div class="dis-none panel-filter w-full p-t-10">
+      <!-- <div class="dis-none panel-filter w-full p-t-10">
         <div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
           <div class="filter-col1 p-r-15 p-b-27">
             <div class="mtext-102 cl2 p-b-15">Sort By</div>
@@ -472,7 +475,7 @@ in this category!
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
 
     <div class="row isotope-grid">

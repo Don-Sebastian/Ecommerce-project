@@ -6,8 +6,8 @@ const state = {
 
 // eslint-disable-next-line func-names
 module.exports.connect = function (done) {
-  const url = 'mongodb://0.0.0.0:27017/';
-  const dbname = 'ecommerce';
+  const url = process.env.ATLAS;
+  const dbname = 'fadonsta';
 
   // eslint-disable-next-line consistent-return
   MongoClient.connect(url, (err, data) => {

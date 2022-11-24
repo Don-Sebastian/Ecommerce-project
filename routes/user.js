@@ -35,6 +35,7 @@ const verifyLogin = async (req, res, next) => {
 //= ===================================================
 
 router.get('/', productController.getAllProductsAndCategory);
+router.post('/search-product', productController.postSearchProduct);
 
 // USER SIGNUP
 router.get('/signup', userController.getUserSignUp);

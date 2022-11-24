@@ -126,7 +126,7 @@ module.exports = {
       });
   }),
   updateProductreq: (productId, productDetails) => new Promise((resolve, reject) => {
-    if ((productDetails.Image).length === 0) {
+    if (productDetails.Image.length === 0) {
       db.get()
         .collection(collection.PRODUCT_COLLECTION)
         .updateOne(
@@ -372,19 +372,27 @@ module.exports = {
         resolve(discount);
       });
   }),
-  getSubCategoryProducts: (subcategoryDetails) => new Promise(async (resolve, reject) => {
-    const products = await db
-      .get()
-      .collection(collection.PRODUCT_COLLECTION)
-      .aggregate([
-        {
-          $match: { Category: subcategoryDetails.CategoryName },
-        },
-        {
-          $match: { subCategory: subcategoryDetails.subCategoryName },
-        },
-      ])
-      .toArray();
-    resolve(products);
-  }),
+  // eslint-disable-next-line arrow-body-style
+  getSubCategoryProducts: (subcategoryDetails) => {
+    return new Promise(async (resolve, reject) => {
+      const products = await db
+        .get()
+        .collection(collection.PRODUCT_COLLECTION)
+        .aggregate([
+          {
+            $match: { Category: subcategoryDetails.CategoryName },
+          },
+          {
+            $match: { subCategory: subcategoryDetails.subCategoryName },
+          },
+        ])
+        .toArray();
+      resolve(products);
+    });
+  },
+  // eslint-disable-next-line arrow-body-style
+  searchProduct: async (payload) => {
+    // eslint-disable-next-line no-return-await
+    return await db.get().collection(collection.PRODUCT_COLLECTION).find({ Name: { $regex: new RegExp(`^${payload}.*`, 'i') } }).toArray();
+  },
 };

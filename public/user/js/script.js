@@ -436,3 +436,35 @@ function addToWishlist(productId) {
     },
   });
 }
+
+function searchProduct(e) {
+  const search = document.getElementById('searchProductbyName');
+  const searchResults = document.getElementById('searchResults');
+  const match = e.value.match(/^[a-zA-Z]*/);
+  const match2 = e.value.match(/\s*/);
+  if (match2[0] === e.value) {
+    searchResults.innerHTML = '';
+  } else if (match[0] === e.value) {
+    fetch('search-product', {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ payload: e.value }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const { payload } = data;
+        searchResults.innerHTML = '';
+        if (payload.length < 1) {
+          searchResults.innerHTML = '<p class="text-danger">Sorry. Nothing Found.</p>';
+        }
+        payload.forEach((item, index) => {
+          if (index > 0) {
+            searchResults.innerHTML += '<hr>';
+            // eslint-disable-next-line no-template-curly-in-string, no-underscore-dangle
+            searchResults.innerHTML += `<a href="/product-detailID/${item._id}"><p>${item.Name}</p></a>`;
+          }
+        });
+      });
+  }
+  searchResults.innerHTML = '';
+}

@@ -58,17 +58,27 @@ exports.getCartItems = async (req, res) => {
     totalValue = await cartHelper.getTotalAmount(userID, req.session.couponOffer);
   }
   const totalAmountProduct = await cartHelper.getTotalAmountProduct(userID);
-  res.render('users/view-cart', {
-    adminAccount: false,
-    navbar: true,
-    footer: true,
-    products,
-    // eslint-disable-next-line no-undef
-    cartCount,
-    // eslint-disable-next-line no-undef
-    totalValue,
-    totalAmountProduct,
-  });
+  if (totalAmountProduct) {
+    res.render('users/view-cart', {
+      adminAccount: false,
+      navbar: true,
+      footer: true,
+      products,
+      // eslint-disable-next-line no-undef
+      cartCount,
+      // eslint-disable-next-line no-undef
+      totalValue,
+      totalAmountProduct,
+    });
+  } else {
+    res.render('users/404-page', {
+      adminAccount: false,
+      navbar: false,
+      footer: false,
+      user: false,
+      error,
+    });
+  }
 };
 
 exports.postChangeProductQuantity = (req, res) => {

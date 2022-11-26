@@ -53,6 +53,9 @@ module.exports = {
           response.userData = userData;
           response.userExist = false;
           resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
         });
     }
   }),

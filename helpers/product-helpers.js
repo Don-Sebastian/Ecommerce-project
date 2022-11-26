@@ -12,7 +12,7 @@ module.exports = {
     db.get()
       .collection(collection.PRODUCT_COLLECTION)
       .insertOne(product)
-      .then(() => {});
+      .then(() => { });
   },
   getAllProducts: () => new Promise(async (resolve, reject) => {
     const products = await db
@@ -50,6 +50,9 @@ module.exports = {
             Price: 1,
             Category: 1,
             Description: 1,
+            Stock: 1,
+            productOffer: 1,
+            salePrice: 1,
             Image: 1,
           },
         },
@@ -123,6 +126,9 @@ module.exports = {
       .toArray()
       .then((product) => {
         resolve(product);
+      })
+      .catch((error) => {
+        reject(error);
       });
   }),
   updateProductreq: (productId, productDetails) => new Promise((resolve, reject) => {
@@ -179,7 +185,7 @@ module.exports = {
 
     const products = await db
       .get()
-      .collection(PRODUCT_COLLECTION)
+      .collection(collection.PRODUCT_COLLECTION)
       .aggregate([
         {
           $lookup: {
@@ -261,7 +267,11 @@ module.exports = {
       .toArray();
     response.products = products;
     response.category = category;
-    resolve(response);
+    if (products && category) {
+      resolve(response);
+    } else {
+      reject();
+    }
   }),
   discount: (userId) => new Promise((resolve, reject) => {
     db.get()

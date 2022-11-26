@@ -29,7 +29,7 @@
                 </td>
                 <td class="column-2"><%= element.productDetails.Name %></td>
                 <td class="column-3">
-                  <% if (element.totalAfterDiscount === null) { %>
+                  <% if (element.productDetails.Price == element.priceAfterDiscount) { %>
                   <span id="<%= element.productDetails._id %>-Price"
                     ><%= element.productDetails.Price%></span
                   >

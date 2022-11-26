@@ -51,7 +51,6 @@ router.get('/view-products', verifyAdminLogin, productController.getAdminViewPro
 // ADD PRODUCTS
 router.get('/add-products', verifyAdminLogin, productController.getAddProductsAdmin);
 router.post('/add-products', verifyAdminLogin, upload.array('Image'), productController.postAddProductsAdmin);
-router.post('/category-subcategory', categoryController.postCategorySubcategory);
 
 // EDIT PRODUCTS
 router.get('/edit-product/:id', verifyAdminLogin, productController.getEditProductID);
@@ -66,6 +65,7 @@ router.get('/admin-categories', verifyAdminLogin, categoryController.getCategory
 
 // ADD CATEGORY
 router.post('/add-category', verifyAdminLogin, upload2.array('CategoryImage'), categoryController.postAddCategory);
+router.post('/category-subcategory', categoryController.postCategorySubcategory);
 
 // EDIT CATEGORY
 router.get('/edit-category/:id', verifyAdminLogin, categoryController.getEditCategoryID);

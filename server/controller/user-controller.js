@@ -49,6 +49,14 @@ exports.postUserSignUp = (req, res) => {
     } else {
       res.redirect('/login');
     }
+  }).catch(() => {
+    res.render('users/404-page', {
+      adminAccount: false,
+      navbar: false,
+      footer: false,
+      user: false,
+      error,
+    });
   });
 };
 
@@ -81,6 +89,14 @@ exports.postUserLogin = (req, res) => {
       req.session.userloginErr = response.loginErr;
       res.redirect('/login');
     }
+  }).catch(() => {
+    res.render('users/404-page', {
+      adminAccount: false,
+      navbar: false,
+      footer: false,
+      user: false,
+      error,
+    });
   });
 };
 
@@ -126,6 +142,14 @@ exports.postOTPLogin = (req, res) => {
       req.session.userloginErr = response.loginErr;
       res.redirect('/loginOTP');
     }
+  }).catch(() => {
+    res.render('users/404-page', {
+      adminAccount: false,
+      navbar: false,
+      footer: false,
+      user: false,
+      error,
+    });
   });
 };
 
@@ -168,6 +192,14 @@ exports.postOTPVerify = (req, res) => {
       req.session.userloginErr = response.loginErr;
       res.redirect('/loginOTP');
     }
+  }).catch(() => {
+    res.render('users/404-page', {
+      adminAccount: false,
+      navbar: false,
+      footer: false,
+      user: false,
+      error,
+    });
   });
 };
 

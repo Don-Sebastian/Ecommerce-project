@@ -149,7 +149,7 @@ module.exports = {
                       { $toInt: '$category.CategoryOffer' },
                     ],
                   },
-                  then: '$product.productOffer',
+                  then: '$productDetails.productOffer',
                   else: '$category.CategoryOffer',
                 },
               },

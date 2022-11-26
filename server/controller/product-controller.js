@@ -44,7 +44,7 @@ exports.postAddProductsAdmin = async (req, res, next) => {
   const product = req.body;
   product.Image = fileName;
   if (req.body.productOffer) {
-    product.salePrice = (((req.body.productOffer) * (req.body.Price)) / 100);
+    product.salePrice = parseInt((((req.body.productOffer) * (req.body.Price)) / 100), 10);
   }
   product.Date = new Date();
   if (!req.files) {
@@ -52,7 +52,7 @@ exports.postAddProductsAdmin = async (req, res, next) => {
     error.httpStatusCode = 400;
     return next(error);
   }
-  await productHelper.addProduct(req.body);
+  await productHelper.addProduct(product);
   const categories = await categoryHelpers.getAllCategories();
   res.render('admin/add-products', {
     adminAccount: true,
@@ -102,7 +102,7 @@ exports.getDeleteProduct = (req, res) => {
   productHelper.deleteProduct(productId).then((response) => {
     if (response.productDetails.Image[0]) {
       for (let i = 0; i < response.productDetails.Image.length; i++) {
-        fs.unlink(`C:/Users/donsw/OneDrive/Desktop/Web Development/web-devolps/1.Project1/Ecommerce-project/public/admin/uploads/${response.productDetails.Image[i]}`, (err) => {
+        fs.unlink(`public/admin/uploads/${response.productDetails.Image[i]}`, (err) => {
           // eslint-disable-next-line no-console
           if (err) console.log(err);
           else {
@@ -123,6 +123,7 @@ exports.getAllProductsAndCategory = async (req, res) => {
   if (req.session.user) {
     cartCount = await cartHelper.getCartCount(req.session.user._id);
     wishlistCount = await wishlistHelpers.getWishlistCount(req.session.user._id);
+    req.session.userloginErr = false;
   }
   productHelper.getAllProductsAndCategory().then((response) => {
     products = response.products;
@@ -138,6 +139,14 @@ exports.getAllProductsAndCategory = async (req, res) => {
       cartCount,
       wishlistCount,
     });
+  }).catch(() => {
+    res.render('users/404-page', {
+      adminAccount: false,
+      navbar: false,
+      footer: false,
+      user: false,
+      error,
+    });
   });
 };
 
@@ -147,26 +156,46 @@ exports.getProductDetailID = (req, res) => {
 };
 
 exports.getProductDetails = async (req, res) => {
-  const { user } = req.session;
-  cartCount = null;
-  wishlistCount = null;
-  if (req.session.user) {
-    cartCount = await cartHelper.getCartCount(req.session.user._id);
-    wishlistCount = await wishlistHelpers.getWishlistCount(req.session.user._id);
-  }
-  productHelper.getProductDetails(id).then((product) => {
-    res.render('users/product-details', {
-      title: 'Fadonsta',
-      adminAccount: false,
-      navbar: true,
-      footer: true,
-      user,
-      product,
-      cartCount,
-      wishlistCount,
-      id,
+  try {
+    const { user } = req.session;
+    cartCount = null;
+    wishlistCount = null;
+    if (req.session.user) {
+      cartCount = await cartHelper.getCartCount(req.session.user._id);
+      wishlistCount = await wishlistHelpers.getWishlistCount(
+        req.session.user._id,
+      );
+    }
+    productHelper.getProductDetails(id).then((product) => {
+      res.render('users/product-details', {
+        title: 'Fadonsta',
+        adminAccount: false,
+        navbar: true,
+        footer: true,
+        user,
+        product,
+        cartCount,
+        wishlistCount,
+        id,
+      });
+    }).catch((error) => {
+      res.render('users/404-page', {
+        adminAccount: false,
+        navbar: false,
+        footer: false,
+        user: false,
+        error,
+      });
     });
-  });
+  } catch (error) {
+    res.render('users/404-page', {
+      adminAccount: false,
+      navbar: false,
+      footer: false,
+      user: false,
+      error,
+    });
+  }
 };
 
 exports.postSearchProduct = async (req, res) => {
